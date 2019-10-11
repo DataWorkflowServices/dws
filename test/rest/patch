@@ -1,0 +1,37 @@
+#!/bin/bash
+
+DWSHOST=${DWSHOST:-localhost}
+DWSPORT=${DWSPORT:-8080}
+
+[[ $# -eq 2 ]] || exit 1
+rname=$1
+rstate=$2
+
+error_exit()
+{
+    echo "update failed: $1: $2"
+    exit 1
+}
+
+check_for_error()
+{
+    errcode=`echo $1 | jq '.code'`
+    errreason=`echo $1 | jq '.reason'`
+
+    [[ "$errcode" = "null" ]] || error_exit $errcode $errreason
+}
+
+# look for current settings
+current=`curl -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json"` || echo "get $rname failed"
+
+check_for_error "$current"
+
+rnamespace=`echo $current | jq '.metadata.namespace'`
+rversion=`echo $current | jq '.metadata.resourceVersion'`
+
+data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "creationTimestamp":null, "resourceVersion":##VERSION##}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"desiredState":"##STATE##"}}'
+
+echo Updating $rname ...
+jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##VERSION##:$rversion:g -e s:##STATE##:$rstate:g -e s:##RNAMESPCE##:$rnamespace:g` 
+
+curl  -X PATCH "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/merge-patch+json" -d "$jsondata" || echo "update failed"

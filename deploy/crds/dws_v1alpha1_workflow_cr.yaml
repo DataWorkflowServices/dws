@@ -1,0 +1,14 @@
+apiVersion: dws.cray.com/v1alpha1
+kind: Workflow
+metadata:
+  name: dws-workflow-test
+spec:
+  # Add fields here
+  desiredState: "proposal"
+  dwDirectives:
+    - '#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes'
+    - '#DW stage_in type=directory destination=\$DW_JOB_STRIPED source=/pfs/dld-input'
+    - '#DW stage_out type=directory destination=/pfs/dld-output source=\$DW_JOB_STRIPED'
+  wlmId: "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"
+  jobId: "2824a44b-0d93-40fc-8716-9bcd5aa9795d"
+  userId: 1001

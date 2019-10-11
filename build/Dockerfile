@@ -1,0 +1,34 @@
+# Copyright 2019 Cray Inc.  All Rights Reserved
+FROM golang:latest AS build-base
+#FROM golang:1.12.0-alpine3.9 as build-base
+
+COPY cmd $GOPATH/src/stash.us.cray.com/dpm/dws-operator/cmd/
+COPY pkg $GOPATH/src/stash.us.cray.com/dpm/dws-operator/pkg/
+COPY vendor $GOPATH/src/stash.us.cray.com/dpm/dws-operator/vendor/
+COPY build $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/
+
+WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
+
+RUN go build -v -i -o build/bin/dws-operator cmd/manager/main.go
+#RUN go build -v -i -o /usr/local/bin/dws-operator cmd/manager/main.go
+
+# The final application release product container
+#FROM build-base as application
+FROM registry.access.redhat.com/ubi7/ubi-minimal:latest as application
+
+WORKDIR /root
+
+ENV OPERATOR=/usr/local/bin/dws-operator \
+    USER_UID=1001 \
+    USER_NAME=dws-operator
+
+# install operator binary
+ENV GOPATH /go
+COPY --from=build-base $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/bin/dws-operator ${OPERATOR}
+COPY --from=build-base $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/bin /usr/local/bin
+
+RUN  /usr/local/bin/user_setup
+
+ENTRYPOINT ["/usr/local/bin/entrypoint"]
+
+USER ${USER_UID}

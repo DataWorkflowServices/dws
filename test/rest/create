@@ -1,0 +1,14 @@
+#!/bin/bash
+
+DWSHOST=${DWSHOST:-localhost}
+DWSPORT=${DWSPORT:-8080}
+
+rname=$1
+[[ ! -z $rname ]] || rname="dws-workflow-test-$$"
+
+data='{"metadata":{"name":"##RNAME##", "namespace":"default", "creationTimestamp":null}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"desiredState":"proposal", "dwDirectives":"#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes", "jobId": "2824a44b-0d93-40fc-8716-9bcd5aa9795d", "userId": 1001, "wlmId": "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"}}'
+
+echo Creating $rname ...
+jsondata=`echo $data | sed -e s:##RNAME##:$rname:g`
+
+curl  -X POST "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows" -H "Content-Type: application/json" -d "$jsondata" || echo "Create failed"

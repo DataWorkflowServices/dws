@@ -1,0 +1,7 @@
+apiVersion: dws.cray.com/v1alpha1
+kind: Driver
+metadata:
+  name: example-driver
+spec:
+  # Add fields here
+  size: 3
