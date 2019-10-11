@@ -1,23 +1,23 @@
 USER:=$(shell id -un)
 
 PROD_VERSION=$(shell sed 1q .version)
-DEV_IMGNAME=dtr.dev.cray.com/$(USER)/dws-operator
+DEV_IMGNAME=dws-operator
+DTR_IMGPATH=dtr.dev.cray.com/$(USER)/$(DEV_IMGNAME)
 
 all: src image
 
 src:
 	operator-sdk generate k8s
 	operator-sdk generate openapi
-	sed -i "" 's|REPLACE_IMAGE|dtr.dev.cray.com/$(USER)/dws-operator:0.0.1|g' deploy/operator.yaml
 
 image:
-	docker build -f build/Dockerfile 
-		--label jhendricks/dtr.dev.cray.com/jhendricks/dws-operator:0.0.1 \
-		-t dtr.dev.cray.com/jhendricks/dws-operator:0.0.1 .
-	docker push $(DEV_IMGNAME):$(PROD_VERSION)
+	docker build -f build/Dockerfile --label $(DTR_IMGPATH):$(PROD_VERSION) -t $(DTR_IMGPATH):$(PROD_VERSION) .
+	docker push $(DTR_IMGPATH):$(PROD_VERSION)
+	docker image prune --force
+	sed -i "" 's|REPLACE_IMAGE|$(DTR_IMGPATH):$(PROD_VERSION)|g' deploy/operator.yaml
 
 clean:
 	docker container prune --force
 	docker image prune --force
-	docker rmi $(DEV_IMGNAME):$(PROD_VERSION)
+	docker rmi $(DTR_IMGPATH):$(PROD_VERSION)
 	go clean all
