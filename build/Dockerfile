@@ -1,6 +1,5 @@
 # Copyright 2019 Cray Inc.  All Rights Reserved
 FROM golang:latest AS build-base
-#FROM golang:1.12.0-alpine3.9 as build-base
 
 COPY cmd $GOPATH/src/stash.us.cray.com/dpm/dws-operator/cmd/
 COPY pkg $GOPATH/src/stash.us.cray.com/dpm/dws-operator/pkg/
@@ -11,6 +10,17 @@ WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 
 RUN go build -v -i -o build/bin/dws-operator cmd/manager/main.go
 #RUN go build -v -i -o /usr/local/bin/dws-operator cmd/manager/main.go
+
+# The base testing container
+FROM build_base AS base_testing
+
+COPY test/ /test/
+COPY test/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/test/
+
+# The testing artifact container
+FROM base_testing AS testing
+WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
+ENTRYPOINT ["sh", "test/docker_test_entry.sh"]
 
 # The final application release product container
 #FROM build-base as application
