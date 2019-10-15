@@ -41,8 +41,7 @@ spec:
               format: int64
               type: integer
             units:
-              format: int64
-              type: integer
+              type: string
           required:
           - poolId
           - units
@@ -52,16 +51,9 @@ spec:
           type: object
         status:
           properties:
-            free:
-              format: int64
-              type: integer
-            poolId:
-              type: string
             state:
               type: string
           required:
-          - poolId
-          - free
           - state
           type: object
   version: v1alpha1

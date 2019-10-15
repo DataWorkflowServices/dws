@@ -8,19 +8,12 @@ import (
 // +k8s:openapi-gen=true
 type DriverSpec struct {
     DriverId             string `json:"driverId"`
-    WatchStates          string `json:"watchStates"`
+    WatchStates          []string `json:"watchStates"`
 }
 
-// DriverStatus defines the observed state of Driver
-// +k8s:openapi-gen=true
-type DriverStatusSpec struct {
-    DriverId      string `json:"driverId"`
-    WatchStates   string `json:"watchStates"`
-    Status        []string `json:"status"`
-}
-
+// WorkflowStatus defines the observed state of Workflow
 type DriverStatus struct {
-    Registrations        []DriverStatusSpec `json:"registrations"`
+    State        string `json:"state"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

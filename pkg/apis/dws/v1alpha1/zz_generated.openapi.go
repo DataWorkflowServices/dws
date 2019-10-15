@@ -13,7 +13,6 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 	return map[string]common.OpenAPIDefinition{
 		"./pkg/apis/dws/v1alpha1.Driver":            schema_pkg_apis_dws_v1alpha1_Driver(ref),
 		"./pkg/apis/dws/v1alpha1.DriverSpec":        schema_pkg_apis_dws_v1alpha1_DriverSpec(ref),
-		"./pkg/apis/dws/v1alpha1.DriverStatusSpec":  schema_pkg_apis_dws_v1alpha1_DriverStatusSpec(ref),
 		"./pkg/apis/dws/v1alpha1.StoragePool":       schema_pkg_apis_dws_v1alpha1_StoragePool(ref),
 		"./pkg/apis/dws/v1alpha1.StoragePoolSpec":   schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref),
 		"./pkg/apis/dws/v1alpha1.StoragePoolStatus": schema_pkg_apis_dws_v1alpha1_StoragePoolStatus(ref),
@@ -80,38 +79,6 @@ func schema_pkg_apis_dws_v1alpha1_DriverSpec(ref common.ReferenceCallback) commo
 					},
 					"watchStates": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-				},
-				Required: []string{"driverId", "watchStates"},
-			},
-		},
-		Dependencies: []string{},
-	}
-}
-
-func schema_pkg_apis_dws_v1alpha1_DriverStatusSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "DriverStatus defines the observed state of Driver",
-				Properties: map[string]spec.Schema{
-					"driverId": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"watchStates": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"status": {
-						SchemaProps: spec.SchemaProps{
 							Type: []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
@@ -124,7 +91,7 @@ func schema_pkg_apis_dws_v1alpha1_DriverStatusSpec(ref common.ReferenceCallback)
 						},
 					},
 				},
-				Required: []string{"driverId", "watchStates", "status"},
+				Required: []string{"driverId", "watchStates"},
 			},
 		},
 		Dependencies: []string{},
@@ -188,8 +155,8 @@ func schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref common.ReferenceCallback) 
 					},
 					"units": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"granularity": {
@@ -224,18 +191,6 @@ func schema_pkg_apis_dws_v1alpha1_StoragePoolStatus(ref common.ReferenceCallback
 			SchemaProps: spec.SchemaProps{
 				Description: "StoragePoolStatus defines the observed state of StoragePool",
 				Properties: map[string]spec.Schema{
-					"poolId": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"free": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
-						},
-					},
 					"state": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
@@ -243,7 +198,7 @@ func schema_pkg_apis_dws_v1alpha1_StoragePoolStatus(ref common.ReferenceCallback
 						},
 					},
 				},
-				Required: []string{"poolId", "free", "state"},
+				Required: []string{"state"},
 			},
 		},
 		Dependencies: []string{},

@@ -1,7 +1,10 @@
 apiVersion: dws.cray.com/v1alpha1
 kind: StoragePool
 metadata:
-  name: example-storagepool
+  name: dws-storagepool-test
 spec:
-  # Add fields here
-  size: 3
+  PoolId:           "dws-storagepool-test"
+  Units:            "bytes"
+  Granularity:      107374182400
+  Quantity:         10
+  Free:             10

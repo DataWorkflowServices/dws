@@ -8,7 +8,7 @@ import (
 // +k8s:openapi-gen=true
 type StoragePoolSpec struct {
     PoolId            string `json:"poolId"`
-    Units             int `json:"units"`
+    Units             string `json:"units"`
     Granularity       int `json:"granularity"`
     Quantity          int `json:"quantity"`
     Free              int `json:"free"`
@@ -17,8 +17,6 @@ type StoragePoolSpec struct {
 // StoragePoolStatus defines the observed state of StoragePool
 // +k8s:openapi-gen=true
 type StoragePoolStatus struct {
-    PoolId string `json:"poolId"`
-    Free   int    `json:"free"`
     State  string `json:"state"`
 }
 

@@ -32,32 +32,19 @@ spec:
             driverId:
               type: string
             watchStates:
-              type: string
+              items:
+                type: string
+              type: array
           required:
           - driverId
           - watchStates
           type: object
         status:
           properties:
-            registrations:
-              items:
-                properties:
-                  driverId:
-                    type: string
-                  status:
-                    items:
-                      type: string
-                    type: array
-                  watchStates:
-                    type: string
-                required:
-                - driverId
-                - watchStates
-                - status
-                type: object
-              type: array
+            state:
+              type: string
           required:
-          - registrations
+          - state
           type: object
   version: v1alpha1
   versions:
