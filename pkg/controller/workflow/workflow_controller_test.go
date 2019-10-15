@@ -95,8 +95,12 @@ func TestWorkflowController2(t *testing.T) {
 		namespace = "dws"
 	)
 
+	var dwds = []string {
+		"#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes",
+	}
+
 	// A Memcached resource with metadata and spec.
-	workflow := &workflow.Workflow{
+	workflow := &dwsv1.Workflow{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
 			Namespace: namespace,
@@ -105,8 +109,8 @@ func TestWorkflowController2(t *testing.T) {
 			DesiredState:	"proposal",
 			WLMId:			"5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
 			JobId:			"2824a44b-0d93-40fc-8716-9bcd5aa9795d",
-			DWDirectives:	[ "#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes" ],
-			UserId:			1001
+			DWDirectives:	dwds,
+			UserId:			1001,
 		},
 	}
 
@@ -138,13 +142,13 @@ func TestWorkflowController2(t *testing.T) {
 	}
 
 	namespacedname := types.NamespacedName{
-		Name:      name + "-data",
+		Name:      name,
 		Namespace: namespace,
 	}
 
-	workflow := &dwsv1.Workflow{}
-	err = cl.Get(context.TODO(), namespacedname, workflow)
+	workflowtst := &dwsv1.Workflow{}
+	err = cl.Get(context.TODO(), namespacedname, workflowtst)
 	if err != nil {
-		t.Error("Workflow  object not created")
+		t.Error("Workflow object not created")
 	}
 }
