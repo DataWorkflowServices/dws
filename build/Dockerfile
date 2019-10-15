@@ -1,5 +1,5 @@
 # Copyright 2019 Cray Inc.  All Rights Reserved
-FROM golang:latest AS build-base
+FROM golang:latest AS build_base
 
 COPY cmd $GOPATH/src/stash.us.cray.com/dpm/dws-operator/cmd/
 COPY pkg $GOPATH/src/stash.us.cray.com/dpm/dws-operator/pkg/
@@ -23,7 +23,7 @@ WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 ENTRYPOINT ["sh", "test/docker_test_entry.sh"]
 
 # The final application release product container
-#FROM build-base as application
+#FROM build_base as application
 FROM registry.access.redhat.com/ubi7/ubi-minimal:latest as application
 
 WORKDIR /root
@@ -34,8 +34,8 @@ ENV OPERATOR=/usr/local/bin/dws-operator \
 
 # install operator binary
 ENV GOPATH /go
-COPY --from=build-base $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/bin/dws-operator ${OPERATOR}
-COPY --from=build-base $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/bin /usr/local/bin
+COPY --from=build_base $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/bin/dws-operator ${OPERATOR}
+COPY --from=build_base $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/bin /usr/local/bin
 
 RUN  /usr/local/bin/user_setup
 
