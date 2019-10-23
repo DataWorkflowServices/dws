@@ -35,7 +35,7 @@ spec:
             granularity:
               format: int64
               type: integer
-            poolId:
+            poolID:
               type: string
             quantity:
               format: int64
@@ -43,7 +43,7 @@ spec:
             units:
               type: string
           required:
-          - poolId
+          - poolID
           - units
           - granularity
           - quantity

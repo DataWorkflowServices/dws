@@ -71,7 +71,7 @@ func schema_pkg_apis_dws_v1alpha1_DriverSpec(ref common.ReferenceCallback) commo
 			SchemaProps: spec.SchemaProps{
 				Description: "DriverSpec defines the desired state of Driver",
 				Properties: map[string]spec.Schema{
-					"driverId": {
+					"driverID": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
@@ -91,7 +91,7 @@ func schema_pkg_apis_dws_v1alpha1_DriverSpec(ref common.ReferenceCallback) commo
 						},
 					},
 				},
-				Required: []string{"driverId", "watchStates"},
+				Required: []string{"driverID", "watchStates"},
 			},
 		},
 		Dependencies: []string{},
@@ -147,7 +147,7 @@ func schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref common.ReferenceCallback) 
 			SchemaProps: spec.SchemaProps{
 				Description: "StoragePoolSpec defines the desired state of StoragePool",
 				Properties: map[string]spec.Schema{
-					"poolId": {
+					"poolID": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
@@ -178,7 +178,7 @@ func schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"poolId", "units", "granularity", "quantity", "free"},
+				Required: []string{"poolID", "units", "granularity", "quantity", "free"},
 			},
 		},
 		Dependencies: []string{},
@@ -260,13 +260,13 @@ func schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref common.ReferenceCallback) com
 							Format: "",
 						},
 					},
-					"wlmId": {
+					"wlmID": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
 						},
 					},
-					"jobId": {
+					"jobID": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
@@ -285,7 +285,7 @@ func schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref common.ReferenceCallback) com
 							},
 						},
 					},
-					"userId": {
+					"userID": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"integer"},
 							Format: "int32",
@@ -311,7 +311,7 @@ func schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref common.ReferenceCallback) com
 						},
 					},
 				},
-				Required: []string{"desiredState", "wlmId", "jobId", "dwDirectives", "userId"},
+				Required: []string{"desiredState", "wlmID", "jobID", "dwDirectives", "userID"},
 			},
 		},
 		Dependencies: []string{},

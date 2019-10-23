@@ -7,7 +7,7 @@ import (
 // StoragePoolSpec defines the desired state of StoragePool
 // +k8s:openapi-gen=true
 type StoragePoolSpec struct {
-    PoolId            string `json:"poolId"`
+    PoolID            string `json:"poolID"`
     Units             string `json:"units"`
     Granularity       int `json:"granularity"`
     Quantity          int `json:"quantity"`

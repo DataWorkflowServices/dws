@@ -29,14 +29,14 @@ spec:
           type: object
         spec:
           properties:
-            driverId:
+            driverID:
               type: string
             watchStates:
               items:
                 type: string
               type: array
           required:
-          - driverId
+          - driverID
           - watchStates
           type: object
         status:

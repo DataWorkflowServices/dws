@@ -95,7 +95,7 @@ func TestDriverController2(t *testing.T) {
 		namespace = "dws"
 	)
 
-	var states_to_watch = []string {
+	var statesToWatch = []string {
 		"prerun",
 		"postrun",
 	}
@@ -107,8 +107,8 @@ func TestDriverController2(t *testing.T) {
 			Namespace: namespace,
 		},
 		Spec: dwsv1.DriverSpec{
-			DriverId:         "5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
-			WatchStates:      states_to_watch,
+			DriverID:         "5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
+			WatchStates:      statesToWatch,
 		},
 	}
 

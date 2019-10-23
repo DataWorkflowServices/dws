@@ -8,10 +8,10 @@ import (
 // +k8s:openapi-gen=true
 type WorkflowSpec struct {
 	DesiredState	  string	`json:"desiredState"`
-    WLMId             string	`json:"wlmId"`
-    JobId             string	`json:"jobId"`
+    WLMID             string	`json:"wlmID"`
+    JobID             string	`json:"jobID"`
     DWDirectives      []string	`json:"dwDirectives"`
-    UserId            int		`json:"userId"`
+    UserID            int		`json:"userID"`
     Env               []string	`json:"env,omitempty"`
     DefaultPool       string	`json:"defaultPool,omitempty"`
 }

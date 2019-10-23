@@ -7,11 +7,11 @@ import (
 // DriverSpec defines the desired state of Driver
 // +k8s:openapi-gen=true
 type DriverSpec struct {
-    DriverId             string `json:"driverId"`
+    DriverID             string `json:"driverID"`
     WatchStates          []string `json:"watchStates"`
 }
 
-// WorkflowStatus defines the observed state of Workflow
+// DriverStatus defines the observed state of Workflow
 type DriverStatus struct {
     State        string `json:"state"`
 }

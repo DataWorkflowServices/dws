@@ -9,18 +9,22 @@ COPY build $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 
 RUN go build -v -i -o build/bin/dws-operator cmd/manager/main.go
-#RUN go build -v -i -o /usr/local/bin/dws-operator cmd/manager/main.go
 
 # The base testing container
 FROM build_base AS base_testing
 
-COPY test/ /test/
 COPY test/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/test/
+COPY static-analysis/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/static-analysis/
 
 # The testing artifact container
 FROM base_testing AS testing
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 ENTRYPOINT ["sh", "test/docker_test_entry.sh"]
+
+# the static-analysis-container
+FROM testing as codestyle
+WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
+ENTRYPOINT ["sh", "static-analysis/docker_golint_entry.sh"]
 
 # The final application release product container
 #FROM build_base as application

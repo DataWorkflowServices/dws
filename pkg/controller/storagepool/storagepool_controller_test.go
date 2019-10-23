@@ -102,7 +102,7 @@ func TestStoragePoolController2(t *testing.T) {
 			Namespace: namespace,
 		},
 		Spec: dwsv1.StoragePoolSpec{
-			PoolId:           "storagepool-test",
+			PoolID:           "storagepool-test",
 			Units:            "bytes",
 			Granularity:      107374182400,
 			Quantity:         10,

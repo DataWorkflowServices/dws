@@ -107,10 +107,10 @@ func TestWorkflowController2(t *testing.T) {
 		},
 		Spec: dwsv1.WorkflowSpec{
 			DesiredState:	"proposal",
-			WLMId:			"5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
-			JobId:			"2824a44b-0d93-40fc-8716-9bcd5aa9795d",
+			WLMID:			"5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
+			JobID:			"2824a44b-0d93-40fc-8716-9bcd5aa9795d",
 			DWDirectives:	dwds,
-			UserId:			1001,
+			UserID:			1001,
 		},
 	}
 

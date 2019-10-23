@@ -41,19 +41,19 @@ spec:
               items:
                 type: string
               type: array
-            jobId:
+            jobID:
               type: string
-            userId:
+            userID:
               format: int64
               type: integer
-            wlmId:
+            wlmID:
               type: string
           required:
           - desiredState
-          - wlmId
-          - jobId
+          - wlmID
+          - jobID
           - dwDirectives
-          - userId
+          - userID
           type: object
         status:
           properties:
