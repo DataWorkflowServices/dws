@@ -26,10 +26,15 @@ FROM testing as coverage
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
 ENTRYPOINT ["sh", "test/docker_coverage_entry.sh"]
 
-# the static-analysis-container
+# the static-analysis-codestyle-container
 FROM testing as codestyle
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
-ENTRYPOINT ["sh", "static-analysis/docker_golint_entry.sh"]
+ENTRYPOINT ["sh", "static-analysis/docker_codestyle_entry.sh"]
+
+# the static-analysis-lint-container
+FROM testing as lint
+WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
+ENTRYPOINT ["sh", "static-analysis/docker_lint_entry.sh"]
 
 # The final application release product container
 #FROM build_base as application
