@@ -21,6 +21,11 @@ FROM base_testing AS testing
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 ENTRYPOINT ["sh", "test/docker_test_entry.sh"]
 
+# The code coverage analysis container
+FROM testing as coverage
+WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
+ENTRYPOINT ["sh", "test/docker_coverage_entry.sh"]
+
 # the static-analysis-container
 FROM testing as codestyle
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
