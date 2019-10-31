@@ -8,7 +8,7 @@ COPY build $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/
 
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 
-RUN go build -v -i -o build/bin/dws-operator cmd/manager/main.go
+RUN CGO_ENABLED=0 go build -v -i -o build/bin/dws-operator cmd/manager/main.go
 
 # The base testing container
 FROM build_base AS base_testing
@@ -37,8 +37,7 @@ WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
 ENTRYPOINT ["sh", "static-analysis/docker_lint_entry.sh"]
 
 # The final application release product container
-#FROM build_base as application
-FROM registry.access.redhat.com/ubi7/ubi-minimal:latest as application
+FROM dtr.dev.cray.com/baseos/alpine:latest as application
 
 WORKDIR /root
 
