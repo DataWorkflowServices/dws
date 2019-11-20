@@ -2,6 +2,7 @@ package workflow
 
 import (
 	"context"
+	"strconv"
 
 //	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -17,6 +18,21 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 	dwsv1alpha1 "stash.us.cray.com/dpm/dws-operator/pkg/apis/dws/v1alpha1"
+)
+
+const (
+    ConditionTrue bool = true
+    ConditionFalse bool = false
+)
+
+const (
+	StateProposal string = "proposal"
+	StateSetup string = "setup"
+	StatePreRun string = "pre_run"
+	StatePostRun string = "post_run"
+	StateDataIn string = "data_in"
+	StateDataOut string = "data_out"
+	StateTearDown string = "teardown"
 )
 
 var log = logf.Log.WithName("controller_workflow")
@@ -62,8 +78,6 @@ type ReconcileWorkflow struct {
 
 // Reconcile reads the state of the cluster for a Workflow object and makes changes based on the state read
 // and what is in the Workflow.Spec
-// TODO(user): Modify this Reconcile function to implement your Controller logic.  This example creates
-// a Pod as an example
 // Note:
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
@@ -99,7 +113,25 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 	if instance.Spec.DesiredState != existing.Status.State {
 		reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
 
+//		var driverStatus dwsv1alpha1.WorkflowDriverStatus
+//		for _, driver := range instance.Spec.Drivers {
+//			driverStatus.DriverID = driver.DriverID
+//			driverStatus.WatchState = driver.WatchState
+//			driverStatus.LastHB = 0
+//			driverStatus.Completed = false
+//			driverStatus.Reason = "not started"
+//			instance.Status.Drivers = append(instance.Status.Drivers, driverStatus)
+//		}
 	    instance.Status.State = instance.Spec.DesiredState
+	    instance.Status.Ready = ConditionTrue
+	    instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
+		userid := strconv.Itoa(instance.Spec.UserID)
+		jobid := strconv.Itoa(instance.Spec.JobID)
+		if instance.Spec.DesiredState == StateProposal {
+		    instance.Status.Env = append(instance.Status.Env,
+				"DW_JOB_STRIPED=/lus/user/" + userid + "/" +
+				instance.Spec.WLMID + "/" + jobid)
+		}
 		err = r.client.Status().Update(context.TODO(), instance)
 		if err != nil {
 			reqLogger.Error(err, "Failed to update Workflow state")

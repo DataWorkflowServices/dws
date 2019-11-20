@@ -64,7 +64,7 @@ func TestStoragePoolController1(t *testing.T) {
 	// Create a fake client to mock API calls.
 	objs := []runtime.Object{}
 	cl := fake.NewFakeClient(objs...)
-	// Create a ReconcileMemcached object with the scheme and fake client.
+	// Create a ReconcileStoragePool object with the scheme and fake client.
 	r := &ReconcileStoragePool{client: cl, scheme: s}
 
 	// Mock request to simulate Reconcile() being called on an event for a
@@ -95,7 +95,7 @@ func TestStoragePoolController2(t *testing.T) {
 		namespace = "dws"
 	)
 
-	// A Memcached resource with metadata and spec.
+	// A StoragePool resource with metadata and spec.
 	storagepool := &dwsv1.StoragePool{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
@@ -104,7 +104,7 @@ func TestStoragePoolController2(t *testing.T) {
 		Spec: dwsv1.StoragePoolSpec{
 			PoolID:           "storagepool-test",
 			Units:            "bytes",
-			Granularity:      107374182400,
+			Granularity:      "107GiB",
 			Quantity:         10,
 			Free:             10,
 		},
@@ -121,7 +121,7 @@ func TestStoragePoolController2(t *testing.T) {
 
 	// Create a fake client to mock API calls.
 	cl := fake.NewFakeClient(objs...)
-	// Create a ReconcileMemcached object with the scheme and fake client.
+	// Create a ReconcileStoragePool object with the scheme and fake client.
 	r := &ReconcileStoragePool{client: cl, scheme: s}
 
 	// Mock request to simulate Reconcile() being called on an event for a

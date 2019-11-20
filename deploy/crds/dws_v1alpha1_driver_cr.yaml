@@ -4,7 +4,7 @@ metadata:
   name: dws-driver-cds-test
 spec:
   # Add fields here
-  driverId: "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"
+  driverID: "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"
   watchStates:
     - 'prerun'
     - 'postrun'

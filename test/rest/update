@@ -29,11 +29,11 @@ check_for_error "$current"
 rnamespace=`echo $current | jq '.metadata.namespace'`
 rversion=`echo $current | jq '.metadata.resourceVersion'`
 
-userid=`echo $current | jq '.spec.userId'`
-jobid=`echo $current | jq '.spec.jobId'`
-wlmid=`echo $current | jq '.spec.wlmId'`
+userid=`echo $current | jq '.spec.userID'`
+jobid=`echo $current | jq '.spec.jobID'`
+wlmid=`echo $current | jq '.spec.wlmID'`
 
-data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "creationTimestamp":null, "resourceVersion":##VERSION##}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"userId":##USERID##, "jobId":##JOBID##, "wlmId":##WLMID##, "desiredState":"##STATE##"}}'
+data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "creationTimestamp":null, "resourceVersion":##VERSION##}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"userID":##USERID##, "jobID":##JOBID##, "wlmID":##WLMID##, "desiredState":"##STATE##"}}'
 
 echo Updating $rname ...
 jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##VERSION##:$rversion:g -e s:##STATE##:$rstate:g -e s:##RNAMESPCE##:$rnamespace:g -e s:##USERID##:$userid:g -e s:##JOBID##:$jobid:g -e s:##WLMID##:$wlmid:g`

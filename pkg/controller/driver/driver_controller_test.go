@@ -64,7 +64,7 @@ func TestDriverController1(t *testing.T) {
 	// Create a fake client to mock API calls.
 	objs := []runtime.Object{}
 	cl := fake.NewFakeClient(objs...)
-	// Create a ReconcileMemcached object with the scheme and fake client.
+	// Create a ReconcileDriver object with the scheme and fake client.
 	r := &ReconcileDriver{client: cl, scheme: s}
 
 	// Mock request to simulate Reconcile() being called on an event for a
@@ -100,7 +100,7 @@ func TestDriverController2(t *testing.T) {
 		"postrun",
 	}
 
-	// A Memcached resource with metadata and spec.
+	// A driver resource with metadata and spec.
 	driver := &dwsv1.Driver{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
@@ -123,7 +123,7 @@ func TestDriverController2(t *testing.T) {
 
 	// Create a fake client to mock API calls.
 	cl := fake.NewFakeClient(objs...)
-	// Create a ReconcileMemcached object with the scheme and fake client.
+	// Create a ReconcileDriver object with the scheme and fake client.
 	r := &ReconcileDriver{client: cl, scheme: s}
 
 	// Mock request to simulate Reconcile() being called on an event for a

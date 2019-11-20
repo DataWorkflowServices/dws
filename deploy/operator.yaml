@@ -15,7 +15,6 @@ spec:
       serviceAccountName: dws-operator
       containers:
         - name: dws-operator
-          # Replace this with the built image name
           image: dtr.dev.cray.com/jhendricks/dws-operator:0.0.1
           command:
           - dws-operator

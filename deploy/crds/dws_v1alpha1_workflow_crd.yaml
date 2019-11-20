@@ -29,20 +29,15 @@ spec:
           type: object
         spec:
           properties:
-            defaultPool:
-              type: string
             desiredState:
               type: string
             dwDirectives:
               items:
                 type: string
               type: array
-            env:
-              items:
-                type: string
-              type: array
             jobID:
-              type: string
+              format: int64
+              type: integer
             userID:
               format: int64
               type: integer
@@ -52,15 +47,64 @@ spec:
           - desiredState
           - wlmID
           - jobID
-          - dwDirectives
           - userID
+          - dwDirectives
           type: object
         status:
           properties:
+            drivers:
+              description: List of registered drivers and related status.  Updated
+                by drivers.
+              items:
+                properties:
+                  completed:
+                    type: boolean
+                  driverID:
+                    type: string
+                  dwdIndex:
+                    format: int64
+                    type: integer
+                  lastHB:
+                    format: int64
+                    type: integer
+                  reason:
+                    description: 'User readable reason. For the CDS driver, this could
+                      be the state of the underlying data movement request:  Pending,
+                      Queued, Running, Completed or Error'
+                    type: string
+                  watchState:
+                    type: string
+                required:
+                - driverID
+                - dwdIndex
+                - watchState
+                - lastHB
+                - completed
+                type: object
+              type: array
+            env:
+              description: "Set of DW environment variable settings for WLM to apply
+                to the job. \t\t- DW_JOB_STRIPED \t\t- DW_JOB_PRIVATE \t\t- DW_JOB_STRIPED_CACHE
+                \t\t- DW_JOB_LDBAL_CACHE \t\t- DW_PERSISTENT_STRIPED_{resname}"
+              items:
+                type: string
+              type: array
+            message:
+              type: string
+            ready:
+              description: Ready can be 'True', 'False' Indicates whether State has
+                been reached.
+              type: boolean
+            reason:
+              description: User readable reason and status message
+              type: string
             state:
+              description: The state the resource is currently transitioning to. Updated
+                by the controller once started.
               type: string
           required:
           - state
+          - ready
           type: object
   version: v1alpha1
   versions:

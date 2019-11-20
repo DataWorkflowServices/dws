@@ -1,0 +1,66 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: dwdirectiverules.dws.cray.com
+spec:
+  group: dws.cray.com
+  names:
+    kind: DWDirectiveRule
+    listKind: DWDirectiveRuleList
+    plural: dwdirectiverules
+    singular: dwdirectiverule
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          items:
+            properties:
+              command:
+                type: string
+              ruleDefs:
+                items:
+                  properties:
+                    isRrequired:
+                      type: boolean
+                    isValueRequired:
+                      type: boolean
+                    key:
+                      type: string
+                    max:
+                      format: int64
+                      type: integer
+                    min:
+                      format: int64
+                      type: integer
+                    pattern:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - key
+                  - type
+                  type: object
+                type: array
+            required:
+            - command
+            - ruleDefs
+            type: object
+          type: array
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

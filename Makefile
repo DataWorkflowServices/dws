@@ -4,8 +4,9 @@ PROD_VERSION=$(shell sed 1q .version)
 DEV_IMGNAME=dws-operator
 DTR_IMGPATH=dtr.dev.cray.com/$(USER)/$(DEV_IMGNAME)
 
-all: src image
+all: image
 
+.PHONY: src
 src:
 	operator-sdk generate k8s
 	operator-sdk generate openapi

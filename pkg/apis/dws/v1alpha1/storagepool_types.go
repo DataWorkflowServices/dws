@@ -9,7 +9,7 @@ import (
 type StoragePoolSpec struct {
     PoolID            string `json:"poolID"`
     Units             string `json:"units"`
-    Granularity       int `json:"granularity"`
+    Granularity       string `json:"granularity"`
     Quantity          int `json:"quantity"`
     Free              int `json:"free"`
 }

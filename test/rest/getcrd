@@ -1,0 +1,35 @@
+[[ "$1" = "all" ]] || rname=$1
+
+error_exit()
+{
+    echo "get failed: $1: $2"
+    exit 1
+}
+
+echo Get $rname ...
+raw=`curl  -X GET "http://localhost:8080/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/${rname}" -H "Content-Type: application/json"` || echo "get failed"
+
+errcode=`echo $raw | jq '.code'`
+errreason=`echo $raw | jq '.reason'`
+
+[[ "$errcode" = "null" ]] || error_exit $errcode $errreason
+
+if [ "$1" = "all" -o "$2" = "all" ]; then
+    echo $raw | jq '.'
+else
+
+    if [ -z "$2" -o  "$2" = "meta" ]; then
+        echo Metadata:
+        echo $raw | jq '[.metadata.name, .metadata.namespace, .metadata.resourceVersion]'
+    fi
+
+    if [ -z "$2" -o  "$2" = "spec" ]; then
+        echo Spec:
+        echo $raw | jq '.spec'
+    fi
+
+    if [ -z "$2" -o  "$2" = "status" ]; then
+        echo  "Status:"
+        echo $raw | jq '.status'
+    fi
+fi

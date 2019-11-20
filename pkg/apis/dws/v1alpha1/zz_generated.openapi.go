@@ -11,14 +11,94 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"./pkg/apis/dws/v1alpha1.Driver":            schema_pkg_apis_dws_v1alpha1_Driver(ref),
-		"./pkg/apis/dws/v1alpha1.DriverSpec":        schema_pkg_apis_dws_v1alpha1_DriverSpec(ref),
-		"./pkg/apis/dws/v1alpha1.StoragePool":       schema_pkg_apis_dws_v1alpha1_StoragePool(ref),
-		"./pkg/apis/dws/v1alpha1.StoragePoolSpec":   schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref),
-		"./pkg/apis/dws/v1alpha1.StoragePoolStatus": schema_pkg_apis_dws_v1alpha1_StoragePoolStatus(ref),
-		"./pkg/apis/dws/v1alpha1.Workflow":          schema_pkg_apis_dws_v1alpha1_Workflow(ref),
-		"./pkg/apis/dws/v1alpha1.WorkflowSpec":      schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref),
-		"./pkg/apis/dws/v1alpha1.WorkflowStatus":    schema_pkg_apis_dws_v1alpha1_WorkflowStatus(ref),
+		"./pkg/apis/dws/v1alpha1.DWDirectiveRule":     schema_pkg_apis_dws_v1alpha1_DWDirectiveRule(ref),
+		"./pkg/apis/dws/v1alpha1.DWDirectiveRuleSpec": schema_pkg_apis_dws_v1alpha1_DWDirectiveRuleSpec(ref),
+		"./pkg/apis/dws/v1alpha1.Driver":              schema_pkg_apis_dws_v1alpha1_Driver(ref),
+		"./pkg/apis/dws/v1alpha1.DriverSpec":          schema_pkg_apis_dws_v1alpha1_DriverSpec(ref),
+		"./pkg/apis/dws/v1alpha1.StoragePool":         schema_pkg_apis_dws_v1alpha1_StoragePool(ref),
+		"./pkg/apis/dws/v1alpha1.StoragePoolSpec":     schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref),
+		"./pkg/apis/dws/v1alpha1.StoragePoolStatus":   schema_pkg_apis_dws_v1alpha1_StoragePoolStatus(ref),
+		"./pkg/apis/dws/v1alpha1.Workflow":            schema_pkg_apis_dws_v1alpha1_Workflow(ref),
+		"./pkg/apis/dws/v1alpha1.WorkflowSpec":        schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref),
+		"./pkg/apis/dws/v1alpha1.WorkflowStatus":      schema_pkg_apis_dws_v1alpha1_WorkflowStatus(ref),
+	}
+}
+
+func schema_pkg_apis_dws_v1alpha1_DWDirectiveRule(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "DWDirectiveRule is the Schema for the DWDirective API",
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("./pkg/apis/dws/v1alpha1.DWDirectiveRuleSpec"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"./pkg/apis/dws/v1alpha1.DWDirectiveRuleSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_dws_v1alpha1_DWDirectiveRuleSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "DWDirectiveRuleSpec defines the desired state of DWDirective",
+				Properties: map[string]spec.Schema{
+					"command": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"ruleDefs": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("./pkg/apis/dws/v1alpha1.DWDirectiveRuleDef"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"command", "ruleDefs"},
+			},
+		},
+		Dependencies: []string{
+			"./pkg/apis/dws/v1alpha1.DWDirectiveRuleDef"},
 	}
 }
 
@@ -161,8 +241,8 @@ func schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref common.ReferenceCallback) 
 					},
 					"granularity": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"quantity": {
@@ -268,8 +348,14 @@ func schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref common.ReferenceCallback) com
 					},
 					"jobID": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Type:   []string{"integer"},
+							Format: "int32",
+						},
+					},
+					"userID": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int32",
 						},
 					},
 					"dwDirectives": {
@@ -285,33 +371,8 @@ func schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref common.ReferenceCallback) com
 							},
 						},
 					},
-					"userID": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
-						},
-					},
-					"env": {
-						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Type:   []string{"string"},
-										Format: "",
-									},
-								},
-							},
-						},
-					},
-					"defaultPool": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
 				},
-				Required: []string{"desiredState", "wlmID", "jobID", "dwDirectives", "userID"},
+				Required: []string{"desiredState", "wlmID", "jobID", "userID", "dwDirectives"},
 			},
 		},
 		Dependencies: []string{},
@@ -322,18 +383,67 @@ func schema_pkg_apis_dws_v1alpha1_WorkflowStatus(ref common.ReferenceCallback) c
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "WorkflowStatus defines the observed state of Workflow",
+				Description: "WorkflowStatus defines the observed state of the Workflow",
 				Properties: map[string]spec.Schema{
 					"state": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The state the resource is currently transitioning to. Updated by the controller once started.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"ready": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Ready can be 'True', 'False' Indicates whether State has been reached.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"reason": {
+						SchemaProps: spec.SchemaProps{
+							Description: "User readable reason and status message",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"message": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
 						},
 					},
+					"env": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Set of DW environment variable settings for WLM to apply to the job.\n\t\t- DW_JOB_STRIPED\n\t\t- DW_JOB_PRIVATE\n\t\t- DW_JOB_STRIPED_CACHE\n\t\t- DW_JOB_LDBAL_CACHE\n\t\t- DW_PERSISTENT_STRIPED_{resname}",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
+					"drivers": {
+						SchemaProps: spec.SchemaProps{
+							Description: "List of registered drivers and related status.  Updated by drivers.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("./pkg/apis/dws/v1alpha1.WorkflowDriverStatus"),
+									},
+								},
+							},
+						},
+					},
 				},
-				Required: []string{"state"},
+				Required: []string{"state", "ready"},
 			},
 		},
-		Dependencies: []string{},
+		Dependencies: []string{
+			"./pkg/apis/dws/v1alpha1.WorkflowDriverStatus"},
 	}
 }

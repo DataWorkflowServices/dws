@@ -33,8 +33,7 @@ spec:
               format: int64
               type: integer
             granularity:
-              format: int64
-              type: integer
+              type: string
             poolID:
               type: string
             quantity:

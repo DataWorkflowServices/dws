@@ -64,7 +64,7 @@ func TestWorkflowController1(t *testing.T) {
 	// Create a fake client to mock API calls.
 	objs := []runtime.Object{}
 	cl := fake.NewFakeClient(objs...)
-	// Create a ReconcileMemcached object with the scheme and fake client.
+	// Create a ReconcileWorkflow object with the scheme and fake client.
 	r := &ReconcileWorkflow{client: cl, scheme: s}
 
 	// Mock request to simulate Reconcile() being called on an event for a
@@ -97,9 +97,10 @@ func TestWorkflowController2(t *testing.T) {
 
 	var dwds = []string {
 		"#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes",
+		"#DW stage_in type=directory source=/foo/mydata destination=$DW_JOB_STRIPED/data",
 	}
 
-	// A Memcached resource with metadata and spec.
+	// A Workflow resource with metadata and spec.
 	workflow := &dwsv1.Workflow{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
@@ -108,7 +109,7 @@ func TestWorkflowController2(t *testing.T) {
 		Spec: dwsv1.WorkflowSpec{
 			DesiredState:	"proposal",
 			WLMID:			"5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
-			JobID:			"2824a44b-0d93-40fc-8716-9bcd5aa9795d",
+			JobID:			900001,
 			DWDirectives:	dwds,
 			UserID:			1001,
 		},
@@ -125,7 +126,7 @@ func TestWorkflowController2(t *testing.T) {
 
 	// Create a fake client to mock API calls.
 	cl := fake.NewFakeClient(objs...)
-	// Create a ReconcileMemcached object with the scheme and fake client.
+	// Create a ReconcileWorkflow object with the scheme and fake client.
 	r := &ReconcileWorkflow{client: cl, scheme: s}
 
 	// Mock request to simulate Reconcile() being called on an event for a
