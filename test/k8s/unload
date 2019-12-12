@@ -1,0 +1,24 @@
+DWSK8SDIR=${DWSK8SDIR:-/root/k8s/dws}
+
+#Delete any CRs
+kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_cr.yaml 
+kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_cr.yaml
+kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_dwdirectiverule_cr.yaml
+#kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_driver_cr.yaml
+
+#Delete any CRs
+kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_dwdirectiverule_crd.yaml
+kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_crd.yaml
+kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_crd.yaml
+#kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_driver_crd.yaml
+
+#Delete the operator
+kubectl delete -f ${DWSK8SDIR}/operator.yaml
+if [ "$1" = "all" ]; then
+	#Delete all roles
+	kubectl create -f ${DWSK8SDIR}/role_binding.yaml
+	kubctl create -f ${DWSK8SDIR}/clusterrole.yaml
+	kubectl create -f ${DWSK8SDIR}/role.yaml
+	kubectl create -f ${DWSK8SDIR}/service_account.yaml
+fi
+

@@ -3,8 +3,8 @@ kind: StoragePool
 metadata:
   name: dws-storagepool-test
 spec:
-  PoolID:           "dws-storagepool-test"
-  Units:            "bytes"
-  Granularity:      107374182400
-  Quantity:         10
-  Free:             10
+  poolID:           "dws-storagepool-test"
+  units:            "bytes"
+  granularity:      "100GiB"
+  quantity:         10
+  free:             10

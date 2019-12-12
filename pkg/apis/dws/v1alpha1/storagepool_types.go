@@ -5,7 +5,7 @@ import (
 )
 
 // StoragePoolSpec defines the desired state of StoragePool
-// +k8s:openapi-gen=true
+
 type StoragePoolSpec struct {
     PoolID            string `json:"poolID"`
     Units             string `json:"units"`
@@ -15,15 +15,15 @@ type StoragePoolSpec struct {
 }
 
 // StoragePoolStatus defines the observed state of StoragePool
-// +k8s:openapi-gen=true
 type StoragePoolStatus struct {
     State  string `json:"state"`
 }
 
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
 // StoragePool is the Schema for the storagepools API
 // +k8s:openapi-gen=true
+// +genclient
+// +k8s:openapi-gen=true
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:subresource:status
 type StoragePool struct {
 	metav1.TypeMeta   `json:",inline"`

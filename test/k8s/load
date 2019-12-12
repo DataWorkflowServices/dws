@@ -1,0 +1,19 @@
+DWSK8SDIR=${DWSK8SDIR:-/root/k8s/dws}
+
+if [ "$1" = "all" ]; then
+	kubectl create -f ${DWSK8SDIR}/role.yaml || exit 1
+	kubectl create -f ${DWSK8SDIR}/role_binding.yaml || exit 1
+	kubectl create -f ${DWSK8SDIR}/service_account.yaml || exit 1
+	kubectl create -f ${DWSK8SDIR}/clusterrole.yaml || exit 1
+fi
+
+kubectl create -f ${DWSK8SDIR}/operator.yaml || exit 1
+kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_dwdirectiverule_crd.yaml || exit 1
+kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_crd.yaml || exit 1
+kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_crd.yaml || exit 1
+#kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_driver_crd.yaml || exit 1
+
+kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_cr.yaml || exit 1
+kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_cr.yaml || exit 1
+kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_dwdirectiverule_cr.yaml || exit 1
+#kubectl create -f ${DWSK8SDIR}/crds/dws_v1alpha1_driver_cr.yaml || exit 1

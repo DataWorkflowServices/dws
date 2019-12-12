@@ -1,7 +1,7 @@
 apiVersion: dws.cray.com/v1alpha1
 kind: DWDirectiveRule
 metadata:
-  name: dwdirectiverules
+  name: dwdparserrules
 spec:
   - command: "jobdw"
     ruleDefs:

@@ -10,6 +10,7 @@ all: image
 src:
 	operator-sdk generate k8s
 	operator-sdk generate openapi
+	bash build/bin/genclient
 
 image:
 	docker build -f build/Dockerfile --label $(DTR_IMGPATH):$(PROD_VERSION) -t $(DTR_IMGPATH):$(PROD_VERSION) .

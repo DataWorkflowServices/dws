@@ -14,13 +14,8 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./pkg/apis/dws/v1alpha1.DWDirectiveRule":     schema_pkg_apis_dws_v1alpha1_DWDirectiveRule(ref),
 		"./pkg/apis/dws/v1alpha1.DWDirectiveRuleSpec": schema_pkg_apis_dws_v1alpha1_DWDirectiveRuleSpec(ref),
 		"./pkg/apis/dws/v1alpha1.Driver":              schema_pkg_apis_dws_v1alpha1_Driver(ref),
-		"./pkg/apis/dws/v1alpha1.DriverSpec":          schema_pkg_apis_dws_v1alpha1_DriverSpec(ref),
 		"./pkg/apis/dws/v1alpha1.StoragePool":         schema_pkg_apis_dws_v1alpha1_StoragePool(ref),
-		"./pkg/apis/dws/v1alpha1.StoragePoolSpec":     schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref),
-		"./pkg/apis/dws/v1alpha1.StoragePoolStatus":   schema_pkg_apis_dws_v1alpha1_StoragePoolStatus(ref),
 		"./pkg/apis/dws/v1alpha1.Workflow":            schema_pkg_apis_dws_v1alpha1_Workflow(ref),
-		"./pkg/apis/dws/v1alpha1.WorkflowSpec":        schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref),
-		"./pkg/apis/dws/v1alpha1.WorkflowStatus":      schema_pkg_apis_dws_v1alpha1_WorkflowStatus(ref),
 	}
 }
 
@@ -145,39 +140,6 @@ func schema_pkg_apis_dws_v1alpha1_Driver(ref common.ReferenceCallback) common.Op
 	}
 }
 
-func schema_pkg_apis_dws_v1alpha1_DriverSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "DriverSpec defines the desired state of Driver",
-				Properties: map[string]spec.Schema{
-					"driverID": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"watchStates": {
-						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Type:   []string{"string"},
-										Format: "",
-									},
-								},
-							},
-						},
-					},
-				},
-				Required: []string{"driverID", "watchStates"},
-			},
-		},
-		Dependencies: []string{},
-	}
-}
-
 func schema_pkg_apis_dws_v1alpha1_StoragePool(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -221,70 +183,6 @@ func schema_pkg_apis_dws_v1alpha1_StoragePool(ref common.ReferenceCallback) comm
 	}
 }
 
-func schema_pkg_apis_dws_v1alpha1_StoragePoolSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "StoragePoolSpec defines the desired state of StoragePool",
-				Properties: map[string]spec.Schema{
-					"poolID": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"units": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"granularity": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"quantity": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
-						},
-					},
-					"free": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
-						},
-					},
-				},
-				Required: []string{"poolID", "units", "granularity", "quantity", "free"},
-			},
-		},
-		Dependencies: []string{},
-	}
-}
-
-func schema_pkg_apis_dws_v1alpha1_StoragePoolStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "StoragePoolStatus defines the observed state of StoragePool",
-				Properties: map[string]spec.Schema{
-					"state": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-				},
-				Required: []string{"state"},
-			},
-		},
-		Dependencies: []string{},
-	}
-}
-
 func schema_pkg_apis_dws_v1alpha1_Workflow(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -325,125 +223,5 @@ func schema_pkg_apis_dws_v1alpha1_Workflow(ref common.ReferenceCallback) common.
 		},
 		Dependencies: []string{
 			"./pkg/apis/dws/v1alpha1.WorkflowSpec", "./pkg/apis/dws/v1alpha1.WorkflowStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
-	}
-}
-
-func schema_pkg_apis_dws_v1alpha1_WorkflowSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "WorkflowSpec defines the desired state of Workflow",
-				Properties: map[string]spec.Schema{
-					"desiredState": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"wlmID": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"jobID": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
-						},
-					},
-					"userID": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int32",
-						},
-					},
-					"dwDirectives": {
-						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Type:   []string{"string"},
-										Format: "",
-									},
-								},
-							},
-						},
-					},
-				},
-				Required: []string{"desiredState", "wlmID", "jobID", "userID", "dwDirectives"},
-			},
-		},
-		Dependencies: []string{},
-	}
-}
-
-func schema_pkg_apis_dws_v1alpha1_WorkflowStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "WorkflowStatus defines the observed state of the Workflow",
-				Properties: map[string]spec.Schema{
-					"state": {
-						SchemaProps: spec.SchemaProps{
-							Description: "The state the resource is currently transitioning to. Updated by the controller once started.",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"ready": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Ready can be 'True', 'False' Indicates whether State has been reached.",
-							Type:        []string{"boolean"},
-							Format:      "",
-						},
-					},
-					"reason": {
-						SchemaProps: spec.SchemaProps{
-							Description: "User readable reason and status message",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"message": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"env": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Set of DW environment variable settings for WLM to apply to the job.\n\t\t- DW_JOB_STRIPED\n\t\t- DW_JOB_PRIVATE\n\t\t- DW_JOB_STRIPED_CACHE\n\t\t- DW_JOB_LDBAL_CACHE\n\t\t- DW_PERSISTENT_STRIPED_{resname}",
-							Type:        []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Type:   []string{"string"},
-										Format: "",
-									},
-								},
-							},
-						},
-					},
-					"drivers": {
-						SchemaProps: spec.SchemaProps{
-							Description: "List of registered drivers and related status.  Updated by drivers.",
-							Type:        []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Ref: ref("./pkg/apis/dws/v1alpha1.WorkflowDriverStatus"),
-									},
-								},
-							},
-						},
-					},
-				},
-				Required: []string{"state", "ready"},
-			},
-		},
-		Dependencies: []string{
-			"./pkg/apis/dws/v1alpha1.WorkflowDriverStatus"},
 	}
 }

@@ -5,9 +5,7 @@ import (
 )
 
 // WorkflowSpec defines the desired state of Workflow
-// +k8s:openapi-gen=true
-// +genclient
-// +genclient:noStatus
+
 type WorkflowSpec struct {
 	DesiredState	string				`json:"desiredState"`
 	WLMID			string				`json:"wlmID"`
@@ -29,7 +27,6 @@ type WorkflowDriverStatus struct {
 }
 
 // WorkflowStatus defines the observed state of the Workflow
-// +k8s:openapi-gen=true
 type WorkflowStatus struct {
 	// The state the resource is currently transitioning to.
 	// Updated by the controller once started.
@@ -56,9 +53,11 @@ type WorkflowStatus struct {
 }
 
 // Workflow is the Schema for the workflows API
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +k8s:openapi-gen=true
+// +genclient
 // +k8s:openapi-gen=true
 // +kubebuilder:subresource:status
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type Workflow struct {
 	metav1.TypeMeta			`json:",inline"`
 	metav1.ObjectMeta		`json:"metadata,omitempty"`

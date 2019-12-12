@@ -6,6 +6,7 @@ import (
 
 // DriverSpec defines the desired state of Driver
 // +k8s:openapi-gen=true
+
 type DriverSpec struct {
     DriverID             string `json:"driverID"`
     WatchStates          []string `json:"watchStates"`
@@ -19,6 +20,7 @@ type DriverStatus struct {
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // Driver is the Schema for the drivers API
+// +genclient
 // +k8s:openapi-gen=true
 // +kubebuilder:subresource:status
 type Driver struct {
