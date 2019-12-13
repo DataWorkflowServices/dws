@@ -26,13 +26,13 @@ type DWDirectiveRuleListerExpansion interface{}
 // DWDirectiveRuleNamespaceLister.
 type DWDirectiveRuleNamespaceListerExpansion interface{}
 
-// DriverListerExpansion allows custom methods to be added to
-// DriverLister.
-type DriverListerExpansion interface{}
+// InstanceListerExpansion allows custom methods to be added to
+// InstanceLister.
+type InstanceListerExpansion interface{}
 
-// DriverNamespaceListerExpansion allows custom methods to be added to
-// DriverNamespaceLister.
-type DriverNamespaceListerExpansion interface{}
+// InstanceNamespaceListerExpansion allows custom methods to be added to
+// InstanceNamespaceLister.
+type InstanceNamespaceListerExpansion interface{}
 
 // StoragePoolListerExpansion allows custom methods to be added to
 // StoragePoolLister.

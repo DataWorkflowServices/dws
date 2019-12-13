@@ -6,6 +6,7 @@ import (
 
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+// DWDirectiveRuleDef defines the DWDirective parser rules
 type DWDirectiveRuleDef struct {
 	Key				string		`json:"key"`
 	Type			string		`json:"type"`
@@ -17,25 +18,17 @@ type DWDirectiveRuleDef struct {
 }
 
 // DWDirectiveRuleSpec defines the desired state of DWDirective
-// +k8s:openapi-gen=true
 type DWDirectiveRuleSpec struct {
 	Command		string					`json:"command"`
 	RuleDefs	[]DWDirectiveRuleDef	`json:"ruleDefs"`
 }
 
-// DWDirectiveRuleStatus defines the observed state of DWDirective
-// +k8s:openapi-gen=true
-//type DWDirectiveStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
-	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-//}
-
-// DWDirectiveRule is the Schema for the DWDirective API
 // +genclient
 // +genclient:noStatus
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// DWDirectiveRule is the Schema for the DWDirective API
 type DWDirectiveRule struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -45,7 +38,7 @@ type DWDirectiveRule struct {
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// DWDirectiveList contains a list of DWDirective
+// DWDirectiveRuleList contains a list of DWDirective
 type DWDirectiveRuleList struct {
 	metav1.TypeMeta	`json:",inline"`
 	metav1.ListMeta	`json:"metadata,omitempty"`

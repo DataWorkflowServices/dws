@@ -1,25 +1,15 @@
+#!/bin/bash
+
 [[ "$1" = "all" ]] || rname=$1
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
 
-error_exit()
-{
-    echo "get failed: $1: $2"
-    exit 1
-}
-
 echo Get $rname ...
-raw=`curl  -X GET "http://${DWSHOST}:${DWSPORT}/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/${rname}" -H "Content-Type: application/json"` || echo "get failed"
-
-errcode=`echo $raw | jq '.code'`
-errreason=`echo $raw | jq '.reason'`
-
-#[[ "$errcode" = "null" ]] || error_exit $errcode $errreason
+raw=`curl  -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}/status" -H "Content-Type: application/json"`
 
 if [ "$1" = "all" -o "$2" = "all" ]; then
-    #echo $raw | jq '.'
-    echo $raw 
+    echo $raw | jq '.'
 else
 
     if [ -z "$2" -o  "$2" = "meta" ]; then

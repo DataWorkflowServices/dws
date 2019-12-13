@@ -10,7 +10,8 @@ all: image
 src:
 	operator-sdk generate k8s
 	operator-sdk generate openapi
-	bash build/bin/genclient
+	#bash build/bin/genclient
+
 
 image:
 	docker build -f build/Dockerfile --label $(DTR_IMGPATH):$(PROD_VERSION) -t $(DTR_IMGPATH):$(PROD_VERSION) .
@@ -23,3 +24,16 @@ clean:
 	docker image prune --force
 	docker rmi $(DTR_IMGPATH):$(PROD_VERSION)
 	go clean all
+
+install: dwsget dwsinformer
+
+dwsget:
+	$(eval ID := $(shell docker run -d $(DTR_IMGPATH):$(PROD_VERSION)))
+	@echo ID=$(ID)
+	docker cp $(ID):/usr/local/bin/dwsget bin/dwsget
+
+dwsinformer:
+	$(eval ID := $(shell docker run -d $(DTR_IMGPATH):$(PROD_VERSION)))
+	@echo ID=$(ID)
+	docker cp $(ID):/usr/local/bin/dwsinformer bin/dwsinformer
+

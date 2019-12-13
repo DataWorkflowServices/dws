@@ -10,8 +10,6 @@ spec:
     plural: storagepools
     singular: storagepool
   scope: Namespaced
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       properties:

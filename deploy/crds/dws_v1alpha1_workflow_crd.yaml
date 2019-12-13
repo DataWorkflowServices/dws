@@ -10,8 +10,6 @@ spec:
     plural: workflows
     singular: workflow
   scope: Namespaced
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       properties:
@@ -67,15 +65,20 @@ spec:
                   lastHB:
                     format: int64
                     type: integer
+                  message:
+                    type: string
                   reason:
                     description: 'User readable reason. For the CDS driver, this could
                       be the state of the underlying data movement request:  Pending,
                       Queued, Running, Completed or Error'
                     type: string
+                  taskID:
+                    type: string
                   watchState:
                     type: string
                 required:
                 - driverID
+                - taskID
                 - dwdIndex
                 - watchState
                 - lastHB

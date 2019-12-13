@@ -1,12 +1,11 @@
 module stash.us.cray.com/dpm/dws-operator
 
 require (
-	github.com/go-openapi/spec v0.19.3
 	github.com/operator-framework/operator-sdk v0.10.1-0.20190930153559-ff284ea01e7e
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/tools v0.0.0-20191023163450-98e333b8b3a3 // indirect
-	k8s.io/api v0.0.0-20190612125737-db0771252981
-	k8s.io/apimachinery v0.0.0-20190612125636-6a5db36e93ad
+	k8s.io/api v0.17.0
+	k8s.io/apimachinery v0.17.0
 	k8s.io/client-go v11.0.0+incompatible
 	k8s.io/code-generator v0.17.0
 	k8s.io/kube-openapi v0.0.0-20191107075043-30be4d16710a

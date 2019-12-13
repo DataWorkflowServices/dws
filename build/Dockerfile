@@ -8,9 +8,9 @@ COPY build $GOPATH/src/stash.us.cray.com/dpm/dws-operator/build/
 
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 
-RUN CGO_ENABLED=0 go build -v -i -o build/bin/dws-operator cmd/manager/main.go
-#RUN CGO_ENABLED=0 go build -v -i -o build/bin/dwdparse cmd/dwdparse/dwdparse.go
-#RUN CGO_ENABLED=0 go build -v -i -o build/bin/dwdget cmd/dwdget/dwdget.go
+RUN CGO_ENABLED=0 go build -v -i -o build/bin/dws-operator ./cmd/manager/main.go
+RUN CGO_ENABLED=0 go build -v -i -o build/bin/dwsget ./cmd/dwsget/main.go
+RUN CGO_ENABLED=0 go build -v -i -o build/bin/dwsinformer ./cmd/informer/main.go
 
 # The base testing container
 FROM build_base AS base_testing

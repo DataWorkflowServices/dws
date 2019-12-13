@@ -60,5 +60,6 @@ rules:
   - storagepools
   - drivers
   - dwdirectiverules
+  - instances
   verbs:
   - '*'

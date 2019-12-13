@@ -1,24 +1,56 @@
 DWSK8SDIR=${DWSK8SDIR:-/root/k8s/dws}
 
-#Delete any CRs
-kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_cr.yaml 
-kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_cr.yaml
-kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_dwdirectiverule_cr.yaml
-#kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_driver_cr.yaml
-
-#Delete any CRs
-kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_dwdirectiverule_crd.yaml
-kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_crd.yaml
-kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_crd.yaml
-#kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_driver_crd.yaml
-
-#Delete the operator
-kubectl delete -f ${DWSK8SDIR}/operator.yaml
-if [ "$1" = "all" ]; then
+unload_roles() {
 	#Delete all roles
-	kubectl create -f ${DWSK8SDIR}/role_binding.yaml
-	kubctl create -f ${DWSK8SDIR}/clusterrole.yaml
-	kubectl create -f ${DWSK8SDIR}/role.yaml
-	kubectl create -f ${DWSK8SDIR}/service_account.yaml
-fi
+	kubectl delete -f ${DWSK8SDIR}/role_binding.yaml
+	kubctl delete -f ${DWSK8SDIR}/clusterrole.yaml
+	kubectl delete -f ${DWSK8SDIR}/role.yaml
+	kubectl delete -f ${DWSK8SDIR}/service_account.yaml
+}
+
+unload_crs() {
+	#Delete default CRs
+	kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_cr.yaml 
+	kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_cr.yaml
+	#kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_instance_cr.yaml
+
+	kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_default_ruleset_cr.yaml
+	kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_cds_2.0_ruleset_cr.yaml
+}
+
+unload_crds() {
+	#Delete CRDs
+	kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_dwdirectiverule_crd.yaml
+	kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_storagepool_crd.yaml
+	kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_workflow_crd.yaml
+	#kubectl delete -f ${DWSK8SDIR}/crds/dws_v1alpha1_instance_crd.yaml
+}
+
+unload_dws() {
+	#Delete the operator
+	kubectl delete -f ${DWSK8SDIR}/operator.yaml
+}
+
+unload_webhooks() {
+    kubectl delete -f ${DWSK8SDIR}/webhook/dws-validation-admission-webhook.yaml
+    kubectl delete -f ${DWSK8SDIR}/webhook/dws-cds-admission-webhook.yaml
+    kubectl delete -f ${DWSK8SDIR}/webhook/dws-lefs-admission-webhook.yaml 
+    kubectl delete -f ${DWSK8SDIR}/webhook/dws-dpms-admission-webhook.yaml 
+}
+
+unload_cds() {
+    kubectl delete -f ${DWSK8SDIR}/drivers/dws_cds_driver.yaml
+}
+
+case $1 in
+    "all")      unload_crs $1
+				unload_webhooks
+				unload_cds
+				unload_dws
+				unload_crds;;
+    "dws")      unload_dws $2;;
+    "webhook")  unload_webhooks;;
+    "cds")      unload_cds;;
+    *)          unload_dws;;
+esac
 

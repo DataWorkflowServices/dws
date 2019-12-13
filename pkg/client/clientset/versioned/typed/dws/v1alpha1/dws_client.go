@@ -20,6 +20,7 @@ package v1alpha1
 
 import (
 	rest "k8s.io/client-go/rest"
+	"k8s.io/apimachinery/pkg/runtime/serializer"
 	v1alpha1 "stash.us.cray.com/dpm/dws-operator/pkg/apis/dws/v1alpha1"
 	"stash.us.cray.com/dpm/dws-operator/pkg/client/clientset/versioned/scheme"
 )
@@ -27,7 +28,6 @@ import (
 type DwsV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	DWDirectiveRulesGetter
-	DriversGetter
 	StoragePoolsGetter
 	WorkflowsGetter
 }
@@ -39,10 +39,6 @@ type DwsV1alpha1Client struct {
 
 func (c *DwsV1alpha1Client) DWDirectiveRules(namespace string) DWDirectiveRuleInterface {
 	return newDWDirectiveRules(c, namespace)
-}
-
-func (c *DwsV1alpha1Client) Drivers(namespace string) DriverInterface {
-	return newDrivers(c, namespace)
 }
 
 func (c *DwsV1alpha1Client) StoragePools(namespace string) StoragePoolInterface {
@@ -85,7 +81,8 @@ func setConfigDefaults(config *rest.Config) error {
 	gv := v1alpha1.SchemeGroupVersion
 	config.GroupVersion = &gv
 	config.APIPath = "/apis"
-	config.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
+	//config.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
+	config.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
 
 	if config.UserAgent == "" {
 		config.UserAgent = rest.DefaultKubernetesUserAgent()

@@ -2,7 +2,7 @@
 
 CURRENT_DIR=$(pwd)
 GEN_DIR=$(dirname $0)
-REPO_DIR="$CURRENT_DIR/$GEN_DIR/../.."
+REPO_DIR="$CURRENT_DIR/$GEN_DIR/.."
 
 PROJECT_MODULE="stash.us.cray.com/dpm/dws-operator"
 IMAGE_NAME="kubernetes-codegen:latest"

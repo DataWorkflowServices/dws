@@ -55,8 +55,6 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 	// Group=dws.cray.com, Version=v1alpha1
 	case v1alpha1.SchemeGroupVersion.WithResource("dwdirectiverules"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Dws().V1alpha1().DWDirectiveRules().Informer()}, nil
-	case v1alpha1.SchemeGroupVersion.WithResource("drivers"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Dws().V1alpha1().Drivers().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("storagepools"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Dws().V1alpha1().StoragePools().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("workflows"):

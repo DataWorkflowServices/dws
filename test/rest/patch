@@ -29,9 +29,11 @@ check_for_error "$current"
 rnamespace=`echo $current | jq '.metadata.namespace'`
 rversion=`echo $current | jq '.metadata.resourceVersion'`
 
-data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "creationTimestamp":null, "resourceVersion":##VERSION##}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"desiredState":"##STATE##"}}'
+data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "resourceVersion":##VERSION##}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"desiredState":"##STATE##"}}'
 
 echo Updating $rname ...
 jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##VERSION##:$rversion:g -e s:##STATE##:$rstate:g -e s:##RNAMESPCE##:$rnamespace:g` 
+
+echo $jsondata | jq '.'
 
 curl  -X PATCH "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/merge-patch+json" -d "$jsondata" || echo "update failed"

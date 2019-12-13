@@ -5,7 +5,6 @@ import (
 )
 
 // WorkflowSpec defines the desired state of Workflow
-
 type WorkflowSpec struct {
 	DesiredState	string				`json:"desiredState"`
 	WLMID			string				`json:"wlmID"`
@@ -14,8 +13,10 @@ type WorkflowSpec struct {
 	DWDirectives	[]string			`json:"dwDirectives"`
 }
 
+// WorkflowDriverStatus defines the status information provided by integration drivers.
 type WorkflowDriverStatus struct {
 	DriverID	string				`json:"driverID"`
+	TaskID		string				`json:"taskID"`
     DWDIndex	int					`json:"dwdIndex"`
 	WatchState	string				`json:"watchState"`
     LastHB		int64				`json:"lastHB"`
@@ -24,6 +25,7 @@ type WorkflowDriverStatus struct {
 	// For the CDS driver, this could be the state of the underlying
 	// data movement request:  Pending, Queued, Running, Completed or Error
 	Reason		string				`json:"reason,omitempty"`
+	Message		string				`json:"message,omitempty"`
 }
 
 // WorkflowStatus defines the observed state of the Workflow
@@ -52,12 +54,11 @@ type WorkflowStatus struct {
     Drivers     []WorkflowDriverStatus	`json:"drivers,omitempty"`
 }
 
-// Workflow is the Schema for the workflows API
-// +k8s:openapi-gen=true
 // +genclient
 // +k8s:openapi-gen=true
-// +kubebuilder:subresource:status
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// Workflow is the Schema for the workflows API
 type Workflow struct {
 	metav1.TypeMeta			`json:",inline"`
 	metav1.ObjectMeta		`json:"metadata,omitempty"`

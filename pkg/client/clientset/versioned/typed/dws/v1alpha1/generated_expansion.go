@@ -20,7 +20,7 @@ package v1alpha1
 
 type DWDirectiveRuleExpansion interface{}
 
-type DriverExpansion interface{}
+type InstanceExpansion interface{}
 
 type StoragePoolExpansion interface{}
 

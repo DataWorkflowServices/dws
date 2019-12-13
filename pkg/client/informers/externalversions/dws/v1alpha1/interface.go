@@ -26,8 +26,6 @@ import (
 type Interface interface {
 	// DWDirectiveRules returns a DWDirectiveRuleInformer.
 	DWDirectiveRules() DWDirectiveRuleInformer
-	// Drivers returns a DriverInformer.
-	Drivers() DriverInformer
 	// StoragePools returns a StoragePoolInformer.
 	StoragePools() StoragePoolInformer
 	// Workflows returns a WorkflowInformer.
@@ -48,11 +46,6 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 // DWDirectiveRules returns a DWDirectiveRuleInformer.
 func (v *version) DWDirectiveRules() DWDirectiveRuleInformer {
 	return &dWDirectiveRuleInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
-}
-
-// Drivers returns a DriverInformer.
-func (v *version) Drivers() DriverInformer {
-	return &driverInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // StoragePools returns a StoragePoolInformer.

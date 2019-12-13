@@ -2,16 +2,14 @@ package workflow
 
 import (
 	"context"
-	"strconv"
+	"strings"
+	myerror "errors"
 
-//	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-//	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
-//	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -20,11 +18,13 @@ import (
 	dwsv1alpha1 "stash.us.cray.com/dpm/dws-operator/pkg/apis/dws/v1alpha1"
 )
 
+// Define condtion values
 const (
     ConditionTrue bool = true
     ConditionFalse bool = false
 )
 
+// Define valid state transition values
 const (
 	StateProposal string = "proposal"
 	StateSetup string = "setup"
@@ -76,6 +76,23 @@ type ReconcileWorkflow struct {
 	scheme *runtime.Scheme
 }
 
+// checkDriverStatus returns true if all registered drivers for the current state completed successfully
+func checkDriverStatus(instance *dwsv1alpha1.Workflow) (bool, error) {
+	for _, d := range instance.Status.Drivers {
+		if d.WatchState == instance.Spec.DesiredState {
+			if d.Completed == ConditionFalse {
+				// Return errors
+				if (strings.ToLower(d.Reason) == "error") {
+					return ConditionFalse, myerror.New(d.Message)
+				}
+				// Return not ready
+				return ConditionFalse, nil
+			}
+		} 
+	}
+	return ConditionTrue, nil
+}
+
 // Reconcile reads the state of the cluster for a Workflow object and makes changes based on the state read
 // and what is in the Workflow.Spec
 // Note:
@@ -94,45 +111,42 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 			// Request object not found, could have been deleted after reconcile request.
 			// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
 			// Return and don't requeue
+			reqLogger.Error(err, "Workflow instance not found")
 			return reconcile.Result{}, nil
 		}
 		// Error reading the object - requeue the request.
+		reqLogger.Error(err, "Could not get instance Workflow")
 		return reconcile.Result{}, err
 	}
 
 	existing := &dwsv1alpha1.Workflow{}
 	err = r.client.Get(context.TODO(), types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, existing)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Workflow not found")
+		reqLogger.Error(err, "Workflow existing not found")
 		return reconcile.Result{}, err
 	} else if err != nil {
-		reqLogger.Info("Could not get Workflow\n")
+		reqLogger.Error(err, "Could not get existing Workflow")
 		return reconcile.Result{}, err
 	}
 
-	if instance.Spec.DesiredState != existing.Status.State {
+	needsUpdate := false
+	driverDone, err := checkDriverStatus(instance)
+	if (driverDone == ConditionTrue) {
 		reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
-
-//		var driverStatus dwsv1alpha1.WorkflowDriverStatus
-//		for _, driver := range instance.Spec.Drivers {
-//			driverStatus.DriverID = driver.DriverID
-//			driverStatus.WatchState = driver.WatchState
-//			driverStatus.LastHB = 0
-//			driverStatus.Completed = false
-//			driverStatus.Reason = "not started"
-//			instance.Status.Drivers = append(instance.Status.Drivers, driverStatus)
-//		}
 	    instance.Status.State = instance.Spec.DesiredState
 	    instance.Status.Ready = ConditionTrue
 	    instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
-		userid := strconv.Itoa(instance.Spec.UserID)
-		jobid := strconv.Itoa(instance.Spec.JobID)
-		if instance.Spec.DesiredState == StateProposal {
-		    instance.Status.Env = append(instance.Status.Env,
-				"DW_JOB_STRIPED=/lus/user/" + userid + "/" +
-				instance.Spec.WLMID + "/" + jobid)
-		}
-		err = r.client.Status().Update(context.TODO(), instance)
+		needsUpdate = true
+	} else if err != nil {
+		reqLogger.Info("Workflow state transitioning to " + "ERROR")
+	    instance.Status.State = instance.Spec.DesiredState
+	    instance.Status.Ready = ConditionFalse
+	    instance.Status.Reason = "ERROR" 
+	    instance.Status.Message = err.Error()
+		needsUpdate = true
+	}
+	if needsUpdate == true {
+		err = r.client.Update(context.TODO(), instance)
 		if err != nil {
 			reqLogger.Error(err, "Failed to update Workflow state")
 			return reconcile.Result{}, err

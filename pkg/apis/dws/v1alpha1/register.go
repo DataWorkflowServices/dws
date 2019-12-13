@@ -17,3 +17,8 @@ var (
 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme
 	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
 )
+
+// Resource returns the schema GroupResource for the specified resource 
+func Resource(r string) schema.GroupResource {
+	return schema.GroupResource{Group:"dws.cray.com", Resource:r}
+}
