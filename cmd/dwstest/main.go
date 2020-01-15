@@ -84,16 +84,16 @@ func main() {
 		for _, r := range list.Items {
 			fmt.Printf("parser %s rules %+v\n", r.Name, r.Spec)
 		}
-	case "instances":
-		var list = v1alpha1.InstanceList{}
-		err = dwsClient.Get().Resource(resource).Do().Into(&list)
-		if err != nil {
-			fmt.Printf("Error listing all instances: %v", err)
-			os.Exit(1)
-		}
-		for _, r := range list.Items {
-			fmt.Printf("instance %s %+v\n", r.Name, r.Spec)
-		}
+//	case "instances":
+//		var list = v1alpha1.InstanceList{}
+//		err = dwsClient.Get().Resource(resource).Do().Into(&list)
+//		if err != nil {
+//			fmt.Printf("Error listing all instances: %v", err)
+//			os.Exit(1)
+//		}
+//		for _, r := range list.Items {
+//			fmt.Printf("instance %s %+v\n", r.Name, r.Spec)
+//		}
 	default:
 		fmt.Printf("Unknown resource kind %s.\n", resource)
 		os.Exit(1)
