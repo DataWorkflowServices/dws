@@ -80,14 +80,14 @@ type ReconcileWorkflow struct {
 func checkDriverStatus(instance *dwsv1alpha1.Workflow) (bool, error) {
 	for _, d := range instance.Status.Drivers {
 		if d.WatchState == instance.Spec.DesiredState {
-			if d.Completed == ConditionFalse {
+			if (strings.ToLower(d.Reason) == "error") {
 				// Return errors
-				if (strings.ToLower(d.Reason) == "error") {
-					return ConditionFalse, myerror.New(d.Message)
-				}
+				return ConditionTrue, myerror.New(d.Message)
+			}
+			if d.Completed == ConditionFalse {
 				// Return not ready
 				return ConditionFalse, nil
-			}
+			} 
 		} 
 	}
 	return ConditionTrue, nil
@@ -129,23 +129,21 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 
-	needsUpdate := false
 	driverDone, err := checkDriverStatus(instance)
 	if (driverDone == ConditionTrue) {
-		reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
-	    instance.Status.State = instance.Spec.DesiredState
-	    instance.Status.Ready = ConditionTrue
-	    instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
-		needsUpdate = true
-	} else if err != nil {
-		reqLogger.Info("Workflow state transitioning to " + "ERROR")
-	    instance.Status.State = instance.Spec.DesiredState
-	    instance.Status.Ready = ConditionFalse
-	    instance.Status.Reason = "ERROR" 
-	    instance.Status.Message = err.Error()
-		needsUpdate = true
-	}
-	if needsUpdate == true {
+		if err == nil {
+			reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
+		    instance.Status.State = instance.Spec.DesiredState
+		    instance.Status.Ready = ConditionTrue
+		    instance.Status.Reason = "COMPLETED" 
+		    instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
+		} else {
+			reqLogger.Info("Workflow state transitioning to " + "ERROR")
+		    instance.Status.State = instance.Spec.DesiredState
+		    instance.Status.Ready = ConditionFalse
+		    instance.Status.Reason = "ERROR" 
+		    instance.Status.Message = err.Error()
+		}
 		err = r.client.Update(context.TODO(), instance)
 		if err != nil {
 			reqLogger.Error(err, "Failed to update Workflow state")
