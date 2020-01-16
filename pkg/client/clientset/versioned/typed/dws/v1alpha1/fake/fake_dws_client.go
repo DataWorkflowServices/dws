@@ -32,10 +32,6 @@ func (c *FakeDwsV1alpha1) DWDirectiveRules(namespace string) v1alpha1.DWDirectiv
 	return &FakeDWDirectiveRules{c, namespace}
 }
 
-func (c *FakeDwsV1alpha1) Instances(namespace string) v1alpha1.InstanceInterface {
-	return &FakeInstances{c, namespace}
-}
-
 func (c *FakeDwsV1alpha1) StoragePools(namespace string) v1alpha1.StoragePoolInterface {
 	return &FakeStoragePools{c, namespace}
 }

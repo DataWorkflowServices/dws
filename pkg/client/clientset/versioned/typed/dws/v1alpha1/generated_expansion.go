@@ -20,8 +20,6 @@ package v1alpha1
 
 type DWDirectiveRuleExpansion interface{}
 
-type InstanceExpansion interface{}
-
 type StoragePoolExpansion interface{}
 
 type WorkflowExpansion interface{}
