@@ -130,28 +130,32 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 	}
 
 	driverDone, err := checkDriverStatus(instance)
-	if (driverDone == ConditionTrue) {
-		if err == nil {
-			reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
-		    instance.Status.State = instance.Spec.DesiredState
-		    instance.Status.Ready = ConditionTrue
-		    instance.Status.Reason = "COMPLETED" 
+	if err != nil {
+		reqLogger.Info("Workflow state transitioning to " + "ERROR")
+	    instance.Status.State = instance.Spec.DesiredState
+	    instance.Status.Ready = ConditionFalse
+	    instance.Status.Reason = "ERROR" 
+	    instance.Status.Message = err.Error()
+	} else {
+		reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
+	    instance.Status.State = instance.Spec.DesiredState
+		if (driverDone == ConditionTrue) {
+			instance.Status.Ready = ConditionTrue
+		    instance.Status.Reason = "Completed" 
 		    instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
 		} else {
-			reqLogger.Info("Workflow state transitioning to " + "ERROR")
-		    instance.Status.State = instance.Spec.DesiredState
-		    instance.Status.Ready = ConditionFalse
-		    instance.Status.Reason = "ERROR" 
-		    instance.Status.Message = err.Error()
+			instance.Status.Ready = ConditionFalse
+		    instance.Status.Reason = "DriverWait" 
+		    instance.Status.Message = "Workflow " + instance.Status.State + " waiting for driver completion"
 		}
-		err = r.client.Update(context.TODO(), instance)
-		if err != nil {
-			reqLogger.Error(err, "Failed to update Workflow state")
-			return reconcile.Result{}, err
-		}
-		reqLogger.Info("Status was updated", "State", instance.Status.State)
-		reqLogger.Info("State to/from", "Existing", existing.Status.State, "Desired", instance.Status.State)
 	}
+	err = r.client.Update(context.TODO(), instance)
+	if err != nil {
+		reqLogger.Error(err, "Failed to update Workflow state")
+		return reconcile.Result{}, err
+	}
+	reqLogger.Info("Status was updated", "State", instance.Status.State)
+	reqLogger.Info("State to/from", "Existing", existing.Status.State, "Desired", instance.Status.State)
 
 	return reconcile.Result{}, nil
 }

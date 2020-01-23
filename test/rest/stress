@@ -1,0 +1,52 @@
+#!/bin/bash
+
+DWSHOST=${DWSHOST:-localhost}
+DWSPORT=${DWSPORT:-8080}
+
+cwd=`dirname $0`
+count=$1
+rname=$2
+cmd=$3
+
+[[ ! -z $count ]] || count=100
+[[ ! -z $cmd ]] || cmd=all
+[[ ! -z $rname ]] || rname="workflow-test-"
+
+create() {
+	i=0
+	while [ $i -lt $count ]; do
+		echo Creating $rname-$i ...
+		$cwd/create $rname-$i || return 1
+		i=`expr $i + 1`
+	done
+	return 0
+}
+
+patch() {
+	i=0
+	while [ $i -lt $count ]; do
+		echo Patching $rname-$i ...
+		$cwd/patch $rname-$i $1 || return 1
+		i=`expr $i + 1`
+	done
+	return 0
+}
+	
+delete() {
+	i=0
+	while [ $i -lt $count ]; do
+		echo Deleting $rname-$i ...
+		$cwd/delete $rname-$i $1 || return 1
+		i=`expr $i + 1`
+	done
+	return 0
+}
+	
+case $cmd in
+	"create")	create || exit 1;;
+	 "patch")	patch data_in || exit 1;;
+	"delete")	delete || exit 1;;
+	   "all")	create  || exit 1
+			patch data_in  || exit 1
+			delete || exit 1;;
+esac

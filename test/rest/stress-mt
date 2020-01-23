@@ -1,0 +1,25 @@
+#!/bin/bash
+
+DWSHOST=${DWSHOST:-localhost}
+DWSPORT=${DWSPORT:-8080}
+
+cwd=`dirname $0`
+nthreads=$1
+count=$2
+rname=$3
+cmd=$4
+
+[[ ! -z $nthreads ]] || nthreads=10
+[[ ! -z $count ]] || count=100
+[[ ! -z $rname ]] || rname="workflow-test-"
+[[ ! -z $cmd ]] || cmd=all
+
+i=0
+while [ $i -lt $nthreads ]; do
+	echo Running $cwd/stress $count $rname-${i}- $cmd 
+	$cwd/stress $count $rname-$i- $cmd &
+	i=`expr $i + 1`
+done
+
+wait
+exit 0
