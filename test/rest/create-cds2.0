@@ -1,0 +1,19 @@
+#!/bin/bash
+
+DWSHOST=${DWSHOST:-localhost}
+DWSPORT=${DWSPORT:-8080}
+
+rname=$1
+[[ ! -z $rname ]] || rname="dws-workflow-test-$$"
+
+#data='{"metadata":{"name":"##RNAME##", "namespace":"default"}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"desiredState":"proposal", "dwDirectives":["#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes","#DW stage_in type=template destination=templates/pool2 source=wlm/testfile","#DW stage_out type=template destination=templates/pool1 source=wlm/testfile"], "jobID": 9000001, "userID": 1001, "wlmID": "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"}}'
+data='{"metadata":{"name":"##RNAME##", "namespace":"default"}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"desiredState":"proposal", "dwDirectives":["#DW stage_in type=template destination=/lus/templates/pool2 source=/lus/wlm/testfile","#DW stage_out type=template destination=/lus/templates/pool1 source=/lus/wlm/testfile"], "jobID": 9000001, "userID": 1001, "wlmID": "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"}}'
+
+echo Creating $rname ...
+jsondata=`echo $data | sed -e s:##RNAME##:$rname:g`
+
+echo $jsondata | jq '.'
+
+curl  -X POST "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows" -H "Content-Type: application/json" -d "$jsondata" || exit 1
+
+exit 0

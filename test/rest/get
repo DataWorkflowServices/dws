@@ -6,24 +6,35 @@ DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
 
 echo Get $rname ...
-raw=`curl  -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json"`
+raw=`curl  -X GET -H "Content-Type: application/json" "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}"`
 
-if [ "$1" = "all" -o "$2" = "all" ]; then
+rc=`echo $raw | jq '.status' | sed -e's:\"::g'`
+if [ "$rc" = "Failure" ]; then
     echo $raw | jq '.'
+    exit 1
+fi
+
+if [ "$1" = "all" -o -z "$2" ]; then
+    echo $raw | jq '.spec'
+    echo $raw | jq '[ .status.state, .status.ready, .status.reason, .status.message, .status.drivers]'
 else
-
-    if [ -z "$2" -o  "$2" = "meta" ]; then
+    case "$2" in
+    "meta")
         echo Metadata:
-        echo $raw | jq '[.metadata.name, .metadata.namespace, .metadata.resourceVersion]'
-    fi
-
-    if [ -z "$2" -o  "$2" = "spec" ]; then
+        echo $raw | jq '[.metadata.name, .metadata.namespace, .metadata.resourceVersion]';;
+    "spec")
         echo Spec:
-        echo $raw | jq '.spec'
-    fi
-
-    if [ -z "$2" -o  "$2" = "status" ]; then
+        echo $raw | jq '.spec';;
+    "status")
+        echo  "Spec:"
+        echo $raw | jq '[ .spec.desiredState, .spec.dwDirectives ]'
         echo  "Status:"
-        echo $raw | jq '.status'
-    fi
+        echo $raw | jq '[ .status.state, .status.ready, .status.reason, .status.message, .status.drivers]';;
+    "state")
+        echo  "State:"
+        echo $raw | jq '[ .status.state, .status.ready, .status.reason, .status.message ]';;
+    "drivers")
+        echo  "State:"
+        echo $raw | jq '.status.drivers';;
+    esac
 fi

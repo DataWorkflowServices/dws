@@ -129,33 +129,53 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 
+	updateNeeded := false
 	driverDone, err := checkDriverStatus(instance)
 	if err != nil {
-		reqLogger.Info("Workflow state transitioning to " + "ERROR")
-	    instance.Status.State = instance.Spec.DesiredState
-	    instance.Status.Ready = ConditionFalse
-	    instance.Status.Reason = "ERROR" 
-	    instance.Status.Message = err.Error()
+		// Update Status only if not already in an ERROR state
+		if instance.Status.State != instance.Spec.DesiredState ||
+		   instance.Status.Ready != ConditionFalse ||
+		   instance.Status.Reason != "ERROR" {
+			reqLogger.Info("Workflow state transitioning to " + "ERROR")
+		    instance.Status.State = instance.Spec.DesiredState
+		    instance.Status.Ready = ConditionFalse
+		    instance.Status.Reason = "ERROR" 
+		    instance.Status.Message = err.Error()
+			updateNeeded = true
+		}
 	} else {
-		reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
-	    instance.Status.State = instance.Spec.DesiredState
+		// Update Status.State if needed
+	    if instance.Status.State != instance.Spec.DesiredState {
+			reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
+		    instance.Status.State = instance.Spec.DesiredState
+			updateNeeded = true
+		}
+		// Set Ready/Reason based on driverDone condition
 		if (driverDone == ConditionTrue) {
 			instance.Status.Ready = ConditionTrue
 		    instance.Status.Reason = "Completed" 
 		    instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
+			reqLogger.Info("Workflow " + instance.Name + " transitioning to ready state " + instance.Status.State)
+			updateNeeded = true
 		} else {
-			instance.Status.Ready = ConditionFalse
-		    instance.Status.Reason = "DriverWait" 
-		    instance.Status.Message = "Workflow " + instance.Status.State + " waiting for driver completion"
+			// Driver not ready, update Status if not already in DriverWait
+			if instance.Status.Reason != "DriverWait" {
+				instance.Status.Ready = ConditionFalse
+				instance.Status.Reason = "DriverWait" 
+				instance.Status.Message = "Workflow " + instance.Status.State + " waiting for driver completion"
+				reqLogger.Info("Workflow " + instance.Name + " State=" + instance.Status.State + " waiting for driver completion")
+				updateNeeded = true
+			}
 		}
 	}
-	err = r.client.Update(context.TODO(), instance)
-	if err != nil {
-		reqLogger.Error(err, "Failed to update Workflow state")
-		return reconcile.Result{}, err
+	if updateNeeded {
+		err = r.client.Update(context.TODO(), instance)
+		if err != nil {
+			reqLogger.Error(err, "Failed to update Workflow state")
+			return reconcile.Result{}, err
+		}
+		reqLogger.Info("Status was updated", "State", instance.Status.State)
 	}
-	reqLogger.Info("Status was updated", "State", instance.Status.State)
-	reqLogger.Info("State to/from", "Existing", existing.Status.State, "Desired", instance.Status.State)
 
 	return reconcile.Result{}, nil
 }
