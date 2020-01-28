@@ -2,7 +2,7 @@
 
 // Package v1alpha1 contains API Schema definitions for the dws v1alpha1 API group
 // +k8s:deepcopy-gen=package,register
-// +groupName=dws.cray.com
+// +groupName=dws.cray.hpe.com
 package v1alpha1
 
 import (
@@ -12,7 +12,7 @@ import (
 
 var (
 	// SchemeGroupVersion is group version used to register these objects
-	SchemeGroupVersion = schema.GroupVersion{Group: "dws.cray.com", Version: "v1alpha1"}
+	SchemeGroupVersion = schema.GroupVersion{Group: "dws.cray.hpe.com", Version: "v1alpha1"}
 
 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme
 	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
@@ -20,5 +20,5 @@ var (
 
 // Resource returns the schema GroupResource for the specified resource 
 func Resource(r string) schema.GroupResource {
-	return schema.GroupResource{Group:"dws.cray.com", Resource:r}
+	return schema.GroupResource{Group:"dws.cray.hpe.com", Resource:r}
 }

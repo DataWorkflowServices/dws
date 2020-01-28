@@ -34,9 +34,9 @@ type FakeStoragePools struct {
 	ns   string
 }
 
-var storagepoolsResource = schema.GroupVersionResource{Group: "dws.cray.com", Version: "v1alpha1", Resource: "storagepools"}
+var storagepoolsResource = schema.GroupVersionResource{Group: "dws.cray.hpe.com", Version: "v1alpha1", Resource: "storagepools"}
 
-var storagepoolsKind = schema.GroupVersionKind{Group: "dws.cray.com", Version: "v1alpha1", Kind: "StoragePool"}
+var storagepoolsKind = schema.GroupVersionKind{Group: "dws.cray.hpe.com", Version: "v1alpha1", Kind: "StoragePool"}
 
 // Get takes name of the storagePool, and returns the corresponding storagePool object, and an error if there is any.
 func (c *FakeStoragePools) Get(name string, options v1.GetOptions) (result *v1alpha1.StoragePool, err error) {

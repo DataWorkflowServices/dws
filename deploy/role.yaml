@@ -54,7 +54,7 @@ rules:
   verbs:
   - get
 - apiGroups:
-  - dws.cray.com
+  - dws.cray.hpe.com
   resources:
   - '*'
   - storagepools

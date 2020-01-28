@@ -34,9 +34,9 @@ type FakeDWDirectiveRules struct {
 	ns   string
 }
 
-var dwdirectiverulesResource = schema.GroupVersionResource{Group: "dws.cray.com", Version: "v1alpha1", Resource: "dwdirectiverules"}
+var dwdirectiverulesResource = schema.GroupVersionResource{Group: "dws.cray.hpe.com", Version: "v1alpha1", Resource: "dwdirectiverules"}
 
-var dwdirectiverulesKind = schema.GroupVersionKind{Group: "dws.cray.com", Version: "v1alpha1", Kind: "DWDirectiveRule"}
+var dwdirectiverulesKind = schema.GroupVersionKind{Group: "dws.cray.hpe.com", Version: "v1alpha1", Kind: "DWDirectiveRule"}
 
 // Get takes name of the dWDirectiveRule, and returns the corresponding dWDirectiveRule object, and an error if there is any.
 func (c *FakeDWDirectiveRules) Get(name string, options v1.GetOptions) (result *v1alpha1.DWDirectiveRule, err error) {

@@ -22,7 +22,7 @@ check_for_error()
 }
 
 # look for current settings
-current=`curl -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json"` || echo "get $rname failed"
+current=`curl -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json"` || echo "get $rname failed"
 
 check_for_error "$current"
 
@@ -33,9 +33,9 @@ userid=`echo $current | jq '.spec.userID'`
 jobid=`echo $current | jq '.spec.jobID'`
 wlmid=`echo $current | jq '.spec.wlmID'`
 
-data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "resourceVersion":##VERSION##}, "kind":"Workflow", "apiVersion":"dws.cray.com/v1alpha1", "spec":{"userID":##USERID##, "jobID":##JOBID##, "wlmID":##WLMID##, "desiredState":"##STATE##"}}'
+data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "resourceVersion":##VERSION##}, "kind":"Workflow", "apiVersion":"dws.cray.hpe.com/v1alpha1", "spec":{"userID":##USERID##, "jobID":##JOBID##, "wlmID":##WLMID##, "desiredState":"##STATE##"}}'
 
 echo Updating $rname ...
 jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##VERSION##:$rversion:g -e s:##STATE##:$rstate:g -e s:##RNAMESPCE##:$rnamespace:g -e s:##USERID##:$userid:g -e s:##JOBID##:$jobid:g -e s:##WLMID##:$wlmid:g`
 
-curl  -X PUT "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json" -d "$jsondata" || echo "update failed"
+curl  -X PUT "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json" -d "$jsondata" || echo "update failed"

@@ -6,6 +6,6 @@ DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
 
 echo Get $rname ...
-raw=`curl -H "Content-Type: application/json" "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/watch/namespaces/default/workflows/${rname}"`
+raw=`curl -H "Content-Type: application/json" "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/watch/namespaces/default/workflows/${rname}"`
 
 echo $raw | jq '.'

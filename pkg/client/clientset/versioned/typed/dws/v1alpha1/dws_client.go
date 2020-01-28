@@ -32,7 +32,7 @@ type DwsV1alpha1Interface interface {
 	WorkflowsGetter
 }
 
-// DwsV1alpha1Client is used to interact with features provided by the dws.cray.com group.
+// DwsV1alpha1Client is used to interact with features provided by the dws.cray.hpe.com group.
 type DwsV1alpha1Client struct {
 	restClient rest.Interface
 }

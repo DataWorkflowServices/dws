@@ -6,7 +6,7 @@ DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
 
 echo Get $rname ...
-raw=`curl  -X GET -H "Content-Type: application/json" "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.com/v1alpha1/namespaces/default/workflows/${rname}"`
+raw=`curl  -X GET -H "Content-Type: application/json" "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/default/workflows/${rname}"`
 
 rc=`echo $raw | jq '.status' | sed -e's:\"::g'`
 if [ "$rc" = "Failure" ]; then

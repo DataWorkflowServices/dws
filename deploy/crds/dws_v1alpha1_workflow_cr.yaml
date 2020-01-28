@@ -1,4 +1,4 @@
-apiVersion: dws.cray.com/v1alpha1
+apiVersion: dws.cray.hpe.com/v1alpha1
 kind: Workflow
 metadata:
   name: dws-workflow-test

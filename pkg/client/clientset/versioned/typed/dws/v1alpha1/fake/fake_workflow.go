@@ -34,9 +34,9 @@ type FakeWorkflows struct {
 	ns   string
 }
 
-var workflowsResource = schema.GroupVersionResource{Group: "dws.cray.com", Version: "v1alpha1", Resource: "workflows"}
+var workflowsResource = schema.GroupVersionResource{Group: "dws.cray.hpe.com", Version: "v1alpha1", Resource: "workflows"}
 
-var workflowsKind = schema.GroupVersionKind{Group: "dws.cray.com", Version: "v1alpha1", Kind: "Workflow"}
+var workflowsKind = schema.GroupVersionKind{Group: "dws.cray.hpe.com", Version: "v1alpha1", Kind: "Workflow"}
 
 // Get takes name of the workflow, and returns the corresponding workflow object, and an error if there is any.
 func (c *FakeWorkflows) Get(name string, options v1.GetOptions) (result *v1alpha1.Workflow, err error) {
