@@ -1,0 +1,123 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: workflows.dws.cray.hpe.com
+  labels:
+    app.kubernetes.io/name: {{ include "cray-service.name" . }}
+    {{- include "cray-service.common-labels" . | nindent 4 }}
+  annotations:
+    {{- include "cray-service.common-annotations" . | nindent 4 }}
+  annotations:
+{{ toYaml .Values.crdAnnotations | indent 4 }}
+spec:
+  group: dws.cray.hpe.com
+  names:
+    kind: Workflow
+    listKind: WorkflowList
+    plural: workflows
+    singular: workflow
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            desiredState:
+              type: string
+            dwDirectives:
+              items:
+                type: string
+              type: array
+            jobID:
+              format: int64
+              type: integer
+            userID:
+              format: int64
+              type: integer
+            wlmID:
+              type: string
+          required:
+          - desiredState
+          - wlmID
+          - jobID
+          - userID
+          - dwDirectives
+          type: object
+        status:
+          properties:
+            drivers:
+              description: List of registered drivers and related status.  Updated
+                by drivers.
+              items:
+                properties:
+                  completed:
+                    type: boolean
+                  driverID:
+                    type: string
+                  dwdIndex:
+                    format: int64
+                    type: integer
+                  lastHB:
+                    format: int64
+                    type: integer
+                  message:
+                    type: string
+                  reason:
+                    description: 'User readable reason. For the CDS driver, this could
+                      be the state of the underlying data movement request:  Pending,
+                      Queued, Running, Completed or Error'
+                    type: string
+                  taskID:
+                    type: string
+                  watchState:
+                    type: string
+                required:
+                - driverID
+                - taskID
+                - dwdIndex
+                - watchState
+                - lastHB
+                - completed
+                type: object
+              type: array
+            env:
+              description: "Set of DW environment variable settings for WLM to apply
+                to the job. \t\t- DW_JOB_STRIPED \t\t- DW_JOB_PRIVATE \t\t- DW_JOB_STRIPED_CACHE
+                \t\t- DW_JOB_LDBAL_CACHE \t\t- DW_PERSISTENT_STRIPED_{resname}"
+              items:
+                type: string
+              type: array
+            message:
+              type: string
+            ready:
+              description: Ready can be 'True', 'False' Indicates whether State has
+                been reached.
+              type: boolean
+            reason:
+              description: User readable reason and status message
+              type: string
+            state:
+              description: The state the resource is currently transitioning to. Updated
+                by the controller once started.
+              type: string
+          required:
+          - state
+          - ready
+          type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

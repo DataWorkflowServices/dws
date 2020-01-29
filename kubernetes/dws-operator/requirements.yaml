@@ -1,0 +1,6 @@
+# Commented out because we manually package the preview version of cray-service
+#---
+#dependencies:
+#  - name: cray-service
+#    version: "~1.1.14"
+#    repository: "@cray-internal"

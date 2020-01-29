@@ -1,0 +1,19 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: loftsman
+  name: delete-chart
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      hostNetwork: true
+      restartPolicy: Never
+      containers:
+        - name: delete-chart
+          image: "dtr.dev.cray.com/appropriate/curl:latest"
+          imagePullPolicy: "Always"
+          command: ["/bin/sh", "-c"]
+          args: ['curl -s http://$CHARTREPO_SERVICE_HOST/api/charts && curl -s -XDELETE http://$CHARTREPO_SERVICE_HOST/api/charts/dws-operator/0.0.1 && curl -s http://$CHARTREPO_SERVICE_HOST/api/charts']
+

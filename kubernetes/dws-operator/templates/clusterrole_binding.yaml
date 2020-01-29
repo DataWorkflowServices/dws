@@ -1,0 +1,17 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "dws-operator.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "cray-service.name" . }}
+    {{- include "cray-service.common-labels" . | nindent 4 }}
+  annotations:
+    {{- include "cray-service.common-annotations" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ index .Values "cray-service" "serviceAccountName" }}
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: {{ include "dws-operator.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io

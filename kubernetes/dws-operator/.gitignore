@@ -1,0 +1,2 @@
+# no longer ignore charts because we manually package cray-service
+#charts/*

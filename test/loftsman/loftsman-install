@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -ex
+
+SMS1=${SMS1:-sms-1}
+DPMHOME=${DPMHOME:-$HOME/stash/dpm}
+VMHOME=${VMHOME:-$HOME/stash/shasta-vm}
+CHART=${CHART:-dws-operator}
+
+pushd ${DPMHOME}/${CHART}/kubernetes/${CHART}
+
+error_exit()
+{
+	popd
+	exit 1
+}
+
+# Package helm chart locally
+rm -fr /tmp/${CHART}/pkgs
+mkdir -p /tmp/${CHART}/pkgs
+helm package -u -d /tmp/${CHART}/pkgs . || error_exit
+
+# Sync packaged charts to remote system
+ssh root@${SMS1} mkdir -p /root/loftsman/${CHART}/charts
+rsync -av --progress /tmp/${CHART}/pkgs/ root@${SMS1}:/root/loftsman/${CHART}/charts/
+
+# Sync Loftsman manifest
+rsync -avz --progress ${DPMHOME}/${CHART}/test/loftsman/loftsman-manifest.yaml root@${SMS1}:/root/loftsman/${CHART}/loftsman-manifest.yaml
+
+# Sync Loftsman cleanup scripts
+rsync -avz --progress ${DPMHOME}/${CHART}/test/loftsman/loftsman-delete* root@${SMS1}:/root/loftsman/${CHART}
+
+# Run Loftsman playbook
+ansible-playbook -vvv --vault-password-file ${VMHOME}/workspace/ansible-inventories/craystack/.vault.txt \
+	-i ${VMHOME}/workspace/ansible-inventories/craystack/inventory.ini \
+    --extra-vars '{"packaged_charts_path": "/root/loftsman/dws-operator/charts", "loftsman_manifest_file_path": "/root/loftsman/dws-operator/loftsman-manifest.yaml", "is_craystack_or_cmsbasebox": false, "docker_registry": "dtr.dev.cray.com"}' \
+    ${VMHOME}/workspace/loftsman-deploy/ansible_framework/main_loftsman.yaml
+
+popd

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+pushd /root/loftsman/dws-operator
+
+# Clean-up
+
+# Delete release and wait for completion
+kubectl apply -f loftsman-delete-release.yaml
+kubectl wait -n loftsman --for=condition=complete --timeout=1m job delete-release
+kubectl delete -n loftsman job delete-release
+
+# Delete the chart from local chart museum
+kubectl apply -f loftsman-delete-chart.yaml
+kubectl wait -n loftsman --for=condition=complete --timeout=5m job delete-chart
+kubectl delete -n loftsman job delete-chart
+
+popd

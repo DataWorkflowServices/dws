@@ -1,0 +1,49 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: loftsman
+  name: delete-release
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      hostNetwork: true
+      restartPolicy: Never
+      serviceAccountName: loftsman
+      volumes:
+        - name: dockersock
+          hostPath:
+            path: /var/run/docker.sock
+        - name: loftsman-data-storage
+          emptyDir: {}
+        - name: loftsman-config
+          configMap:
+            name: loftsman-config
+        - name: loftsman-secrets
+          secret:
+            secretName: loftsman-secrets
+      containers:
+        - name: helm-del
+          image: "dtr.dev.cray.com/loftsman/shipper:latest"
+          imagePullPolicy: "Always"
+          env:
+            - name: DATA_PATH
+              value: /loftsman/data
+            - name: CONFIG_PATH
+              value: /loftsman/config
+            - name: SECRETS_PATH
+              value: /loftsman/secrets
+            - name: LOFTSMAN_CERT_PATH
+              value: /loftsman/secrets
+          command: ["/bin/sh", "-c"]
+          args: ['export LOFTSMAN_TILLER_IMAGE=$(cat $CONFIG_PATH/tiller.image); helmet init --upgrade; helmet del --purge dws-operator']
+          volumeMounts:
+            - name: dockersock
+              mountPath: "/var/run/docker.sock"
+            - name: loftsman-data-storage
+              mountPath: "/loftsman/data"
+            - name: loftsman-config
+              mountPath: "/loftsman/config"
+            - name: loftsman-secrets
+              mountPath: "/loftsman/secrets"
