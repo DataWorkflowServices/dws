@@ -14,7 +14,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: dws-operator
-    namespace: default
+    namespace: operators
 roleRef:
   kind: ClusterRole
   name: dws-operator

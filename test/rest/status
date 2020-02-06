@@ -4,9 +4,10 @@
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
+NAMESPACE=${NAMESPACE:-operators}
 
 echo Get $rname ...
-raw=`curl  -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/default/workflows/${rname}/status" -H "Content-Type: application/json"`
+raw=`curl  -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}/status" -H "Content-Type: application/json"`
 
 if [ "$1" = "all" -o "$2" = "all" ]; then
     echo $raw | jq '.'

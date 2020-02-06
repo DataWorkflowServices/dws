@@ -1,4 +1,4 @@
-@Library('dst-shared@master') _
+@Library('dst-shared@feature/SSM-1208_mm_1') _
 
 dockerBuildPipeline {
         repository = "cray"
@@ -8,4 +8,5 @@ dockerBuildPipeline {
         description = "Operator for the Data Workflow Services stack"
         dockerfile = "build/Dockerfile"
         useLazyDocker = true
+		createSDPManifest = true
 }
