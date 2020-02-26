@@ -8,7 +8,7 @@ repositories:
   helm: charts.local
 charts:
   - name: "dws-operator"
-    namespace: "services"
+    namespace: "operators"
     version: 0.0.1
     waitFor:
       script:

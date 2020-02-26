@@ -2,6 +2,7 @@
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
+NAMESPACE=${NAMESPACE:-operators}
 
 [[ $# -eq 2 ]] || exit 1
 rname=$1
@@ -22,7 +23,7 @@ check_for_error()
 }
 
 # look for current settings
-current=`curl -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json"` || echo "get $rname failed"
+current=`curl -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}" -H "Content-Type: application/json"` || echo "get $rname failed"
 
 check_for_error "$current"
 
@@ -38,4 +39,4 @@ data='{"metadata":{"name":"##RNAME##", "namespace":##RNAMESPCE##, "resourceVersi
 echo Updating $rname ...
 jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##VERSION##:$rversion:g -e s:##STATE##:$rstate:g -e s:##RNAMESPCE##:$rnamespace:g -e s:##USERID##:$userid:g -e s:##JOBID##:$jobid:g -e s:##WLMID##:$wlmid:g`
 
-curl  -X PUT "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json" -d "$jsondata" || echo "update failed"
+curl  -X PUT "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}" -H "Content-Type: application/json" -d "$jsondata" || echo "update failed"

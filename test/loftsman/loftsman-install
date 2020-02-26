@@ -3,7 +3,7 @@
 set -ex
 
 # DPHHOME should point to the root of the repo
-DPMHOME=${DPMHOME:-$(pwd)}
+DPMHOME=${DPMHOME:-$HOME/stash/dpm}
 # SMS1 is the hostname of master node 1 of the shasta-vm craystack cluster
 SMS1=${SMS1:-ncn-m001.craystack.test}
 # Name of the chart
@@ -11,7 +11,7 @@ CHART=${CHART:-dws-operator}
 # VMHOME should point to the root of the shasta-vm repo used to build the craystack cluster
 VMHOME=${VMHOME:-$HOME/stash/shasta-vm}
 
-pushd ${DPMHOME}/kubernetes/${CHART}
+pushd ${DPMHOME}/${CHART}/kubernetes/${CHART}
 
 error_exit()
 {
@@ -29,10 +29,10 @@ ssh root@${SMS1} mkdir -p /root/loftsman/${CHART}/charts
 rsync -av --progress /tmp/${CHART}/pkgs/ root@${SMS1}:/root/loftsman/${CHART}/charts/
 
 # Sync Loftsman manifest
-rsync -avz --progress ${DPMHOME}/test/loftsman/loftsman-manifest.yaml root@${SMS1}:/root/loftsman/${CHART}/loftsman-manifest.yaml
+rsync -avz --progress ${DPMHOME}/${CHART}/test/loftsman/loftsman-manifest.yaml root@${SMS1}:/root/loftsman/${CHART}/loftsman-manifest.yaml
 
 # Sync Loftsman cleanup scripts
-rsync -avz --progress ${DPMHOME}/test/loftsman/loftsman-delete* root@${SMS1}:/root/loftsman/${CHART}
+rsync -avz --progress ${DPMHOME}/${CHART}/test/loftsman/loftsman-delete* root@${SMS1}:/root/loftsman/${CHART}
 
 # Run Loftsman playbook
 ansible-playbook -vvv --vault-password-file ${VMHOME}/workspace/ansible-inventories/craystack/.vault.txt \

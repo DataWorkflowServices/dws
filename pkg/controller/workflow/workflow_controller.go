@@ -122,7 +122,7 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 	existing := &dwsv1alpha1.Workflow{}
 	err = r.client.Get(context.TODO(), types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, existing)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Error(err, "Workflow existing not found")
+		reqLogger.Error(err, "Existing Workflow not found")
 		return reconcile.Result{}, err
 	} else if err != nil {
 		reqLogger.Error(err, "Could not get existing Workflow")

@@ -2,9 +2,10 @@
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
+NAMESPACE=${NAMESPACE:-operators}
 
 rname=$1
 [[ ! -z $rname ]] || rname="dws-workflow-test"
 
 echo Get $rname ...
-curl  -X DELETE "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/default/workflows/${rname}" -H "Content-Type: application/json" 
+curl  -X DELETE "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}" -H "Content-Type: application/json" 
