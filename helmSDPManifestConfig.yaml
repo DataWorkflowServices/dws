@@ -7,4 +7,4 @@ helm_chart_info:
     namespace: operators
     additional_overrides: []
     docker_images:
-      - "http://car.dev.cray.com/artifactory/internal/DPM/noos/noarch/dev/master/ssm-team/sdp_manifest/docker/cray-dws-operator_1.0.0_metadata.json"
+      - "http://car.dev.cray.com/artifactory/internal/DPM/noos/noarch/dev/master/ssm-team/sdp_manifest/docker/cray-dws-operator_0.0.1_metadata.json"
