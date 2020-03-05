@@ -1,5 +1,5 @@
 # Copyright 2019 Cray Inc.  All Rights Reserved
-FROM golang:latest AS build_base
+FROM dtr.dev.cray.com/alpine/golang:alpine AS build_base
 
 COPY cmd $GOPATH/src/stash.us.cray.com/dpm/dws-operator/cmd/
 COPY pkg $GOPATH/src/stash.us.cray.com/dpm/dws-operator/pkg/
