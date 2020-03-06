@@ -15,6 +15,8 @@ RUN CGO_ENABLED=0 go build -v -i -o build/bin/dwsinformer ./cmd/informer/main.go
 # The base testing container
 FROM build_base AS base_testing
 
+RUN apk add gcc libc-dev git
+
 COPY test/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/test/
 COPY static-analysis/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/static-analysis/
 
