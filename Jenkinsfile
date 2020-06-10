@@ -1,4 +1,4 @@
-@Library('dst-shared@feature/SSM-1208_mm_1') _
+@Library('dst-shared@master') _
 
 dockerBuildPipeline {
         repository = "cray"
