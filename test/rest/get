@@ -4,7 +4,7 @@
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
-NAMESPACE=${NAMESPACE:-operators}
+NAMESPACE=${NAMESPACE:-default}
 
 echo Get $rname ...
 raw=`curl  -X GET -H "Content-Type: application/json" "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}"`
@@ -15,27 +15,29 @@ if [ "$rc" = "Failure" ]; then
     exit 1
 fi
 
-if [ "$1" = "all" -o -z "$2" ]; then
-    echo $raw | jq '.spec'
-    echo $raw | jq '[ .status.state, .status.ready, .status.reason, .status.message, .status.drivers]'
+if [ "$1" = "all" -a -z "$2" ]; then
+    echo $raw | jq '.'
 else
     case "$2" in
     "meta")
         echo Metadata:
-        echo $raw | jq '[.metadata.name, .metadata.namespace, .metadata.resourceVersion]';;
+        echo $raw | jq '.items[] | [.metadata.name), metadata.namespace, .metadata.resourceVersion]';;
     "spec")
+        echo Metadata:
+        echo $raw | jq '.items[] | "\(.metadata.name) \(.metadata.namespace) \(.metadata.resourceVersion)"'
         echo Spec:
         echo $raw | jq '.spec';;
     "status")
+        echo $raw | jq '.items[] | "\(.metadata.name):"'
         echo  "Spec:"
-        echo $raw | jq '[ .spec.desiredState, .spec.dwDirectives ]'
+        echo $raw | jq '.items[] | [.spec.desiredState, .spec.dwDirectives]'
         echo  "Status:"
-        echo $raw | jq '[ .status.state, .status.ready, .status.reason, .status.message, .status.drivers]';;
+        echo $raw | jq '.items[] | [.status.state, .status.ready, .status.reason, .status.message, .status.drivers]';;
     "state")
         echo  "State:"
-        echo $raw | jq '[ .status.state, .status.ready, .status.reason, .status.message ]';;
+        echo $raw | jq '.items[] | [.status.state, .status.ready, .status.reason, .status.message]';;
     "drivers")
         echo  "State:"
-        echo $raw | jq '.status.drivers';;
+        echo $raw | jq '.items[] | .status.drivers';;
     esac
 fi

@@ -7,25 +7,27 @@ You must be logged into DTR to access the containers for any of these build opti
 $ docker login dtr.dev.cray.com
 ```
 
-To rebuild the auto-generated source after updating api/controller definitions:
----
+To rebuild the operator-sdk auto-generated source after updating api/controller definitions:
 ```
-$ make src
+$ make code-generation
+```
+
+To re-format source to meet go fmt conventions:
+```
+$ make fmt
 ```
 
 To create a deployable image with the dws-operator installed (update version as appropriate):
----
+```
+$ make image
+```
+Or
 ```
 $ docker build -f build/Dockerfile --label dtr.dev.cray.com/${USER}/dws-operator:0.0.1 \
 	-t dtr.dev.cray.com/${USER}/dws-operator:0.0.1 .
 ```
-Or
-```
-$ make image
-```
 
 To clean/remove all images:
----
 ```
 $ make clean
 ```

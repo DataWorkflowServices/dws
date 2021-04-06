@@ -36,7 +36,7 @@ import (
  * actually be called.
  */
 
-func ReconcileWithRequeue(r *ReconcileStoragePool , request reconcile.Request) (reconcile.Result, error) {
+func ReconcileWithRequeue(r *ReconcileStoragePool, request reconcile.Request) (reconcile.Result, error) {
 	for {
 		res, err := r.Reconcile(request)
 		if err != nil {
@@ -102,11 +102,11 @@ func TestStoragePoolController2(t *testing.T) {
 			Namespace: namespace,
 		},
 		Spec: dwsv1.StoragePoolSpec{
-			PoolID:           "storagepool-test",
-			Units:            "bytes",
-			Granularity:      "107GiB",
-			Quantity:         10,
-			Free:             10,
+			PoolID:      "storagepool-test",
+			Units:       "bytes",
+			Granularity: "107GiB",
+			Quantity:    10,
+			Free:        10,
 		},
 	}
 

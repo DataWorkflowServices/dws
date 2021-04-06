@@ -6,16 +6,16 @@ import (
 
 // StoragePoolSpec defines the desired state of StoragePool
 type StoragePoolSpec struct {
-    PoolID            string `json:"poolID"`
-    Units             string `json:"units"`
-    Granularity       string `json:"granularity"`
-    Quantity          int `json:"quantity"`
-    Free              int `json:"free"`
+	PoolID      string `json:"poolID"`
+	Units       string `json:"units"`
+	Granularity string `json:"granularity"`
+	Quantity    int    `json:"quantity"`
+	Free        int    `json:"free"`
 }
 
 // StoragePoolStatus defines the observed state of StoragePool
 type StoragePoolStatus struct {
-    State  string `json:"state"`
+	State string `json:"state"`
 }
 
 // +genclient

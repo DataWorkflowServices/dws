@@ -15,8 +15,7 @@ jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##NAMESPACE##:$NAMESPACE
 curl -X POST "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows" -H "Content-Type: application/json" -d "$jsondata" | jq . || echo "Create failed"
 
 if [ $? -eq 0 ]; then
-    echo Created $rname 
+	echo Created $rname
 fi
 
 exit $?
-

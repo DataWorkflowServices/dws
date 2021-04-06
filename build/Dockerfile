@@ -1,5 +1,5 @@
 # Copyright 2019 Cray Inc.  All Rights Reserved
-FROM dtr.dev.cray.com/alpine/golang:alpine AS build_base
+FROM arti.dev.cray.com/baseos-docker-master-local/golang:1.14-alpine3.12 AS build_base
 
 COPY cmd $GOPATH/src/stash.us.cray.com/dpm/dws-operator/cmd/
 COPY pkg $GOPATH/src/stash.us.cray.com/dpm/dws-operator/pkg/
@@ -41,7 +41,7 @@ WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
 ENTRYPOINT ["sh", "static-analysis/docker_lint_entry.sh"]
 
 # The final application release product container
-FROM dtr.dev.cray.com/baseos/alpine:latest as application
+FROM arti.dev.cray.com/baseos-docker-master-local/alpine:3.12 AS application
 
 WORKDIR /root
 

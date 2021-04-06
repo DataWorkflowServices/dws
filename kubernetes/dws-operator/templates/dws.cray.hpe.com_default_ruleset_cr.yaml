@@ -1,0 +1,70 @@
+apiVersion: dws.cray.hpe.com/v1alpha1
+kind: DWDirectiveRule
+metadata:
+  name: default
+spec:
+  - command: "jobdw"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(scratch)$"
+        isRequired: true
+        isValueRequired: true
+      - key: "capacity"
+        type: "string"
+        pattern: "^\\d+(KiB|KB|MiB|MB|GiB|GB|TiB|TB)$"
+        isRequired: true
+        isValueRequired: true
+      - key: "access_mode"
+        type: "string"
+        pattern: "^(striped)$"
+        isRequired: true
+        isValueRequired: true
+      - key: "pool"
+        type: "string"
+        isRequired: false
+        isValueRequired: true
+      - key: "max_mds"
+        type: "string"
+        pattern: "^(yes|no)$"
+        isRequired: false
+        isValueRequired: true
+
+  - command: "persistentdw"
+    ruleDefs:
+      - key: "name"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+
+  - command: "stage_in"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "destination"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+
+  - command: "stage_out"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "destination"
+        type: "string"
+        isRequired: true
+        isValueRequired: true

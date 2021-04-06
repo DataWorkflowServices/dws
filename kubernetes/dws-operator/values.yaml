@@ -30,9 +30,15 @@ cray-service:
             fieldPath: metadata.name
       - name: OPERATOR_NAME
         value: dws-operator
-#  nodeSelector:
-#   cray.dpm.dg.data-workflow-services: "1.0.0"
+  nodeSelector:
+    cray.dpm.dg.dpm-management-node: "true"
 
-chart:
-  name: "" # set at deploy time automatically, no need to ever set explicitly
-  version: "" # set at deploy time automatically, no need to ever set explicitly
+global:
+  appVersion: "" # This is set at build time.
+  # these are values to address shortcomings of helm in referencing .Chart.* values in sub-charts/parent charts:
+  # https://github.com/helm/helm/issues/4314
+  # https://github.com/helm/helm/issues/3920
+  chart:
+    name: "" # set at deploy time automatically, no need to ever set explicitly
+    version: "" # set at deploy time automatically, no need to ever set explicitly
+

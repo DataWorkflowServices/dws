@@ -47,6 +47,16 @@ rules:
   verbs:
   - update
 - apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+- apiGroups:
   - ""
   resources:
   - pods

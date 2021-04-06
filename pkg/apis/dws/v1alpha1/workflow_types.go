@@ -6,41 +6,41 @@ import (
 
 // WorkflowSpec defines the desired state of Workflow
 type WorkflowSpec struct {
-	DesiredState	string				`json:"desiredState"`
-	WLMID			string				`json:"wlmID"`
-	JobID			int					`json:"jobID"`
-	UserID			int					`json:"userID"`
-	DWDirectives	[]string			`json:"dwDirectives"`
+	DesiredState string   `json:"desiredState"`
+	WLMID        string   `json:"wlmID"`
+	JobID        int      `json:"jobID"`
+	UserID       int      `json:"userID"`
+	DWDirectives []string `json:"dwDirectives"`
 }
 
 // WorkflowDriverStatus defines the status information provided by integration drivers.
 type WorkflowDriverStatus struct {
-	DriverID	string				`json:"driverID"`
-	TaskID		string				`json:"taskID"`
-    DWDIndex	int					`json:"dwdIndex"`
-	WatchState	string				`json:"watchState"`
-    LastHB		int64				`json:"lastHB"`
-    Completed	bool				`json:"completed"`
+	DriverID   string `json:"driverID"`
+	TaskID     string `json:"taskID"`
+	DWDIndex   int    `json:"dwdIndex"`
+	WatchState string `json:"watchState"`
+	LastHB     int64  `json:"lastHB"`
+	Completed  bool   `json:"completed"`
 	// User readable reason.
 	// For the CDS driver, this could be the state of the underlying
 	// data movement request:  Pending, Queued, Running, Completed or Error
-	Reason		string				`json:"reason,omitempty"`
-	Message		string				`json:"message,omitempty"`
+	Reason  string `json:"reason,omitempty"`
+	Message string `json:"message,omitempty"`
 }
 
 // WorkflowStatus defines the observed state of the Workflow
 type WorkflowStatus struct {
 	// The state the resource is currently transitioning to.
 	// Updated by the controller once started.
-    State		string					`json:"state"`
+	State string `json:"state"`
 
 	// Ready can be 'True', 'False'
 	// Indicates whether State has been reached.
-    Ready       bool					`json:"ready"`
+	Ready bool `json:"ready"`
 
 	// User readable reason and status message
-	Reason		string					 `json:"reason,omitempty"`
-	Message		string					 `json:"message,omitempty"`
+	Reason  string `json:"reason,omitempty"`
+	Message string `json:"message,omitempty"`
 
 	// Set of DW environment variable settings for WLM to apply to the job.
 	//		- DW_JOB_STRIPED
@@ -48,10 +48,10 @@ type WorkflowStatus struct {
 	//		- DW_JOB_STRIPED_CACHE
 	//		- DW_JOB_LDBAL_CACHE
 	//		- DW_PERSISTENT_STRIPED_{resname}
-    Env         []string				`json:"env,omitempty"`
+	Env []string `json:"env,omitempty"`
 
 	// List of registered drivers and related status.  Updated by drivers.
-    Drivers     []WorkflowDriverStatus	`json:"drivers,omitempty"`
+	Drivers []WorkflowDriverStatus `json:"drivers,omitempty"`
 }
 
 // +genclient
@@ -60,11 +60,11 @@ type WorkflowStatus struct {
 
 // Workflow is the Schema for the workflows API
 type Workflow struct {
-	metav1.TypeMeta			`json:",inline"`
-	metav1.ObjectMeta		`json:"metadata,omitempty"`
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   WorkflowSpec		`json:"spec,omitempty"`
-	Status WorkflowStatus	`json:"status,omitempty"`
+	Spec   WorkflowSpec   `json:"spec,omitempty"`
+	Status WorkflowStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

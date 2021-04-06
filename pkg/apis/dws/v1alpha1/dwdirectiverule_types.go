@@ -8,19 +8,19 @@ import (
 
 // DWDirectiveRuleDef defines the DWDirective parser rules
 type DWDirectiveRuleDef struct {
-	Key				string		`json:"key"`
-	Type			string		`json:"type"`
-	Pattern			string		`json:"pattern,omitempty"`
-	Min				int			`json:"min,omitempty"`
-	Max				int			`json:"max,omitempty"`
-	IsRequired		bool		`json:"isRrequired,omitempty"`
-	IsValueRequired	bool		`json:"isValueRequired,omitempty"`
+	Key             string `json:"key"`
+	Type            string `json:"type"`
+	Pattern         string `json:"pattern,omitempty"`
+	Min             int    `json:"min,omitempty"`
+	Max             int    `json:"max,omitempty"`
+	IsRequired      bool   `json:"isRrequired,omitempty"`
+	IsValueRequired bool   `json:"isValueRequired,omitempty"`
 }
 
 // DWDirectiveRuleSpec defines the desired state of DWDirective
 type DWDirectiveRuleSpec struct {
-	Command		string					`json:"command"`
-	RuleDefs	[]DWDirectiveRuleDef	`json:"ruleDefs"`
+	Command  string               `json:"command"`
+	RuleDefs []DWDirectiveRuleDef `json:"ruleDefs"`
 }
 
 // +genclient
@@ -33,16 +33,16 @@ type DWDirectiveRule struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   []DWDirectiveRuleSpec   `json:"spec,omitempty"`
+	Spec []DWDirectiveRuleSpec `json:"spec,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // DWDirectiveRuleList contains a list of DWDirective
 type DWDirectiveRuleList struct {
-	metav1.TypeMeta	`json:",inline"`
-	metav1.ListMeta	`json:"metadata,omitempty"`
-	Items	[]DWDirectiveRule	`json:"items"`
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []DWDirectiveRule `json:"items"`
 }
 
 func init() {

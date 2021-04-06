@@ -1,6 +1,18 @@
 #!/bin/bash
 
+export CGO_ENABLED=0
+
+apk add git
+if [ $? -ne 0 ] ; then
+	echo "pre-run setup error"
+	exit 1
+fi
+
 go get -u golang.org/x/lint/golint
+if [ $? -ne 0 ] ; then
+	echo "pre-run setup error"
+	exit 1
+fi
 
 GOLINTBIN=$(dirname $(go list -f {{.Target}} golang.org/x/lint/golint))
 export PATH=$PATH:$GOLINTBIN
@@ -9,6 +21,12 @@ export PATH=$PATH:$GOLINTBIN
 mypkgs=$(go list ./pkg/... ./cmd/...)
 echo "Checking non-vendor packages:"
 echo "$mypkgs"
+
+echo "Checking code format."
+if [ ! -z "$(gofmt -l ${mypkgs})" ] ; then
+	echo "Failed: Invalid go source file formatting detected."
+	exit 1
+fi
 
 # Check non-vendor package files ignoring all generated files
 echo "Running golint"

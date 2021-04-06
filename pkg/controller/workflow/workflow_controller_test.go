@@ -36,7 +36,7 @@ import (
  * actually be called.
  */
 
-func ReconcileWithRequeue(r *ReconcileWorkflow , request reconcile.Request) (reconcile.Result, error) {
+func ReconcileWithRequeue(r *ReconcileWorkflow, request reconcile.Request) (reconcile.Result, error) {
 	for {
 		res, err := r.Reconcile(request)
 		if err != nil {
@@ -95,7 +95,7 @@ func TestWorkflowController2(t *testing.T) {
 		namespace = "dws"
 	)
 
-	var dwds = []string {
+	var dwds = []string{
 		"#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes",
 		"#DW stage_in type=directory source=/foo/mydata destination=$DW_JOB_STRIPED/data",
 	}
@@ -107,11 +107,11 @@ func TestWorkflowController2(t *testing.T) {
 			Namespace: namespace,
 		},
 		Spec: dwsv1.WorkflowSpec{
-			DesiredState:	"proposal",
-			WLMID:			"5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
-			JobID:			900001,
-			DWDirectives:	dwds,
-			UserID:			1001,
+			DesiredState: "proposal",
+			WLMID:        "5f239bd8-30db-450b-8c2c-a1a7c8631a1a",
+			JobID:        900001,
+			DWDirectives: dwds,
+			UserID:       1001,
 		},
 	}
 

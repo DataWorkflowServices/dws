@@ -18,7 +18,7 @@ var (
 	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
 )
 
-// Resource returns the schema GroupResource for the specified resource 
+// Resource returns the schema GroupResource for the specified resource
 func Resource(r string) schema.GroupResource {
-	return schema.GroupResource{Group:"dws.cray.hpe.com", Resource:r}
+	return schema.GroupResource{Group: "dws.cray.hpe.com", Resource: r}
 }

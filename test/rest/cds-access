@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. $HOME/.cdsrc
+
+TOKEN=`get_token`
+
+echo CDS connection test...
+#echo "curl -s $CERT -H Authorization: Bearer $TOKEN https://$CDSHOST:$CDSPORT/apis/cds/private/v0/hello"
+
+curl -s $CDSCERT \
+ -H "Authorization: Bearer $TOKEN" \
+ https://$CDSHOST:$CDSPORT/apis/cds/private/v0/hello
+curl -s $CDSCERT \
+ -H "Authorization: Bearer $TOKEN" \
+ https://$CDSHOST:$CDSPORT/apis

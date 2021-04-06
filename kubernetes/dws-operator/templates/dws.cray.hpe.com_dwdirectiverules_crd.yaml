@@ -1,0 +1,75 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: dwdirectiverules.dws.cray.hpe.com
+  labels:
+    app.kubernetes.io/name: {{ include "cray-service.name" . }}
+    {{- include "cray-service.common-labels" . | nindent 4 }}
+  annotations:
+    {{- include "cray-service.common-annotations" . | nindent 4 }}
+  annotations:
+{{ toYaml .Values.crdAnnotations | indent 4 }}
+spec:
+  group: dws.cray.hpe.com
+  names:
+    kind: DWDirectiveRule
+    listKind: DWDirectiveRuleList
+    plural: dwdirectiverules
+    singular: dwdirectiverule
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: DWDirectiveRule is the Schema for the DWDirective API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            items:
+              description: DWDirectiveRuleSpec defines the desired state of DWDirective
+              properties:
+                command:
+                  type: string
+                ruleDefs:
+                  items:
+                    description: DWDirectiveRuleDef defines the DWDirective parser
+                      rules
+                    properties:
+                      isRrequired:
+                        type: boolean
+                      isValueRequired:
+                        type: boolean
+                      key:
+                        type: string
+                      max:
+                        type: integer
+                      min:
+                        type: integer
+                      pattern:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - key
+                    - type
+                    type: object
+                  type: array
+              required:
+              - command
+              - ruleDefs
+              type: object
+            type: array
+        type: object
+    served: true
+    storage: true

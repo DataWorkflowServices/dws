@@ -8,6 +8,7 @@ dockerBuildPipeline {
         description = "Operator for the Data Workflow Services stack"
         dockerfile = "build/Dockerfile"
         useLazyDocker = true
+        autoJira = false
         createSDPManifest = true
-        product = "internal"
+        product = "kj"
 }

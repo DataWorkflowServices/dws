@@ -1,23 +1,23 @@
 package main
 
 import (
-	"os"
 	"flag"
 	"fmt"
+	"os"
 
-    "k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/tools/cache"
+	"k8s.io/client-go/tools/clientcmd"
 
-    "stash.us.cray.com/dpm/dws-operator/pkg/apis/dws/v1alpha1"
-    clientset "stash.us.cray.com/dpm/dws-operator/pkg/client/clientset/versioned"
+	"stash.us.cray.com/dpm/dws-operator/pkg/apis/dws/v1alpha1"
+	clientset "stash.us.cray.com/dpm/dws-operator/pkg/client/clientset/versioned"
 	informers "stash.us.cray.com/dpm/dws-operator/pkg/client/informers/externalversions"
 )
 
 var (
 	kuberconfig = flag.String("kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
-	master = flag.String("master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
-	resource = flag.String("resource", "workflows", "The resource kind to list.")
+	master      = flag.String("master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
+	resource    = flag.String("resource", "workflows", "The resource kind to list.")
 )
 
 func main() {
@@ -35,10 +35,10 @@ func main() {
 		os.Exit(1)
 	}
 
-    factory := informers.NewSharedInformerFactory(dwsClient, 0)
-    stopper := make(chan struct{})
-    defer close(stopper)
-    defer runtime.HandleCrash()
+	factory := informers.NewSharedInformerFactory(dwsClient, 0)
+	stopper := make(chan struct{})
+	defer close(stopper)
+	defer runtime.HandleCrash()
 
 	var informer cache.SharedIndexInformer
 
@@ -46,21 +46,21 @@ func main() {
 	case "workflows":
 		informer = factory.Dws().V1alpha1().Workflows().Informer()
 		informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-			AddFunc: onWorkflowAdd,
+			AddFunc:    onWorkflowAdd,
 			UpdateFunc: onWorkflowUpdate,
 		})
-//	case "storagepools":
-//		informer = factory.Core().V1alpha1().StoragPools()Informer()
-//		informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-//			AddFunc: onStoragPoolAdd,
-//			UpdateFunc: onStoragPoolUpdate,
-//		})
-//	case "dwddirectiverules":
-//		informer = factory.Core().V1alpha1().DWDirectiveRules().Informer()
-//		informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-//			AddFunc: onDWDirectiveRuleAdd,
-//			UpdateFunc: onDWDirectiveRuleUpdate,
-//		})
+		//	case "storagepools":
+		//		informer = factory.Core().V1alpha1().StoragPools()Informer()
+		//		informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		//			AddFunc: onStoragPoolAdd,
+		//			UpdateFunc: onStoragPoolUpdate,
+		//		})
+		//	case "dwddirectiverules":
+		//		informer = factory.Core().V1alpha1().DWDirectiveRules().Informer()
+		//		informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		//			AddFunc: onDWDirectiveRuleAdd,
+		//			UpdateFunc: onDWDirectiveRuleUpdate,
+		//		})
 	default:
 		fmt.Printf("Unknown resource kind %s\n", *resource)
 		os.Exit(1)
@@ -77,22 +77,22 @@ func main() {
 
 func onWorkflowAdd(obj interface{}) {
 	wf := obj.(*v1alpha1.Workflow)
-	fmt.Printf("Workflow:\n%+v",wf)
+	fmt.Printf("Workflow:\n%+v", wf)
 }
 
 func onWorkflowUpdate(old interface{}, new interface{}) {
 	wfo := old.(*v1alpha1.Workflow)
 	wfn := new.(*v1alpha1.Workflow)
-	fmt.Printf("Workflow Old:\n%+v",wfo)
-	fmt.Printf("Workflow New:\n%+v",wfn)
+	fmt.Printf("Workflow Old:\n%+v", wfo)
+	fmt.Printf("Workflow New:\n%+v", wfn)
 }
 
 func onStoragePoolAdd(obj interface{}) {
 	sp := obj.(*v1alpha1.StoragePool)
-	fmt.Printf("StoragePool:\n%+v",sp)
+	fmt.Printf("StoragePool:\n%+v", sp)
 }
 
 func onDWDirectiveRuleAdd(obj interface{}) {
 	dr := obj.(*v1alpha1.DWDirectiveRule)
-	fmt.Printf("DWDirectiveRule:\n%+v",dr)
+	fmt.Printf("DWDirectiveRule:\n%+v", dr)
 }

@@ -1,0 +1,36 @@
+apiVersion: dws.cray.hpe.com/v1alpha1
+kind: DWDirectiveRule
+metadata:
+  name: cds2.0
+spec:
+  - command: "stage_in"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list|template)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "destination"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+
+  - command: "stage_out"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list|template)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "destination"
+        type: "string"
+        isRequired: true
+        isValueRequired: true

@@ -2,8 +2,8 @@ package workflow
 
 import (
 	"context"
-	"strings"
 	myerror "errors"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -20,18 +20,18 @@ import (
 
 // Define condtion values
 const (
-    ConditionTrue bool = true
-    ConditionFalse bool = false
+	ConditionTrue  bool = true
+	ConditionFalse bool = false
 )
 
 // Define valid state transition values
 const (
 	StateProposal string = "proposal"
-	StateSetup string = "setup"
-	StatePreRun string = "pre_run"
-	StatePostRun string = "post_run"
-	StateDataIn string = "data_in"
-	StateDataOut string = "data_out"
+	StateSetup    string = "setup"
+	StatePreRun   string = "pre_run"
+	StatePostRun  string = "post_run"
+	StateDataIn   string = "data_in"
+	StateDataOut  string = "data_out"
 	StateTearDown string = "teardown"
 )
 
@@ -80,15 +80,15 @@ type ReconcileWorkflow struct {
 func checkDriverStatus(instance *dwsv1alpha1.Workflow) (bool, error) {
 	for _, d := range instance.Status.Drivers {
 		if d.WatchState == instance.Spec.DesiredState {
-			if (strings.ToLower(d.Reason) == "error") {
+			if strings.ToLower(d.Reason) == "error" {
 				// Return errors
 				return ConditionTrue, myerror.New(d.Message)
 			}
 			if d.Completed == ConditionFalse {
 				// Return not ready
 				return ConditionFalse, nil
-			} 
-		} 
+			}
+		}
 	}
 	return ConditionTrue, nil
 }
@@ -134,34 +134,34 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 	if err != nil {
 		// Update Status only if not already in an ERROR state
 		if instance.Status.State != instance.Spec.DesiredState ||
-		   instance.Status.Ready != ConditionFalse ||
-		   instance.Status.Reason != "ERROR" {
+			instance.Status.Ready != ConditionFalse ||
+			instance.Status.Reason != "ERROR" {
 			reqLogger.Info("Workflow state transitioning to " + "ERROR")
-		    instance.Status.State = instance.Spec.DesiredState
-		    instance.Status.Ready = ConditionFalse
-		    instance.Status.Reason = "ERROR" 
-		    instance.Status.Message = err.Error()
+			instance.Status.State = instance.Spec.DesiredState
+			instance.Status.Ready = ConditionFalse
+			instance.Status.Reason = "ERROR"
+			instance.Status.Message = err.Error()
 			updateNeeded = true
 		}
 	} else {
 		// Update Status.State if needed
-	    if instance.Status.State != instance.Spec.DesiredState {
+		if instance.Status.State != instance.Spec.DesiredState {
 			reqLogger.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
-		    instance.Status.State = instance.Spec.DesiredState
+			instance.Status.State = instance.Spec.DesiredState
 			updateNeeded = true
 		}
 		// Set Ready/Reason based on driverDone condition
-		if (driverDone == ConditionTrue) {
+		if driverDone == ConditionTrue {
 			instance.Status.Ready = ConditionTrue
-		    instance.Status.Reason = "Completed" 
-		    instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
+			instance.Status.Reason = "Completed"
+			instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
 			reqLogger.Info("Workflow " + instance.Name + " transitioning to ready state " + instance.Status.State)
 			updateNeeded = true
 		} else {
 			// Driver not ready, update Status if not already in DriverWait
 			if instance.Status.Reason != "DriverWait" {
 				instance.Status.Ready = ConditionFalse
-				instance.Status.Reason = "DriverWait" 
+				instance.Status.Reason = "DriverWait"
 				instance.Status.Message = "Workflow " + instance.Status.State + " waiting for driver completion"
 				reqLogger.Info("Workflow " + instance.Name + " State=" + instance.Status.State + " waiting for driver completion")
 				updateNeeded = true

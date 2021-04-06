@@ -2,7 +2,7 @@
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
-NAMESPACE=${NAMESPACE:-operators}
+NAMESPACE=${NAMESPACE:-default}
 
 [[ $# -eq 2 ]] || exit 1
 rname=$1
@@ -37,4 +37,10 @@ jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##VERSION##:$rversion:g 
 
 echo $jsondata | jq '.'
 
-curl  -X PATCH "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}" -H "Content-Type: application/merge-patch+json" -d "$jsondata" || echo "update failed"
+curl  -X PATCH "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}" -H "Content-Type: application/merge-patch+json" -d "$jsondata" | jq . || echo "update failed"
+
+if [ $? -eq 0 ]; then
+	echo Updated $rname
+fi
+
+exit $?
