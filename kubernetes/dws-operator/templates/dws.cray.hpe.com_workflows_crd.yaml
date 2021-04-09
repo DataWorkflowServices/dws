@@ -7,8 +7,6 @@ metadata:
     {{- include "cray-service.common-labels" . | nindent 4 }}
   annotations:
     {{- include "cray-service.common-annotations" . | nindent 4 }}
-  annotations:
-{{ toYaml .Values.crdAnnotations | indent 4 }}
 spec:
   group: dws.cray.hpe.com
   names:

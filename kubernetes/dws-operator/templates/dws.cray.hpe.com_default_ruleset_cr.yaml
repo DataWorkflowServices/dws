@@ -2,6 +2,8 @@ apiVersion: dws.cray.hpe.com/v1alpha1
 kind: DWDirectiveRule
 metadata:
   name: default
+  annotations:
+    helm.sh/hook: post-install
 spec:
   - command: "jobdw"
     ruleDefs:

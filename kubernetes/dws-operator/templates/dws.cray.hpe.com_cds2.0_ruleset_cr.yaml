@@ -2,6 +2,8 @@ apiVersion: dws.cray.hpe.com/v1alpha1
 kind: DWDirectiveRule
 metadata:
   name: cds2.0
+  annotations:
+    helm.sh/hook: post-install
 spec:
   - command: "stage_in"
     ruleDefs:
