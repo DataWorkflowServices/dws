@@ -31,7 +31,7 @@ cray-service:
       - name: OPERATOR_NAME
         value: dws-operator
   nodeSelector:
-    cray.dpm.dg.dpm-management-node: "true"
+    cray.dpm.dg.data-workflow-services: "true"
 
 global:
   appVersion: "" # This is set at build time.
