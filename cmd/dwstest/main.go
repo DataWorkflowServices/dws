@@ -6,7 +6,7 @@ import (
 	"os"
 
 	//"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/runtime/serializer"
+	//"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -45,7 +45,7 @@ func main() {
 	crdConfig := *config
 	crdConfig.ContentConfig.GroupVersion = &v1alpha1.SchemeGroupVersion
 	crdConfig.APIPath = "/apis"
-	crdConfig.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
+	//crdConfig.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
 	crdConfig.UserAgent = rest.DefaultKubernetesUserAgent()
 
 	dwsClient, err := rest.UnversionedRESTClientFor(&crdConfig)

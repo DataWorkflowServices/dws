@@ -61,7 +61,7 @@ func (in *DWDirectiveRuleDef) DeepCopy() *DWDirectiveRuleDef {
 func (in *DWDirectiveRuleList) DeepCopyInto(out *DWDirectiveRuleList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]DWDirectiveRule, len(*in))
@@ -143,7 +143,7 @@ func (in *StoragePool) DeepCopyObject() runtime.Object {
 func (in *StoragePoolList) DeepCopyInto(out *StoragePoolList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]StoragePool, len(*in))
@@ -252,7 +252,7 @@ func (in *WorkflowDriverStatus) DeepCopy() *WorkflowDriverStatus {
 func (in *WorkflowList) DeepCopyInto(out *WorkflowList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]Workflow, len(*in))

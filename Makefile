@@ -1,8 +1,9 @@
 USER:=$(shell id -un)
 
 PROD_VERSION=$(shell sed 1q .version)
+DEV_REPONAME=dws-operator
 DEV_IMGNAME=dws-operator
-DTR_IMGPATH=arti.dev.cray.com/$(USER)/$(DEV_IMGNAME)
+DTR_IMGPATH=arti.dev.cray.com/$(DEV_REPONAME)/$(DEV_IMGNAME)
 OPERATOR_SDK_IMGPATH=arti.dev.cray.com/kj-docker-unstable-local/cray-operator-sdk-build:0.19.2-20210318151410_80def2a
 
 all: codestyle image

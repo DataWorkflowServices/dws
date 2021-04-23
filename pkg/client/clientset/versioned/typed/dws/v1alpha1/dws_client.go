@@ -19,10 +19,10 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"k8s.io/apimachinery/pkg/runtime/serializer"
+	//"k8s.io/apimachinery/pkg/runtime/serializer"
+	//"stash.us.cray.com/dpm/dws-operator/pkg/client/clientset/versioned/scheme"
 	rest "k8s.io/client-go/rest"
 	v1alpha1 "stash.us.cray.com/dpm/dws-operator/pkg/apis/dws/v1alpha1"
-	"stash.us.cray.com/dpm/dws-operator/pkg/client/clientset/versioned/scheme"
 )
 
 type DwsV1alpha1Interface interface {
@@ -82,7 +82,7 @@ func setConfigDefaults(config *rest.Config) error {
 	config.GroupVersion = &gv
 	config.APIPath = "/apis"
 	//config.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
-	config.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
+	//config.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
 
 	if config.UserAgent == "" {
 		config.UserAgent = rest.DefaultKubernetesUserAgent()
