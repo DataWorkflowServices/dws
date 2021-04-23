@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	//"k8s.io/apimachinery/pkg/runtime/schema"
-	//"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -45,7 +43,6 @@ func main() {
 	crdConfig := *config
 	crdConfig.ContentConfig.GroupVersion = &v1alpha1.SchemeGroupVersion
 	crdConfig.APIPath = "/apis"
-	//crdConfig.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
 	crdConfig.UserAgent = rest.DefaultKubernetesUserAgent()
 
 	dwsClient, err := rest.UnversionedRESTClientFor(&crdConfig)
@@ -84,16 +81,6 @@ func main() {
 		for _, r := range list.Items {
 			fmt.Printf("parser %s rules %+v\n", r.Name, r.Spec)
 		}
-		//	case "instances":
-		//		var list = v1alpha1.InstanceList{}
-		//		err = dwsClient.Get().Resource(resource).Do().Into(&list)
-		//		if err != nil {
-		//			fmt.Printf("Error listing all instances: %v", err)
-		//			os.Exit(1)
-		//		}
-		//		for _, r := range list.Items {
-		//			fmt.Printf("instance %s %+v\n", r.Name, r.Spec)
-		//		}
 	default:
 		fmt.Printf("Unknown resource kind %s.\n", resource)
 		os.Exit(1)
