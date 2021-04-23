@@ -2,14 +2,14 @@ USER:=$(shell id -un)
 
 PROD_VERSION=$(shell sed 1q .version)
 DEV_REPONAME=dws-operator
-DEV_IMGNAME=dws-operator
+DEV_IMGNAME=cray-dws-operator
 DTR_IMGPATH=arti.dev.cray.com/$(DEV_REPONAME)/$(DEV_IMGNAME)
 OPERATOR_SDK_IMGPATH=arti.dev.cray.com/kj-docker-unstable-local/cray-operator-sdk-build:0.19.2-20210318151410_80def2a
 
 all: codestyle image
 
 code-generation:
-	docker run --rm -v $(PWD)/kubernetes:/go/src/stash.us.cray.com/dpm/$(DEV_IMGNAME)/kubernetes -v $(PWD)/vendor:/go/src/stash.us.cray.com/dpm/$(DEV_IMGNAME)/vendor -v $(PWD)/pkg:/go/src/stash.us.cray.com/dpm/$(DEV_IMGNAME)/pkg -v $(PWD)/cmd:/go/src/stash.us.cray.com/dpm/$(DEV_IMGNAME)/cmd -v $(PWD)/build:/go/src/stash.us.cray.com/dpm/$(DEV_IMGNAME)/build $(OPERATOR_SDK_IMGPATH) stash.us.cray.com/dpm/$(DEV_IMGNAME)/build/codeGenerationOperatorSdk.sh $(DEV_IMGNAME)
+	docker run --rm -v $(PWD)/kubernetes:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/kubernetes -v $(PWD)/vendor:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/vendor -v $(PWD)/pkg:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/pkg -v $(PWD)/cmd:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/cmd -v $(PWD)/build:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/build $(OPERATOR_SDK_IMGPATH) stash.us.cray.com/dpm/$(DEV_REPONAME)/build/codeGenerationOperatorSdk.sh $(DEV_REPONAME)
 
 vendor: code-generation
 	GOPRIVATE=stash.us.cray.com go mod vendor
