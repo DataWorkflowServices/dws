@@ -138,7 +138,6 @@ rollback ()
 		helm list | grep "${chart}" | awk '{print $1}' | xargs helm delete || exit
 	done
 
-	printf "Remaining DWS CRDs:\n%s\n" "$(cd "${dws_tools_dir}"/.. && ./apply.sh -l 2>&1)"
 	resource_kinds=$(kubectl get crds | grep -E 'dws.cray.hpe.com' | awk '{print $1}' | sed -e 's/.dws.cray.hpe.com//')
 	for res_type in ${resource_kinds}
 	do
@@ -160,7 +159,6 @@ rollback ()
 			echo "Unable to count ${res_type}" > /dev/stderr
 		fi
 	done
-	printf "Remaining DWS CRDs:\n%s\n" "$(cd "${dws_tools_dir}"/.. && ./apply.sh -l 2>&1)"
 
 	if [ "${clean_docker_cache}" = "true" ]; then
 		for image_base_name in "${required_images[@]}";
