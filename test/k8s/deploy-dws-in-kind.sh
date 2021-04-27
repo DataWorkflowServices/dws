@@ -255,7 +255,8 @@ set -x
 
 			# Get/Update charts if needed and install
 			chart_dir="${repo_dir}"/kubernetes/$(curl "${helm_metadata}" | jq -r '.name')
-			if [ ! -d "${chart_dir}"/charts ]; then
+			needs_cray_service=$(cat ${chart_dir}/requirements.yaml | awk '!/^#/ && /cray-service/ {print}')
+			if [ "$needs_cray_service" -a ! -d "${chart_dir}"/charts ]; then
 				mkdir -p "${chart_dir}"/charts
 				if [ ! -f cray-service-2.0.0.tgz ]; then
 					helm dependency update "${chart_dir}" || exit
