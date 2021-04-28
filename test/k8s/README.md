@@ -59,14 +59,20 @@ Now when you start kind it'll use the cached container, and won't pull a new con
 
 ## Clean The DWS Environment
 Clean up the DWS resources and containers used in an active kind environment so you can redeploy a new DWS environment without restarting a new kind cluster.
-test/k8s/deploy-dws-in-kind.sh rollback
+```
+$ test/k8s/deploy-dws-in-kind.sh rollback
+```
 
 ## Deploy DWS Again
 If you have done a rollback then you still have a working kind cluster and you can re-deploy the DWS containers and charts.
-test/k8s/deploy-dws-in-kind.sh deploy
+```
+$ test/k8s/deploy-dws-in-kind.sh deploy
+```
 
 ## Destroy the DWS Environment and KIND cluster
 Destroy the entire KIND cluster and all DWS resources.  This preserves the deploy-in-kind-work directory so it can be re-used for the next deployment.
-test/k8s/deploy-dws-in-kind.sh delete_kind_cluster
+```
+$ test/k8s/deploy-dws-in-kind.sh delete_kind_cluster
+```
 
 # References
