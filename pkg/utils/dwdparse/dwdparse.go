@@ -11,9 +11,6 @@ import (
 	"strings"
 )
 
-var validCommands = "jobdw persistentdw stage_in stage-in stage_out stage-out create_persistent destroy_persistent"
-var argsWithPath = "source destination"
-
 // BuildRulesMap builds a map of the DWDirectives argument parser rules for the specified command
 func BuildRulesMap(rules []v1alpha1.DWDirectiveRuleSpec, cmd string) (map[string]v1alpha1.DWDirectiveRuleDef, error) {
 	rulesMap := make(map[string]v1alpha1.DWDirectiveRuleDef)
@@ -27,7 +24,7 @@ func BuildRulesMap(rules []v1alpha1.DWDirectiveRuleSpec, cmd string) (map[string
 	}
 
 	if len(rulesMap) == 0 {
-		return nil, errors.New("Unsupported #DW command - " + cmd)
+		return nil, errors.New("Unsupported #DW command " + cmd)
 	}
 
 	return rulesMap, nil
@@ -38,26 +35,17 @@ func BuildArgsMap(dwd string) (map[string]string, error) {
 	argsMap := make(map[string]string)
 	dwdArgs := strings.Fields(dwd)
 	if dwdArgs[0] == "#DW" {
-		if strings.Contains(validCommands, dwdArgs[1]) {
-			argsMap["command"] = dwdArgs[1]
-			//for _, cmd := range dwdArgs {
-			for i := 2; i < len(dwdArgs); i++ {
-				keyValue := strings.Split(dwdArgs[i], "=")
-				if len(keyValue) == 1 {
-					argsMap[keyValue[0]] = "true"
-				} else if len(keyValue) == 2 {
-					argsMap[keyValue[0]] = keyValue[1]
-				} else {
-					if strings.Contains(argsWithPath, keyValue[0]) {
-						keyValue := strings.SplitN(dwdArgs[i], "=", 2)
-						argsMap[keyValue[0]] = keyValue[1]
-					} else {
-						return nil, errors.New("Malformed keyword[=value]: " + dwdArgs[i])
-					}
-				}
+		argsMap["command"] = dwdArgs[1]
+		for i := 2; i < len(dwdArgs); i++ {
+			keyValue := strings.Split(dwdArgs[i], "=")
+			if len(keyValue) == 1 {
+				argsMap[keyValue[0]] = "true"
+			} else if len(keyValue) == 2 {
+				argsMap[keyValue[0]] = keyValue[1]
+			} else {
+				keyValue := strings.SplitN(dwdArgs[i], "=", 2)
+				argsMap[keyValue[0]] = keyValue[1]
 			}
-		} else {
-			return nil, errors.New("Unsupported #DW command " + dwdArgs[1])
 		}
 	} else {
 		return nil, errors.New("Missing #DW in directive")
@@ -79,6 +67,9 @@ func ValidateArgs(args map[string]string, rules []v1alpha1.DWDirectiveRuleSpec) 
 			rule, found := rulesMap[k]
 			if found == false {
 				return errors.New("Unsupported argument - " + k)
+			}
+			if rule.IsValueRequired && len(v) == 0 {
+				return errors.New("Malformed keyword[=value]: " + k + "=" + v)
 			}
 			switch rule.Type {
 			case "integer":

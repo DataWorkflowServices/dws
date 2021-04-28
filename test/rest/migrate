@@ -7,7 +7,7 @@ NAMESPACE=${NAMESPACE:-default}
 rname=$1
 [[ ! -z $rname ]] || rname="dws-workflow-test-$$"
 
-data='{"metadata":{"name":"##RNAME##", "namespace":"##NAMESPACE##"}, "kind":"Workflow", "apiVersion":"dws.cray.hpe.com/v1alpha1", "spec":{"desiredState":"proposal", "dwDirectives":["#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes","#DW stage_in type=template destination=/lus/.cray/template/flash_pool source=/lus/wlm/my-file","#DW stage_out type=template destination=/lus/.cray/template/disk_pool source=/lus/wlm/my-file"],"jobID": 9000001, "userID": 1001, "wlmID": "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"}}'
+data='{"metadata":{"name":"##RNAME##", "namespace":"##NAMESPACE##"}, "kind":"Workflow", "apiVersion":"dws.cray.hpe.com/v1alpha1", "spec":{"desiredState":"proposal", "dwDirectives":["#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes","#DW tier_in template=/lus/.cray/cds/template/flash_pool source=/lus/wlm/my-file type=file","#DW tier_out template=/lus/.cray/cds/template/disk_pool source=/lus/wlm/my-file type=file"],"jobID": 9000001, "userID": 1001, "wlmID": "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"}}'
 
 echo Creating $rname ...
 jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##NAMESPACE##:$NAMESPACE:g`

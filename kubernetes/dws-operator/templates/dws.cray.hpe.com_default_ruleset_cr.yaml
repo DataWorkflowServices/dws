@@ -70,3 +70,36 @@ spec:
         type: "string"
         isRequired: true
         isValueRequired: true
+
+  - command: "tier_in"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "template"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+
+  - command: "tier_out"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "template"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+

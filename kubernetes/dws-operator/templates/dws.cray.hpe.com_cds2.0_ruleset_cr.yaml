@@ -9,7 +9,7 @@ spec:
     ruleDefs:
       - key: "type"
         type: "string"
-        pattern: "^(directory|file|list|template)"
+        pattern: "^(directory|file|list)"
         isRequired: true
         isValueRequired: true
       - key: "source"
@@ -25,7 +25,7 @@ spec:
     ruleDefs:
       - key: "type"
         type: "string"
-        pattern: "^(directory|file|list|template)"
+        pattern: "^(directory|file|list)"
         isRequired: true
         isValueRequired: true
       - key: "source"
@@ -33,6 +33,38 @@ spec:
         isRequired: true
         isValueRequired: true
       - key: "destination"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+
+  - command: "tier_in"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "template"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+
+  - command: "tier_out"
+    ruleDefs:
+      - key: "type"
+        type: "string"
+        pattern: "^(directory|file|list)"
+        isRequired: true
+        isValueRequired: true
+      - key: "source"
+        type: "string"
+        isRequired: true
+        isValueRequired: true
+      - key: "template"
         type: "string"
         isRequired: true
         isValueRequired: true
