@@ -48,10 +48,10 @@ usage ()
 	echo ""
 	echo "  Options:"
 	echo "    -c  Find images in manifest files and remove them from the docker cache."
-	echo "        Used in conjunction with \"${main_manifest}\" and \"${dpapi_manifest}\" actions."
+	echo "        Used in conjunction with \"${main_manifest}\"."
 	echo ""
 	echo "  Parameters"
-	echo "    main_manifest      Location of the main manifest file.  Defaults to: \"${main_manifest}\""
+	echo "    main_manifest     Location of the main manifest file.  Defaults to: \"${main_manifest}\""
 	echo "    sdp_manifests     Contains helm metadata"
 	echo "    workdir           Working directory to hold things like manifests, repos, and image artifacts.  Defaults to: \"${workdir}\""
 	echo "    deploy_tag        Version/tag of images that helm charts expects.  Defaults to: \"${deploy_tag}\""
@@ -60,12 +60,12 @@ usage ()
 	echo "    To deploy DWS in Kind using the latest images from artifactory, run:"
 	echo "      ${0} ${action_create_deployment}"
 	echo ""
-	echo "    To deploy with a different artifactory image.  Update the image version in ${dpapi_manifest}"
-	echo "    or ${dpapi_manifest}, and run:"
+	echo "    To deploy with a different artifactory image.  Update the image version in ${main_manifest}"
+	echo "    or ${main_manifest}, and run:"
 	echo "      ${0} ${action_deploy}"
 	echo ""
-	echo "      Note:  To deploy a custom image.  Load the image into your local docker cache then updade the manifest"
-	echo "             with the docker name and tag of the custom image.  Then run the above command."
+	echo "      Note:  To deploy a custom image, load the image into your local docker cache then update the manifest"
+	echo "             with the docker name and tag of the custom image.  Finally, run the above command."
 	echo ""
 	echo "    To start from scratch, remove the working directory and appropriate images from docker cache.  Then create a new deployment:"
 	echo "      ${0} ${action_rollback}"
@@ -107,7 +107,7 @@ EOF
 
 	delete_kind_cluster
 
-	kind create cluster --config="${kind_config}"
+	kind create cluster --config="${kind_config}"		# see embedded config file above
 	helm init --service-account tiller --upgrade
 	kubectl create serviceaccount -n kube-system tiller
 	kubectl create clusterrolebinding tiller-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
@@ -131,7 +131,7 @@ rollback ()
 	ordered_rollback_list=('dws-operator'
 		'dws-validation-webhook'
 		'dws-cds-webhook'
-		'dws-cdw-integration')
+		'dws-cds-integration')
 
 	for chart in "${ordered_rollback_list[@]}";
 	do
@@ -191,6 +191,7 @@ deploy ()
 	fi
 
 	DWS_NODES=$(kubectl get node -l cray.dpm.dg.data-workflow-services=true -o json | jq -r '.items[].metadata.name' | paste -s -d, -)
+	echo "DWS_NODES: ${DWS_NODES}"
 
 	for image_base_name in "${required_images[@]}";
 	do
@@ -201,7 +202,7 @@ deploy ()
 		ver=$(grep -h "${basic_name}" "${main_manifest}" | awk '{print $2}') || exit
 
 		if [ -z "${docker_image_name}" ] || [ -z "${ver}" ]; then
-			echo "Failed to retreive info for ${basic_name} (${docker_image_name}:${ver})"
+			echo "Failed to retrieve info for ${basic_name} (${docker_image_name}:${ver})"
 			exit
 		fi
 
