@@ -4,7 +4,7 @@
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
-NAMESPACE=${NAMESPACE:-operators}
+NAMESPACE=${NAMESPACE:-default}
 
 echo Get $rname ...
 echo curl  -X GET "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}" -H "Content-Type: application/json"

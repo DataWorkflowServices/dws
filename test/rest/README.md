@@ -14,4 +14,6 @@ To start the the kubectl proxy:
 
 $ kubectl proxy --port 8080 &
 
+NOTE: If you tear down you kind cluster, you likely need to kill kubectl proxy as well.:wq
+
 Run the tests.

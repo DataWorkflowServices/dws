@@ -2,7 +2,7 @@
 
 DWSHOST=${DWSHOST:-localhost}
 DWSPORT=${DWSPORT:-8080}
-NAMESPACE=${NAMESPACE:-operators}
+NAMESPACE=${NAMESPACE:-default}
 
 [[ $# -eq 2 ]] || exit 1
 rname=$1
