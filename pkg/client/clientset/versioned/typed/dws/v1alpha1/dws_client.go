@@ -19,9 +19,9 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"stash.us.cray.com/dpm/dws-operator/pkg/client/clientset/versioned/scheme"
 	rest "k8s.io/client-go/rest"
 	v1alpha1 "stash.us.cray.com/dpm/dws-operator/pkg/apis/dws/v1alpha1"
+	"stash.us.cray.com/dpm/dws-operator/pkg/client/clientset/versioned/scheme"
 )
 
 type DwsV1alpha1Interface interface {

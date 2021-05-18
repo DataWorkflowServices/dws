@@ -251,7 +251,7 @@ set -x
 			# Clone the repo if it doesn't exist locally
 			repo_dir=$(basename "${repo}" | sed 's|.git||')
 			if [ ! -d "${repo_dir}" ]; then
-				git clone "${repo}" || exit
+				git clone --depth 1 "${repo}" || exit
 			fi
 
 			# Get/Update charts if needed and install
