@@ -14,7 +14,7 @@ if [ $? -ne 0 ] ; then
 	exit 1
 fi
 
-GOLINTBIN=$(dirname "$(go list -f "{{.Target}}" golang.org/x/lint/golint)")
+GOLINTBIN=$(dirname "$(go list -f {{.Target}} golang.org/x/lint/golint)")
 export PATH=$PATH:$GOLINTBIN
 
 # Check non-vendor packages
@@ -45,7 +45,7 @@ fi
 echo "Running golint"
 for pkg in $mypkgs; do
 	mypkgfiles=$(find "${pkg##*dws-operator/}" -maxdepth 1 -type f \( ! -iname "*zz_generated*" \))
-	printf "checking $mypkgfiles\n"
+	printf "checking %s\n" "$mypkgfiles"
 	golint -min_confidence 0.8 -set_exit_status "$mypkgfiles"
 	if [ $? -ne 0 ] ; then
 		echo "go lint failed"

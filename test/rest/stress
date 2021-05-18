@@ -8,9 +8,9 @@ count=$1
 rname=$2
 cmd=$3
 
-[[ ! -z $count ]] || count=100
-[[ ! -z $cmd ]] || cmd=all
-[[ ! -z $rname ]] || rname="workflow-test-"
+[[ -n $count ]] || count=100
+[[ -n $cmd ]] || cmd=all
+[[ -n $rname ]] || rname="workflow-test-"
 
 create() {
 	i=0

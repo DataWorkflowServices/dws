@@ -5,7 +5,7 @@ DWSPORT=${DWSPORT:-8080}
 NAMESPACE=${NAMESPACE:-default}
 
 rname=$1
-[[ ! -z $rname ]] || rname="dws-workflow-test-$$"
+[[ -n $rname ]] || rname="dws-workflow-test-$$"
 
  data='{'
 data+='  "metadata": {'
@@ -28,7 +28,7 @@ data+='  }'
 data+='}'
 
 echo Attempting to create $rname ...
-jsondata=`echo $data | sed -e s:##RNAME##:$rname:g -e s:##NAMESPACE##:$NAMESPACE:g`
+jsondata=$(echo $data | sed -e s:##RNAME##:$rname:g -e s:##NAMESPACE##:"$NAMESPACE":g)
 
 admitResponse=$(curl -X POST "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows" -H "Content-Type: application/json" -d "$jsondata")
 retCode=$?
@@ -40,7 +40,7 @@ if [ $retCode -ne 0 ]; then
 fi
 
 # curl command successful, look at the returned JSON to see if we were successful
-echo ${admitResponse} | \
+echo "$admitResponse" | \
 jq 'if .kind == "Status"
 	then 
 		"Failed to create" 

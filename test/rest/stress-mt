@@ -9,10 +9,10 @@ count=$2
 rname=$3
 cmd=$4
 
-[[ ! -z $nthreads ]] || nthreads=10
-[[ ! -z $count ]] || count=100
-[[ ! -z $rname ]] || rname="workflow-test-"
-[[ ! -z $cmd ]] || cmd=all
+[[ -n $nthreads ]] || nthreads=10
+[[ -n $count ]] || count=100
+[[ -n $rname ]] || rname="workflow-test-"
+[[ -n $cmd ]] || cmd=all
 
 i=0
 while [ $i -lt $nthreads ]; do
