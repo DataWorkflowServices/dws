@@ -20,23 +20,23 @@ RUN apk add gcc libc-dev git
 COPY test/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/test/
 COPY static-analysis/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/static-analysis/
 
-# The testing artifact container
-FROM base_testing AS testing
+# The test artifact container
+FROM base_testing AS test
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator/
 ENTRYPOINT ["sh", "test/docker_test_entry.sh"]
 
 # The code coverage analysis container
-FROM testing as coverage
+FROM test as coverage
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
 ENTRYPOINT ["sh", "test/docker_coverage_entry.sh"]
 
 # the static-analysis-codestyle-container
-FROM testing as codestyle
+FROM test as codestyle
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
 ENTRYPOINT ["sh", "static-analysis/docker_codestyle_entry.sh"]
 
 # the static-analysis-lint-container
-FROM testing as lint
+FROM test as lint
 WORKDIR $GOPATH/src/stash.us.cray.com/dpm/dws-operator
 ENTRYPOINT ["sh", "static-analysis/docker_lint_entry.sh"]
 

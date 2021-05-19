@@ -48,7 +48,7 @@ func BuildArgsMap(dwd string) (map[string]string, error) {
 			}
 		}
 	} else {
-		return nil, errors.New("Missing #DW in directive")
+		return nil, errors.New("missing #DW in directive")
 	}
 	return argsMap, nil
 }
@@ -61,11 +61,14 @@ func ValidateArgs(args map[string]string, rules []v1alpha1.DWDirectiveRuleSpec) 
 		return err
 	}
 
+	// Compile this regex outside the loop for better performance.
+	var boolMatcher = regexp.MustCompile("^(true|false|True|False|TRUE|FALSE)$")
+
 	// Iterate over all arguments and validate each based on the associated rule
 	for k, v := range args {
 		if k != "command" {
 			rule, found := rulesMap[k]
-			if found == false {
+			if !found {
 				return errors.New("Unsupported argument - " + k)
 			}
 			if rule.IsValueRequired && len(v) == 0 {
@@ -86,18 +89,15 @@ func ValidateArgs(args map[string]string, rules []v1alpha1.DWDirectiveRuleSpec) 
 				}
 			case "bool":
 				if rule.Pattern != "" {
-					isok, err := regexp.MatchString("^(true|false|True|False|TRUE|FALSE)$", v)
-					if isok == false {
-						if err != nil {
-							return errors.New("Invalid regexp in rule: " + rule.Pattern)
-						}
+					isok := boolMatcher.MatchString(v)
+					if !isok {
 						return errors.New("Invalid bool argument: " + k + "=" + v)
 					}
 				}
 			case "string":
 				if rule.Pattern != "" {
 					isok, err := regexp.MatchString(rule.Pattern, v)
-					if isok == false {
+					if !isok {
 						if err != nil {
 							return errors.New("Invalid regexp in rule: " + rule.Pattern)
 						}

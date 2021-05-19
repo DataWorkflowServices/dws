@@ -8,6 +8,8 @@ OPERATOR_SDK_IMGPATH=arti.dev.cray.com/kj-docker-unstable-local/cray-operator-sd
 
 all: codestyle image
 
+.PHONY: test
+
 code-generation:
 	docker run --rm -v $(PWD)/kubernetes:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/kubernetes -v $(PWD)/vendor:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/vendor -v $(PWD)/pkg:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/pkg -v $(PWD)/cmd:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/cmd -v $(PWD)/build:/go/src/stash.us.cray.com/dpm/$(DEV_REPONAME)/build $(OPERATOR_SDK_IMGPATH) stash.us.cray.com/dpm/$(DEV_REPONAME)/build/codeGenerationOperatorSdk.sh $(DEV_REPONAME)
 
@@ -19,6 +21,10 @@ fmt: code-generation
 
 image: code-generation
 	docker build -f build/Dockerfile --label $(DTR_IMGPATH):$(PROD_VERSION) -t $(DTR_IMGPATH):$(PROD_VERSION) .
+
+test:
+	docker build -f build/Dockerfile --label $(DTR_IMGPATH)-$@:$(PROD_VERSION)-$@ -t $(DTR_IMGPATH)-$@:$(PROD_VERSION) --target $@ .
+	docker run --rm -t --name $@  -v $(PWD):$(PWD):rw,z $(DTR_IMGPATH)-$@:$(PROD_VERSION)
 
 lint:
 	docker build -f build/Dockerfile --label $(DTR_IMGPATH)-$@:$(PROD_VERSION)-$@ -t $(DTR_IMGPATH)-$@:$(PROD_VERSION) --target $@ .
