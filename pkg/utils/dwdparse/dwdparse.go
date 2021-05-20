@@ -62,7 +62,7 @@ func ValidateArgs(args map[string]string, rules []v1alpha1.DWDirectiveRuleSpec) 
 	}
 
 	// Compile this regex outside the loop for better performance.
-	var boolMatcher = regexp.MustCompile("^(true|false|True|False|TRUE|FALSE)$")
+	var boolMatcher = regexp.MustCompile(`(?i)^(true|false)$`) // (?i) -> case-insensitve comparison
 
 	// Iterate over all arguments and validate each based on the associated rule
 	for k, v := range args {
