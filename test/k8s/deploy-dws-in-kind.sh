@@ -7,8 +7,8 @@ action_create_kind_cluster="create_kind_cluster"
 action_delete_kind_cluster="delete_kind_cluster"
 action_deploy="deploy"
 action_rollback="rollback"
+action_reapply_charts="reapply_charts"
 
-dws_tools_dir=$(pwd)/$(dirname "${0}")
 docker_image_name_prefix="arti.dev.cray.com/cray/cray-"
 
 workdir=${workdir:-'./deploy-in-kind-work'}
@@ -45,6 +45,7 @@ usage ()
 	echo "    ${action_delete_kind_cluster}   Deletes the cluster"
 	echo "    ${action_deploy}                Deploys DWS"
 	echo "    ${action_rollback}              Removes DWS deployments"
+	echo "    ${action_reapply_charts}        Re-apply the same charts"
 	echo ""
 	echo "  Options:"
 	echo "    -c  Find images in manifest files and remove them from the docker cache."
@@ -87,6 +88,36 @@ delete_kind_cluster ()
 	kind delete cluster || exit
 }
 
+wait_for_helm_tiller() {
+	# Acquire tiller's Ready setting.
+	# Looking for the 2 numbers in the READY column to match
+	# afloeder@Anthonys-MacBook-Pro ~/dev1/dws-operator/test/k8s (issue/RABSW-xxx)$ kubectl get pods --namespace kube-system
+	# NAME                                         READY   STATUS    RESTARTS   AGE
+	# coredns-74ff55c5b-jzhvb                      1/1     Running   0          22m
+	# coredns-74ff55c5b-scpc9                      1/1     Running   0          22m
+	# etcd-kind-control-plane                      1/1     Running   0          22m
+	# kindnet-95kc7                                1/1     Running   0          22m
+	# kindnet-lsjtx                                1/1     Running   0          22m
+	# kindnet-qw6tg                                1/1     Running   0          22m
+	# kube-apiserver-kind-control-plane            1/1     Running   0          22m
+	# kube-controller-manager-kind-control-plane   1/1     Running   0          22m
+	# kube-proxy-7g2gk                             1/1     Running   0          22m
+	# kube-proxy-lnkmp                             1/1     Running   0          22m
+	# kube-proxy-nsg9f                             1/1     Running   0          22m
+	# kube-scheduler-kind-control-plane            1/1     Running   0          22m
+	# tiller-deploy-7b56c8dfb7-7mqcx            -->1/1<--  Running   0          22m
+	helmReady=$(kubectl get pods --namespace kube-system | grep tiller | awk '{split($2,a,"/"); if(a[1] == a[2]) {print "Ready"} else {print "Waiting"};}')
+
+	echo "Helm-Tiller: " "$helmReady"
+	while [ "$helmReady" == "Waiting" ];
+	do
+		echo "Waiting 5 seconds for helm's tiller to be Ready"
+		sleep 5
+
+		helmReady=$(kubectl get pods --namespace kube-system | grep tiller | awk '{split($2,a,"/"); if(a[1] == a[2]) {print "Ready"} else {print "Waiting"};}')
+	done
+}
+
 create_kind_cluster ()
 {
 	# Create a config file used to create the Kind cluster,
@@ -120,7 +151,10 @@ EOF
 		echo "Waiting 5 seconds for nodes to become Ready"
 		sleep 5
 	done
-	
+
+	# Before we can submit helm charts, we need to make sure Tiller is Ready
+	wait_for_helm_tiller
+
 	echo "Kind cluster is ready"
 }
 
@@ -131,7 +165,8 @@ rollback ()
 	ordered_rollback_list=('dws-operator'
 		'dws-validation-webhook'
 		'dws-cds-webhook'
-		'dws-cds-integration')
+		'dws-cds-integration'
+		'dws-nnf-webhook')
 
 	for chart in "${ordered_rollback_list[@]}";
 	do
@@ -231,11 +266,14 @@ deploy ()
 		kind load docker-image --nodes "${deployment_nodes}" "${docker_image_name_prefix}${image_base_name}:${deploy_tag}" || exit
 	done
 
-set -x
-
 	if ! helm repo list | grep -q cray-internal; then
 		helm repo add cray-internal http://helmrepo.dev.cray.com:8080 || exit
 	fi
+}
+
+apply_charts () {
+
+set -x
 
 	# Get the helm charts and install them
 	for sdp_manifest in "${sdp_manifests[@]}";
@@ -256,8 +294,8 @@ set -x
 
 			# Get/Update charts if needed and install
 			chart_dir="${repo_dir}"/kubernetes/$(curl "${helm_metadata}" | jq -r '.name')
-			needs_cray_service=$(cat ${chart_dir}/requirements.yaml | awk '!/^#/ && /cray-service/ {print}')
-			if [ "$needs_cray_service" -a ! -d "${chart_dir}"/charts ]; then
+			needs_cray_service=$(awk '!/^#/ && /cray-service/ {print}' "$chart_dir"/requirements.yaml)
+			if [ "$needs_cray_service" ] && [ ! -d "${chart_dir}"/charts ]; then
 				mkdir -p "${chart_dir}"/charts
 				if [ ! -f cray-service-2.0.0.tgz ]; then
 					helm dependency update "${chart_dir}" || exit
@@ -271,6 +309,7 @@ set -x
 			helm install --set cray-service.imagesHost=arti.dev.cray.com "${chart_dir}" || exit
 		done
 	done
+
 }
 
 
@@ -303,6 +342,7 @@ case "${action}" in
 	"${action_create_deployment}")
 		create_kind_cluster
 		deploy
+		apply_charts
 		;;
 	"${action_create_kind_cluster}")
 		create_kind_cluster
@@ -313,9 +353,13 @@ case "${action}" in
 	"${action_deploy}")
 		rollback
 		deploy
+		apply_charts
 		;;
 	"${action_rollback}")
 		rollback
+		;;
+	"${action_reapply_charts}")
+		apply_charts
 		;;
 	*)
 		usage

@@ -1,34 +1,47 @@
-# Build
+# dws operator
+
+## Build
+
 To build locally (outside of Jenkins), you will need docker and Make packages
 installed nad have access to DTR.  For all commands, you must be at the top of the source tree.
 
 To create a deployable image with the dws-operator installed (update version as appropriate):
+
+```bash
+make
 ```
-$ make
-```
+
 Or
+
+```bash
+make image
 ```
-$ make image
-```
+
 Or
-```
+
+```bash
 $ docker build -f build/Dockerfile --label arti.dev.cray.com/cray/dws-operator:0.0.1 \
-	-t arti.dev.cray.com/cray/dws-operator:0.0.1 .
+     -t arti.dev.cray.com/cray/dws-operator:0.0.1 .
 ```
+
 To rebuild the operator-sdk auto-generated source after updating api/controller definitions:
-```
-$ make code-generation
+
+```bash
+make code-generation
 ```
 
 To re-format source to meet go fmt conventions:
-```
-$ make fmt
+
+```bash
+make fmt
 ```
 
 To clean/remove all images:
-```
-$ make clean
+
+```bash
+make clean
 ```
 
-# Test
+## Test
+
 [Testing using Kind](test/k8s/README.md)
