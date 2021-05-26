@@ -1,10 +1,13 @@
 module stash.us.cray.com/dpm/dws-operator
 
 require (
-	contrib.go.opencensus.io/exporter/ocagent v0.7.0 // indirect
-	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
+	cloud.google.com/go v0.56.0 // indirect
+	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/operator-framework/operator-sdk v0.16.0
 	github.com/spf13/pflag v1.0.5
+	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2 // indirect
+	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
+	google.golang.org/protobuf v1.24.0 // indirect
 	k8s.io/api v0.18.2
 	k8s.io/apimachinery v0.18.2
 	k8s.io/client-go v12.0.0+incompatible

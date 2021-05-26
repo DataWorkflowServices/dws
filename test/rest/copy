@@ -7,7 +7,7 @@ NAMESPACE=${NAMESPACE:-default}
 rname=$1
 [[ -n $rname ]] || rname="dws-workflow-test-$$"
 
- data='{'
+data='{'
 data+='  "metadata": {'
 data+='    "name": "##RNAME##",'
 data+='    "namespace": "##NAMESPACE##"'
@@ -18,8 +18,8 @@ data+='  "spec": {'
 data+='    "desiredState": "proposal",'
 data+='    "dwDirectives": ['
 data+='      "#DW jobdw type=scratch capacity=10GiB access_mode=striped max_mds=yes",'
-data+='      "#DW stage_in type=file destination=/lus/wlm/tmp-file source=/lus/wlm/my-file",'
-data+='      "#DW stage_out type=file destination=/lus/wlm/my-file  source=/lus/wlm/tmp-file"'
+data+='      "#DW copy_in type=file destination=/lus/wlm/tmp-file source=/lus/wlm/my-file",'
+data+='      "#DW copy_out type=file destination=/lus/wlm/my-file  source=/lus/wlm/tmp-file"'
 data+='    ],'
 data+='    "jobID": 9000001,'
 data+='    "userID": 1001,'
@@ -43,7 +43,7 @@ fi
 echo "$admitResponse" | \
 jq 'if .kind == "Status"
 	then 
-		"Failed to create" 
+		"Failed to create: $admitResponse" 
 	else 
 		.metadata.name, .
 	end' 

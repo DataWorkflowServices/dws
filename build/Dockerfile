@@ -17,7 +17,8 @@ FROM build_base AS base_testing
 
 RUN apk add gcc libc-dev git
 
-COPY test/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/test/
+COPY test/docker_coverage_entry.sh $GOPATH/src/stash.us.cray.com/dpm/dws-operator/test/docker_coverage_entry.sh
+COPY test/docker_test_entry.sh $GOPATH/src/stash.us.cray.com/dpm/dws-operator/test/docker_test_entry.sh
 COPY static-analysis/ $GOPATH/src/stash.us.cray.com/dpm/dws-operator/static-analysis/
 
 # The test artifact container

@@ -7,7 +7,6 @@ import (
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -116,16 +115,6 @@ func (r *ReconcileWorkflow) Reconcile(request reconcile.Request) (reconcile.Resu
 		}
 		// Error reading the object - requeue the request.
 		reqLogger.Error(err, "Could not get instance Workflow")
-		return reconcile.Result{}, err
-	}
-
-	existing := &dwsv1alpha1.Workflow{}
-	err = r.client.Get(context.TODO(), types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, existing)
-	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Error(err, "Existing Workflow not found")
-		return reconcile.Result{}, err
-	} else if err != nil {
-		reqLogger.Error(err, "Could not get existing Workflow")
 		return reconcile.Result{}, err
 	}
 
