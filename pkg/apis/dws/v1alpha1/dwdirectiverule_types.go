@@ -13,7 +13,7 @@ type DWDirectiveRuleDef struct {
 	Pattern         string `json:"pattern,omitempty"`
 	Min             int    `json:"min,omitempty"`
 	Max             int    `json:"max,omitempty"`
-	IsRequired      bool   `json:"isRrequired,omitempty"`
+	IsRequired      bool   `json:"isRequired,omitempty"`
 	IsValueRequired bool   `json:"isValueRequired,omitempty"`
 }
 

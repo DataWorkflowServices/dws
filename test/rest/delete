@@ -7,5 +7,5 @@ NAMESPACE=${NAMESPACE:-default}
 rname=$1
 [[ -n $rname ]] || rname="dws-workflow-test"
 
-echo Get $rname ...
+echo Delete $rname ...
 curl  -X DELETE "http://${DWSHOST}:${DWSPORT}/apis/dws.cray.hpe.com/v1alpha1/namespaces/$NAMESPACE/workflows/${rname}" -H "Content-Type: application/json" 

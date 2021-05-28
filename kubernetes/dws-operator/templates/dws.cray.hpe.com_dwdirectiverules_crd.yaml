@@ -46,7 +46,7 @@ spec:
                     description: DWDirectiveRuleDef defines the DWDirective parser
                       rules
                     properties:
-                      isRrequired:
+                      isRequired:
                         type: boolean
                       isValueRequired:
                         type: boolean
