@@ -245,7 +245,10 @@ rollback ()
 
     for chart in "${ordered_rollback_list[@]}";
     do
-        helm list | grep "${chart}" | awk '{print $1}' | xargs helm delete || exit
+        chartToDelete=$(helm list | grep "$chart" | awk '{print $1}')
+        if [ "$chartToDelete" != "" ]; then
+            helm delete --purge "$chartToDelete"
+        fi
     done
 
     resource_kinds=$(kubectl get crds | grep -E 'dws.cray.hpe.com' | awk '{print $1}' | sed -e 's/.dws.cray.hpe.com//')

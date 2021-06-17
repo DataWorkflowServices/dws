@@ -71,9 +71,7 @@ Session.vim
 .netrwhist
 # auto-generated tag files
 tags
-### VisualStudioCode ###
-.vscode/*
 .history
 # End of https://www.gitignore.io/api/go,vim,emacs,visualstudiocode
 # Created by test/k8s/deploy-dws-in-kind.sh
-deploy-in-kind-work/*
+work-deploy-in-kind/*
