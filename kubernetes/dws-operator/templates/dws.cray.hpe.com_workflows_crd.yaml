@@ -96,6 +96,66 @@ spec:
                   - watchState
                   type: object
                 type: array
+              dwDirectiveBreakdowns:
+                description: '#DW directive breakdowns indicating to WLM what to allocate
+                  on what Rabbit'
+                items:
+                  description: DWDirectiveBreakdowns define the storage information
+                    WLM needs to select NNF Nodes and request storage from the selected
+                    nodes
+                  properties:
+                    allocationSet:
+                      items:
+                        description: AllocationSetComponents define the details of
+                          the allocation
+                        properties:
+                          allocationStrategy:
+                            description: 'The allowed set of AllocationStategy''s:
+                              AllocatePerCompute DivideAcrossRabbits SingleRabbit'
+                            type: string
+                          computeBindings:
+                            items:
+                              type: string
+                            type: array
+                          dwRecord:
+                            properties:
+                              dwDirective:
+                                description: 'Copy of the #DW for this breakdown'
+                                type: string
+                              dwDirectiveIndex:
+                                description: 'Array index of the #DW directive in
+                                  original WFR'
+                                type: integer
+                            required:
+                            - dwDirective
+                            - dwDirectiveIndex
+                            type: object
+                          labels:
+                            items:
+                              type: string
+                            type: array
+                          minimumCapacity:
+                            properties:
+                              size:
+                                type: integer
+                              units:
+                                type: string
+                            required:
+                            - size
+                            - units
+                            type: object
+                        required:
+                        - allocationStrategy
+                        - computeBindings
+                        - dwRecord
+                        - labels
+                        - minimumCapacity
+                        type: object
+                      type: array
+                  required:
+                  - allocationSet
+                  type: object
+                type: array
               env:
                 description: "Set of DW environment variable settings for WLM to apply
                   to the job. \t\t- DW_JOB_STRIPED \t\t- DW_JOB_PRIVATE \t\t- DW_JOB_STRIPED_CACHE
@@ -116,6 +176,70 @@ spec:
                 description: The state the resource is currently transitioning to.
                   Updated by the controller once started.
                 type: string
+              storageResourceDesc:
+                description: 'A StorageResource is created for each #DW to express
+                  to the NNF Driver how to create storage'
+                items:
+                  properties:
+                    dwRecord:
+                      properties:
+                        dwDirective:
+                          description: 'Copy of the #DW for this breakdown'
+                          type: string
+                        dwDirectiveIndex:
+                          description: 'Array index of the #DW directive in original
+                            WFR'
+                          type: integer
+                      required:
+                      - dwDirective
+                      - dwDirectiveIndex
+                      type: object
+                    name:
+                      type: string
+                    storageResourceRef:
+                      description: ObjectReference contains enough information to
+                        let you inspect or modify the referred object.
+                      properties:
+                        apiVersion:
+                          description: API version of the referent.
+                          type: string
+                        fieldPath:
+                          description: 'If referring to a piece of an object instead
+                            of an entire object, this string should contain a valid
+                            JSON/Go field access statement, such as desiredState.manifest.containers[2].
+                            For example, if the object reference is to a container
+                            within a pod, this would take on a value like: "spec.containers{name}"
+                            (where "name" refers to the name of the container that
+                            triggered the event) or if no container name is specified
+                            "spec.containers[2]" (container with index 2 in this pod).
+                            This syntax is chosen only to have some well-defined way
+                            of referencing a part of an object. TODO: this design
+                            is not final and this field is subject to change in the
+                            future.'
+                          type: string
+                        kind:
+                          description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                          type: string
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                          type: string
+                        namespace:
+                          description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                          type: string
+                        resourceVersion:
+                          description: 'Specific resourceVersion to which this reference
+                            is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                          type: string
+                        uid:
+                          description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
+                          type: string
+                      type: object
+                  required:
+                  - dwRecord
+                  - name
+                  - storageResourceRef
+                  type: object
+                type: array
             required:
             - ready
             - state

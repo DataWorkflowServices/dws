@@ -30,6 +30,12 @@ To rebuild the operator-sdk auto-generated source after updating api/controller 
 make code-generation
 ```
 
+To run go test:
+
+```bash
+make test
+```
+
 To re-format source to meet go fmt conventions:
 
 ```bash

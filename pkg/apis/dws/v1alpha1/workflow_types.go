@@ -1,8 +1,45 @@
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+type Capacity struct {
+	Units string `json:"units"`
+	Size  int    `json:"size"`
+}
+
+type DWRecord struct {
+	// Array index of the #DW directive in original WFR
+	DWDirectiveIndex int `json:"dwDirectiveIndex"`
+	// Copy of the #DW for this breakdown
+	DWDirective string `json:"dwDirective"`
+}
+
+// AllocationSetComponents define the details of the allocation
+type AllocationSetComponents struct {
+	DW DWRecord `json:"dwRecord"`
+	// The allowed set of AllocationStategy's:
+	// AllocatePerCompute
+	// DivideAcrossRabbits
+	// SingleRabbit
+	AllocationStrategy string   `json:"allocationStrategy"`
+	MinimumCapacity    Capacity `json:"minimumCapacity"`
+	Labels             []string `json:"labels"`
+	ComputeBindings    []string `json:"computeBindings"`
+}
+
+type StorageResourceDescriptor struct {
+	DW        DWRecord                `json:"dwRecord"`
+	Name      string                  `json:"name"`
+	Reference *corev1.ObjectReference `json:"storageResourceRef"`
+}
+
+// DWDirectiveBreakdowns define the storage information WLM needs to select NNF Nodes and request storage from the selected nodes
+type DWDirectiveBreakdownAllocationSet struct {
+	AllocationSet []AllocationSetComponents `json:"allocationSet"`
+}
 
 // WorkflowSpec defines the desired state of Workflow
 type WorkflowSpec struct {
@@ -41,6 +78,12 @@ type WorkflowStatus struct {
 	// User readable reason and status message
 	Reason  string `json:"reason,omitempty"`
 	Message string `json:"message,omitempty"`
+
+	// #DW directive breakdowns indicating to WLM what to allocate on what Rabbit
+	DWDirectiveBreakdowns []DWDirectiveBreakdownAllocationSet `json:"dwDirectiveBreakdowns,omitempty"`
+
+	// A StorageResource is created for each #DW to express to the NNF Driver how to create storage
+	StorageResource []StorageResourceDescriptor `json:"storageResourceDesc,omitempty"`
 
 	// Set of DW environment variable settings for WLM to apply to the job.
 	//		- DW_JOB_STRIPED
