@@ -110,8 +110,10 @@ spec:
                           the allocation
                         properties:
                           allocationStrategy:
-                            description: 'The allowed set of AllocationStategy''s:
-                              AllocatePerCompute DivideAcrossRabbits SingleRabbit'
+                            enum:
+                            - AllocatePerCompute
+                            - DivideAcrossRabbits
+                            - SingleRabbit
                             type: string
                           computeBindings:
                             items:
@@ -135,15 +137,8 @@ spec:
                               type: string
                             type: array
                           minimumCapacity:
-                            properties:
-                              size:
-                                type: integer
-                              units:
-                                type: string
-                            required:
-                            - size
-                            - units
-                            type: object
+                            format: int64
+                            type: integer
                         required:
                         - allocationStrategy
                         - computeBindings

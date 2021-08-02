@@ -5,11 +5,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type Capacity struct {
-	Units string `json:"units"`
-	Size  int    `json:"size"`
-}
-
 type DWRecord struct {
 	// Array index of the #DW directive in original WFR
 	DWDirectiveIndex int `json:"dwDirectiveIndex"`
@@ -20,12 +15,9 @@ type DWRecord struct {
 // AllocationSetComponents define the details of the allocation
 type AllocationSetComponents struct {
 	DW DWRecord `json:"dwRecord"`
-	// The allowed set of AllocationStategy's:
-	// AllocatePerCompute
-	// DivideAcrossRabbits
-	// SingleRabbit
+	// +kubebuilder:validation:Enum=AllocatePerCompute;DivideAcrossRabbits;SingleRabbit
 	AllocationStrategy string   `json:"allocationStrategy"`
-	MinimumCapacity    Capacity `json:"minimumCapacity"`
+	MinimumCapacity    uint64   `json:"minimumCapacity"`
 	Labels             []string `json:"labels"`
 	ComputeBindings    []string `json:"computeBindings"`
 }
