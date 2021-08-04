@@ -1,0 +1,7 @@
+apiVersion: dws.cray.hpe.com/v1alpha1
+kind: StoragePool
+metadata:
+  name: storagepool-sample
+spec:
+  # Add fields here
+  foo: bar

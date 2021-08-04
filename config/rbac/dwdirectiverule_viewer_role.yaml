@@ -1,0 +1,20 @@
+# permissions for end users to view dwdirectiverules.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dwdirectiverule-viewer-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - dwdirectiverules
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - dwdirectiverules/status
+  verbs:
+  - get

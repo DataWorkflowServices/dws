@@ -1,0 +1,24 @@
+# permissions for end users to edit dwdirectiverules.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dwdirectiverule-editor-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - dwdirectiverules
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - dwdirectiverules/status
+  verbs:
+  - get
