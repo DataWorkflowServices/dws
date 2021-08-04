@@ -1,0 +1,9 @@
+domain: cray.hpe.com
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: dws-operator
+repo: stash.us.cray.com/dpm/dws-operator
+version: "3"

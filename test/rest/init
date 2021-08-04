@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# kill any running proxy
-pkill kubectl
-
-# Proxy port 8080 to allow easy REST access
-kubectl proxy --port 8080 &
-echo
