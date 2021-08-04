@@ -16,6 +16,11 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
+        env:
+        - name: "WORKFLOW_WEBHOOK_TYPE"
+          value: "validating"
+        - name: "WORKFLOW_WEBHOOK_RULESET_LIST"
+          value: "dws-operator-nnf"
       volumes:
       - name: cert
         secret:

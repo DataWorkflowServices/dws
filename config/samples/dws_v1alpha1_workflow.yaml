@@ -1,7 +1,12 @@
 apiVersion: dws.cray.hpe.com/v1alpha1
 kind: Workflow
 metadata:
-  name: workflow-sample
+  name: dws-workflow-test
 spec:
   # Add fields here
-  foo: bar
+  desiredState: "proposal"
+  dwDirectives:
+    - '#DW jobdw type=raw capacity=10GiB name=mattr'
+  wlmID: "5f239bd8-30db-450b-8c2c-a1a7c8631a1a"
+  jobID: 900001
+  userID: 1001

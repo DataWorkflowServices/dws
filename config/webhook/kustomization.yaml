@@ -1,6 +1,7 @@
 resources:
 - manifests.yaml
 - service.yaml
+- nnf-ruleset.yaml
 
 configurations:
 - kustomizeconfig.yaml

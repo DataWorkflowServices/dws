@@ -80,11 +80,16 @@ func main() {
 
 	if err = (&controllers.WorkflowReconciler{
 		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("Workflow"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Workflow")
 		os.Exit(1)
 	}
+	//	if err = (&workflow.WorkflowWebhook{}).SetupWebhook(mgr); err != nil {
+	//		setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
+	//		os.Exit(1)
+	//	}
 	if err = (&dwsv1alpha1.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 		os.Exit(1)
