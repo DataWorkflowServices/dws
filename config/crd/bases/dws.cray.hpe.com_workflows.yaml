@@ -113,67 +113,20 @@ spec:
                             - DivideAcrossRabbits
                             - SingleRabbit
                             type: string
-                          computeBindings:
-                            items:
-                              type: string
-                            type: array
-                          dwRecord:
-                            properties:
-                              dwDirective:
-                                description: 'Copy of the #DW for this breakdown'
-                                type: string
-                              dwDirectiveIndex:
-                                description: 'Array index of the #DW directive in
-                                  original WFR'
-                                type: integer
-                            required:
-                            - dwDirective
-                            - dwDirectiveIndex
-                            type: object
-                          labels:
-                            items:
-                              type: string
-                            type: array
+                          constraint:
+                            type: string
+                          label:
+                            type: string
                           minimumCapacity:
                             format: int64
                             type: integer
                         required:
                         - allocationStrategy
-                        - computeBindings
-                        - dwRecord
-                        - labels
+                        - constraint
+                        - label
                         - minimumCapacity
                         type: object
                       type: array
-                  required:
-                  - allocationSet
-                  type: object
-                type: array
-              env:
-                description: "Set of DW environment variable settings for WLM to apply
-                  to the job. \t\t- DW_JOB_STRIPED \t\t- DW_JOB_PRIVATE \t\t- DW_JOB_STRIPED_CACHE
-                  \t\t- DW_JOB_LDBAL_CACHE \t\t- DW_PERSISTENT_STRIPED_{resname}"
-                items:
-                  type: string
-                type: array
-              message:
-                type: string
-              ready:
-                description: Ready can be 'True', 'False' Indicates whether State
-                  has been reached.
-                type: boolean
-              reason:
-                description: User readable reason and status message
-                type: string
-              state:
-                description: The state the resource is currently transitioning to.
-                  Updated by the controller once started.
-                type: string
-              storageResourceDesc:
-                description: 'A StorageResource is created for each #DW to express
-                  to the NNF Driver how to create storage'
-                items:
-                  properties:
                     dwRecord:
                       properties:
                         dwDirective:
@@ -187,35 +140,16 @@ spec:
                       - dwDirective
                       - dwDirectiveIndex
                       type: object
+                    lifetime:
+                      enum:
+                      - job
+                      - persistent
+                      type: string
                     name:
                       type: string
-                    storageResourceRef:
-                      description: 'ObjectReference contains enough information to
-                        let you inspect or modify the referred object. --- New uses
-                        of this type are discouraged because of difficulty describing
-                        its usage when embedded in APIs.  1. Ignored fields.  It includes
-                        many fields which are not generally honored.  For instance,
-                        ResourceVersion and FieldPath are both very rarely valid in
-                        actual usage.  2. Invalid usage help.  It is impossible to
-                        add specific help for individual usage.  In most embedded
-                        usages, there are particular     restrictions like, "must
-                        refer only to types A and B" or "UID not honored" or "name
-                        must be restricted".     Those cannot be well described when
-                        embedded.  3. Inconsistent validation.  Because the usages
-                        are different, the validation rules are different by usage,
-                        which makes it hard for users to predict what will happen.  4.
-                        The fields are both imprecise and overly precise.  Kind is
-                        not a precise mapping to a URL. This can produce ambiguity     during
-                        interpretation and require a REST mapping.  In most cases,
-                        the dependency is on the group,resource tuple     and the
-                        version of the actual struct is irrelevant.  5. We cannot
-                        easily change it.  Because this type is embedded in many locations,
-                        updates to this type     will affect numerous schemas.  Don''t
-                        make new APIs embed an underspecified API type they do not
-                        control. Instead of using this type, create a locally provided
-                        and used type that is well-focused on your reference. For
-                        example, ServiceReferences for admission registration: https://github.com/kubernetes/api/blob/release-1.17/admissionregistration/v1/types.go#L533
-                        .'
+                    storageReference:
+                      description: Reference to the NNFStorage CR to be filled in
+                        by WLM
                       properties:
                         apiVersion:
                           description: API version of the referent.
@@ -251,12 +185,37 @@ spec:
                           description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                           type: string
                       type: object
+                    type:
+                      type: string
                   required:
+                  - allocationSet
                   - dwRecord
+                  - lifetime
                   - name
-                  - storageResourceRef
+                  - storageReference
+                  - type
                   type: object
                 type: array
+              env:
+                description: "Set of DW environment variable settings for WLM to apply
+                  to the job. \t\t- DW_JOB_STRIPED \t\t- DW_JOB_PRIVATE \t\t- DW_JOB_STRIPED_CACHE
+                  \t\t- DW_JOB_LDBAL_CACHE \t\t- DW_PERSISTENT_STRIPED_{resname}"
+                items:
+                  type: string
+                type: array
+              message:
+                type: string
+              ready:
+                description: Ready can be 'True', 'False' Indicates whether State
+                  has been reached.
+                type: boolean
+              reason:
+                description: User readable reason and status message
+                type: string
+              state:
+                description: The state the resource is currently transitioning to.
+                  Updated by the controller once started.
+                type: string
             required:
             - ready
             - state
