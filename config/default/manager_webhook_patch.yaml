@@ -20,7 +20,7 @@ spec:
         - name: "WORKFLOW_WEBHOOK_TYPE"
           value: "validating"
         - name: "WORKFLOW_WEBHOOK_RULESET_LIST"
-          value: "dws-operator-nnf"
+          value: "dws-operator-nnf/dws-operator-system"
       volumes:
       - name: cert
         secret:

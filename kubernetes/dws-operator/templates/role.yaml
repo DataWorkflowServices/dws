@@ -1,0 +1,61 @@
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: {{ include "dws-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - services/finalizers
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  - leases
+  verbs:
+  - '*'
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - '*'
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - dwdirectiverules
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - workflows
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - workflows/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - workflows/status
+  verbs:
+  - get
+  - patch
+  - update

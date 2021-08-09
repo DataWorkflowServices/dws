@@ -1,0 +1,10 @@
+---
+helm_chart_info:
+  -
+    chart_name: dws-operator
+    repo_override: "cray-service.imagesHost=\"{repos[docker]}\""
+    image_tag_override_template_str: "cray-service.containers.{dname}.image.tag=\"{dversion}\""
+    namespace: operators
+    additional_overrides: []
+    docker_images:
+      - "http://car.dev.cray.com/artifactory/kj/DPM/noos/noarch/dev/master/ssm-team/sdp_manifest/docker/cray-dws-operator_0.0.1_metadata.json"

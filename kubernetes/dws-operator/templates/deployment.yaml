@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dws-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dws-operator
+  template:
+    metadata:
+      labels:
+        app: dws-operator
+    spec:
+      serviceAccountName: {{ include "dws-operator.fullname" . }}
+      containers:
+      - name: dws-validation-webhook
+        image: {{ .Values.imagesHost }}/{{ .Values.imagesRepo }}/cray-dws-operator:{{ .Values.imagesTag }}
+        command:
+          - /manager
+        args:
+          - "--leader-elect"
+          - " --config=controller_manager_config.yaml"
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+        - name: "WEBHOOK_CERTS_PATH"
+          value: "/etc/webhook/certs"
+        - name: "DRIVER_ID"
+          value: ""
+        - name: "WORKFLOW_WEBHOOK_TYPE"
+          value: "validating"
+        - name: "WORKFLOW_WEBHOOK_RULESET_LIST"
+          value: "nnf/{{ .Release.Namespace }}"
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        volumeMounts:
+        - name: dws-operator-tls-certs
+          mountPath: /tmp/k8s-webhook-server/serving-certs
+          readOnly: true
+        - name: manager-config
+          mountPath: /controller_manager_config.yaml
+          subPath: controller_manager_config.yaml
+
+      volumes:
+      - name: dws-operator-tls-certs
+        secret:
+          secretName: {{ include "dws-operator.fullname" . }}-server-tls
+      - name: manager-config
+        configMap:
+          name: {{ include "dws-operator.fullname" . }}
+
+      nodeSelector:
+        cray.dpm.dg.data-workflow-services: "true"

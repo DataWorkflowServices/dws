@@ -1,0 +1,55 @@
+{{- $cn := include "dws-operator.fullname" . }}
+{{- $altName1 := printf "%s.%s" $cn .Release.Namespace }}
+{{- $altName2 := printf "%s.%s.svc" $cn .Release.Namespace }}
+{{- $ca := genCA "dws-validation-webhook-ca" 420 }}
+{{- $cert := genSignedCert $cn nil (list $altName1 $altName2) 420 $ca }}
+
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: {{ $cn }}
+  labels:
+    name: {{ $cn }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+webhooks:
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: {{ $cn }}
+      namespace: {{ .Release.Namespace }}
+      path: "/validate-dws-cray-hpe-com-v1alpha1-workflow"
+    caBundle: {{ $ca.Cert | b64enc }}
+  failurePolicy: Fail
+  name: {{ $altName2 }}
+  rules:
+  - apiGroups:
+    - dws.cray.hpe.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - workflows
+  sideEffects: None
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $cn }}-server-tls
+  labels:
+    name: {{ $cn }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+type: tls
+data:
+  tls.crt: {{ $cert.Cert | b64enc }}
+  tls.key: {{ $cert.Key | b64enc }}
+
