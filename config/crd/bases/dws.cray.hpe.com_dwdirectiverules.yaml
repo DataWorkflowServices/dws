@@ -35,11 +35,18 @@ spec:
             type: object
           spec:
             items:
-              description: DWDirectiveRuleSpec defines the desired state of DWDirective
+              description: DwDirectiveRuleSpec defines the desired state of DWDirective
               properties:
                 command:
+                  description: 'Name of the #DW command. jobdw, stage_in, etc.'
+                  type: string
+                driverLabel:
+                  description: Override for the Driver ID. If left empty this defaults
+                    to the name of the DWDirectiveRule
                   type: string
                 ruleDefs:
+                  description: 'List of key/value pairs this #DW command is expected
+                    to have'
                   items:
                     description: DWDirectiveRuleDef defines the DWDirective parser
                       rules
@@ -63,6 +70,11 @@ spec:
                     - type
                     type: object
                   type: array
+                watchStates:
+                  description: Comma separated list of states that this rule wants
+                    to register for. These watch states will result in an entry in
+                    the driver status array in the Workflow resource
+                  type: string
               required:
               - command
               - ruleDefs

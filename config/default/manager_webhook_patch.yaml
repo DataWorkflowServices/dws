@@ -17,10 +17,10 @@ spec:
           name: cert
           readOnly: true
         env:
-        - name: "WORKFLOW_WEBHOOK_TYPE"
-          value: "validating"
-        - name: "WORKFLOW_WEBHOOK_RULESET_LIST"
-          value: "dws-operator-nnf/dws-operator-system"
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
       volumes:
       - name: cert
         secret:

@@ -37,8 +37,20 @@ spec:
             description: WorkflowSpec defines the desired state of Workflow
             properties:
               desiredState:
+                description: Desired state for the workflow to be in. Unless progressing
+                  to the teardown state, this can only be set to the next state when
+                  the current desired state has been achieved.
+                enum:
+                - proposal
+                - setup
+                - data_in
+                - pre_run
+                - post_run
+                - data_out
+                - teardown
                 type: string
               dwDirectives:
+                description: 'List of #DW strings from a WLM job script'
                 items:
                   type: string
                 type: array
@@ -213,6 +225,7 @@ spec:
                 description: User readable reason and status message
                 type: string
               state:
+                default: proposal
                 description: The state the resource is currently transitioning to.
                   Updated by the controller once started.
                 type: string
