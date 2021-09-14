@@ -1,0 +1,5 @@
+apiVersion: dws.cray.hpe.com/v1alpha1
+kind: DirectiveBreakdown
+metadata:
+  name: directivebreakdown-sample
+spec:

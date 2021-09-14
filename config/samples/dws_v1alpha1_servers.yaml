@@ -1,5 +1,5 @@
 apiVersion: dws.cray.hpe.com/v1alpha1
-kind: DWDirectiveRule
+kind: Servers
 metadata:
-  name: dwdirectiverule-sample
+  name: servers-sample
 spec:

@@ -25,6 +25,6 @@ testbin/*
 *~
 
 commands.log
-kind-config.yaml
+kind-*.yaml
 
 nnf-sos

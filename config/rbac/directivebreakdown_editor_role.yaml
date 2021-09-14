@@ -1,0 +1,24 @@
+# permissions for end users to edit directivebreakdowns.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: directivebreakdown-editor-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - directivebreakdowns
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - directivebreakdowns/status
+  verbs:
+  - get

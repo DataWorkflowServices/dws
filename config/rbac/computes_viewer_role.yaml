@@ -1,0 +1,20 @@
+# permissions for end users to view computes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: computes-viewer-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - computes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - computes/status
+  verbs:
+  - get

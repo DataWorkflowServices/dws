@@ -1,5 +1,5 @@
 apiVersion: dws.cray.hpe.com/v1alpha1
-kind: DWDirectiveRule
+kind: Computes
 metadata:
-  name: dwdirectiverule-sample
+  name: computes-sample
 spec:

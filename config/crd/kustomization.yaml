@@ -5,6 +5,9 @@ resources:
 - bases/dws.cray.hpe.com_workflows.yaml
 - bases/dws.cray.hpe.com_dwdirectiverules.yaml
 - bases/dws.cray.hpe.com_storagepools.yaml
+- bases/dws.cray.hpe.com_directivebreakdowns.yaml
+- bases/dws.cray.hpe.com_computes.yaml
+- bases/dws.cray.hpe.com_servers.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
@@ -13,6 +16,9 @@ patchesStrategicMerge:
 #- patches/webhook_in_workflows.yaml
 #- patches/webhook_in_dwdirectiverules.yaml
 #- patches/webhook_in_storagepools.yaml
+#- patches/webhook_in_directivebreakdowns.yaml
+#- patches/webhook_in_computes.yaml
+#- patches/webhook_in_servers.yaml
 #+kubebuilder:scaffold:crdkustomizewebhookpatch
 
 # [CERTMANAGER] To enable cert-manager, uncomment all the sections with [CERTMANAGER] prefix.
@@ -20,6 +26,9 @@ patchesStrategicMerge:
 #- patches/cainjection_in_workflows.yaml
 #- patches/cainjection_in_dwdirectiverules.yaml
 #- patches/cainjection_in_storagepools.yaml
+#- patches/cainjection_in_directivebreakdowns.yaml
+#- patches/cainjection_in_computes.yaml
+#- patches/cainjection_in_servers.yaml
 #+kubebuilder:scaffold:crdkustomizecainjectionpatch
 
 # the following config is for teaching kustomize how to do kustomization for CRDs.

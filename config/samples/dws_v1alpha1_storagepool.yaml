@@ -3,5 +3,3 @@ kind: StoragePool
 metadata:
   name: storagepool-sample
 spec:
-  # Add fields here
-  foo: bar
