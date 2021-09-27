@@ -38,11 +38,15 @@ spec:
               needs to select NNF Nodes and request storage from the selected nodes
             properties:
               allocationSet:
-                description: 'Allocation sets required to fulfill the #DW Directive'
+                description: 'AllocationSets lists the allocations required to fulfill
+                  the #DW Directive'
                 items:
                   description: AllocationSetComponents define the details of the allocation
                   properties:
                     allocationStrategy:
+                      description: AllocationStrategy specifies the way to determine
+                        the number of allocations of the MinimumCapacity required
+                        for this AllocationSet.
                       enum:
                       - AllocatePerCompute
                       - AllocateAcrossServers
@@ -51,42 +55,62 @@ spec:
                       - AssignAcrossServers
                       type: string
                     constraint:
+                      description: Constraint is an additional requirement pertaining
+                        to the suitability of Servers that may be used for this AllocationSet
+                      enum:
+                      - MayNotBeShared
                       type: string
                     label:
+                      description: Label is an identifier used to communicate from
+                        the DWS interface to internal interfaces the filesystem use
+                        of this AllocationSet.
+                      enum:
+                      - raw
+                      - xfs
+                      - gfs2
+                      - mgt
+                      - mdt
+                      - ost
                       type: string
                     minimumCapacity:
+                      description: MinimumCapacity is the minumum number of bytes
+                        required to meet the needs of the filesystem that will use
+                        the storage.
                       format: int64
+                      minimum: 1
                       type: integer
                   required:
                   - allocationStrategy
-                  - constraint
                   - label
                   - minimumCapacity
                   type: object
                 type: array
               dwRecord:
-                description: 'NOTE: json tags are required.  Any new fields you add
-                  must have json tags for the fields to be serialized.'
+                description: 'The DWRecord contains the index of the Datawarp directive
+                  (#DW) within the workflow along with a copy of the actual #DW'
                 properties:
                   dwDirective:
-                    description: 'Copy of the #DW for this breakdown'
+                    description: 'DWDirective is a copy of the #DW for this breakdown'
                     type: string
                   dwDirectiveIndex:
-                    description: 'Array index of the #DW directive in original WFR'
+                    description: 'DWDirectiveIndex is the index of the #DW directive
+                      in the workflow'
                     type: integer
                 required:
                 - dwDirective
                 - dwDirectiveIndex
                 type: object
               lifetime:
+                description: Lifetime is the duration of the allocation
                 enum:
                 - job
                 - persistent
                 type: string
               name:
+                description: Name is the identifier for this directive breakdown
                 type: string
               servers:
-                description: Reference to the Server CR to be filled in by WLM
+                description: Servers is a reference to the Server CR
                 properties:
                   apiVersion:
                     description: API version of the referent.
@@ -122,6 +146,11 @@ spec:
                     type: string
                 type: object
               type:
+                description: 'Type is the type specified in the #DW directive'
+                enum:
+                - raw
+                - xfs
+                - lustre
                 type: string
             required:
             - allocationSet

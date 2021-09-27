@@ -26,6 +26,45 @@ spec:
               of an object. Servers should convert recognized schemas to the latest
               internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
+          data:
+            items:
+              description: ServersData defines the desired state of Servers
+              properties:
+                allocationSize:
+                  description: Allocation size in bytes
+                  format: int64
+                  minimum: 1
+                  type: integer
+                hosts:
+                  description: List of hosts where allocations are created
+                  items:
+                    description: Host specifies info required to identify the host
+                      (name) on which to create storage, and the number of storage
+                      allocations on each Host. ServersData.AllocationSize specifies
+                      the size of each allocation.
+                    properties:
+                      allocationCount:
+                        description: The number of allocations to create of the size
+                          in bytes specified in ServerData
+                        minimum: 1
+                        type: integer
+                      name:
+                        description: The name of the host
+                        type: string
+                    required:
+                    - allocationCount
+                    - name
+                    type: object
+                  type: array
+                label:
+                  description: Label as specified in the DirectiveBreakdown
+                  type: string
+              required:
+              - allocationSize
+              - hosts
+              - label
+              type: object
+            type: array
           kind:
             description: 'Kind is a string value representing the REST resource this
               object represents. Servers may infer this from the endpoint the client
@@ -33,19 +72,9 @@ spec:
             type: string
           metadata:
             type: object
-          spec:
-            description: ServersSpec defines the desired state of Servers
-            properties:
-              foo:
-                description: Foo is an example field of Servers. Edit servers_types.go
-                  to remove/update
-                type: string
-            type: object
         type: object
     served: true
     storage: true
-    subresources:
-      status: {}
 status:
   acceptedNames:
     kind: ""
