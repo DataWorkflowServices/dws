@@ -2,4 +2,9 @@ apiVersion: dws.cray.hpe.com/v1alpha1
 kind: Computes
 metadata:
   name: computes-sample
-spec:
+data:
+  - name: compute-5c73ad
+  - name: compute-5c73ae
+  - name: compute-2c73b0
+  - name: compute-2c73b1
+  - name: compute-2c73b2
