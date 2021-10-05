@@ -180,6 +180,9 @@ EOF
         sleep 5
     done
 
+    # Let our first kind-worker double as a generic worker.
+    kubectl label node kind-worker cray.wlm.manager=true
+
     echo "Kind cluster is ready"
 }
 
