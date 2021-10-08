@@ -35,7 +35,7 @@ spec:
             type: object
           spec:
             items:
-              description: DwDirectiveRuleSpec defines the desired state of DWDirective
+              description: DWDirectiveRuleSpec defines the desired state of DWDirective
               properties:
                 command:
                   description: 'Name of the #DW command. jobdw, stage_in, etc.'
