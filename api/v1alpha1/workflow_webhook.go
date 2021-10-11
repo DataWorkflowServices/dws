@@ -18,7 +18,6 @@ package v1alpha1
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -159,8 +158,9 @@ func validateWorkflowImmutable(a *Workflow, b *Workflow) error {
 }
 
 func checkDirectives(workflow *Workflow, ruleParser RuleParser) error {
+	// Ok if we don't have any DW directives, stop parsing.
 	if len(workflow.Spec.DWDirectives) == 0 {
-		return errors.New("no #DW directives found")
+		return nil
 	}
 
 	err := ruleParser.ReadRules()
