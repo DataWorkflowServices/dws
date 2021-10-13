@@ -1,17 +1,5 @@
 /*
-Copyright 2021.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Copyright 2021 Hewlett Packard Enterprise Development LP
 */
 
 package controllers
@@ -22,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/go-logr/logr"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -29,7 +18,7 @@ import (
 	dwsv1alpha1 "stash.us.cray.com/dpm/dws-operator/api/v1alpha1"
 )
 
-// Define condtion values
+// Define condition values
 const (
 	ConditionTrue  bool = true
 	ConditionFalse bool = false
@@ -103,15 +92,20 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		if instance.Status.State != instance.Spec.DesiredState {
 			log.Info("Workflow state transitioning to " + instance.Spec.DesiredState)
 			instance.Status.State = instance.Spec.DesiredState
+			instance.Status.DesiredStateChange = metav1.Now()
 			updateNeeded = true
 		}
 		// Set Ready/Reason based on driverDone condition
+		// All drivers achieving the current desiredStatus means we've achieved the desired state
 		if driverDone == ConditionTrue {
-			instance.Status.Ready = ConditionTrue
-			instance.Status.Reason = "Completed"
-			instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
-			log.Info("Workflow transitioning to ready state " + instance.Status.State)
-			updateNeeded = true
+			if instance.Status.Ready != ConditionTrue {
+				instance.Status.Ready = ConditionTrue
+				instance.Status.ReadyChange = metav1.Now()
+				instance.Status.Reason = "Completed"
+				instance.Status.Message = "Workflow " + instance.Status.State + " completed successfully"
+				log.Info("Workflow transitioning to ready state " + instance.Status.State)
+				updateNeeded = true
+			}
 		} else {
 			// Driver not ready, update Status if not already in DriverWait
 			if instance.Status.Reason != "DriverWait" {
