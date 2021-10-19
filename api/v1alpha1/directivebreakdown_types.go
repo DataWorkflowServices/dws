@@ -81,6 +81,7 @@ type DirectiveBreakdownStatus struct {
 }
 
 //+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
 
 // DirectiveBreakdown is the Schema for the directivebreakdown API
 type DirectiveBreakdown struct {
