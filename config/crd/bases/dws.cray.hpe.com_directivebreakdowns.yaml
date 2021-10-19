@@ -86,8 +86,7 @@ spec:
                   type: object
                 type: array
               dwRecord:
-                description: 'The DWRecord contains the index of the Datawarp directive
-                  (#DW) within the workflow along with a copy of the actual #DW'
+                description: DW is the Datawarp Directive Record
                 properties:
                   dwDirective:
                     description: 'DWDirective is a copy of the #DW for this breakdown'
@@ -110,7 +109,10 @@ spec:
                 description: Name is the identifier for this directive breakdown
                 type: string
               servers:
-                description: Servers is a reference to the Server CR
+                description: "TODO: Remove everything below because they are in the
+                  Status Section.       Once nnf-sos has the directivebreakdown controller
+                  that understands status \t     these can be removed. Servers is
+                  a reference to the Server CR"
                 properties:
                   apiVersion:
                     description: API version of the referent.
@@ -153,17 +155,111 @@ spec:
                 - lustre
                 type: string
             required:
-            - allocationSet
             - dwRecord
             - lifetime
             - name
             - type
             type: object
+          status:
+            description: DirectiveBreakdownStatus defines the storage information
+              WLM needs to select NNF Nodes and request storage from the selected
+              nodes
+            properties:
+              allocationSet:
+                description: 'AllocationSets lists the allocations required to fulfill
+                  the #DW Directive'
+                items:
+                  description: AllocationSetComponents define the details of the allocation
+                  properties:
+                    allocationStrategy:
+                      description: AllocationStrategy specifies the way to determine
+                        the number of allocations of the MinimumCapacity required
+                        for this AllocationSet.
+                      enum:
+                      - AllocatePerCompute
+                      - AllocateAcrossServers
+                      - AllocateSingleServer
+                      - AssignPerCompute
+                      - AssignAcrossServers
+                      type: string
+                    constraint:
+                      description: Constraint is an additional requirement pertaining
+                        to the suitability of Servers that may be used for this AllocationSet
+                      enum:
+                      - MayNotBeShared
+                      type: string
+                    label:
+                      description: Label is an identifier used to communicate from
+                        the DWS interface to internal interfaces the filesystem use
+                        of this AllocationSet.
+                      enum:
+                      - raw
+                      - xfs
+                      - gfs2
+                      - mgt
+                      - mdt
+                      - ost
+                      type: string
+                    minimumCapacity:
+                      description: MinimumCapacity is the minumum number of bytes
+                        required to meet the needs of the filesystem that will use
+                        the storage.
+                      format: int64
+                      minimum: 1
+                      type: integer
+                  required:
+                  - allocationStrategy
+                  - label
+                  - minimumCapacity
+                  type: object
+                type: array
+              ready:
+                description: Ready indicates whether AllocationSets have been generated
+                  (true) or not (false)
+                type: boolean
+              servers:
+                description: Servers is a reference to the Server CR
+                properties:
+                  apiVersion:
+                    description: API version of the referent.
+                    type: string
+                  fieldPath:
+                    description: 'If referring to a piece of an object instead of
+                      an entire object, this string should contain a valid JSON/Go
+                      field access statement, such as desiredState.manifest.containers[2].
+                      For example, if the object reference is to a container within
+                      a pod, this would take on a value like: "spec.containers{name}"
+                      (where "name" refers to the name of the container that triggered
+                      the event) or if no container name is specified "spec.containers[2]"
+                      (container with index 2 in this pod). This syntax is chosen
+                      only to have some well-defined way of referencing a part of
+                      an object. TODO: this design is not final and this field is
+                      subject to change in the future.'
+                    type: string
+                  kind:
+                    description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                    type: string
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                    type: string
+                  namespace:
+                    description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                    type: string
+                  resourceVersion:
+                    description: 'Specific resourceVersion to which this reference
+                      is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                    type: string
+                  uid:
+                    description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
+                    type: string
+                type: object
+            required:
+            - allocationSet
+            - ready
+            type: object
         type: object
     served: true
     storage: true
-    subresources:
-      status: {}
 status:
   acceptedNames:
     kind: ""

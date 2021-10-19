@@ -88,7 +88,6 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			log.Error(err, "Failed to update Workflow state")
 			return ctrl.Result{}, err
 		}
-		log.Info("Status was updated", "State", workflow.Status.State)
 
 		return ctrl.Result{}, nil
 	}
