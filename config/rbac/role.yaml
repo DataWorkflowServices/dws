@@ -9,6 +9,17 @@ rules:
 - apiGroups:
   - dws.cray.hpe.com
   resources:
+  - computes
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
   - dwdirectiverules
   verbs:
   - get
