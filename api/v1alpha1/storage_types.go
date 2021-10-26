@@ -19,6 +19,7 @@ const (
 	StoragePoolLabelPrefix = "dws.cray.hpe.com/storage-pool-"
 )
 
+// StorageDevices contains the details of the storage hardware
 type StorageDevices struct {
 	// Model is the manufacturer information about the device
 	Model string `json:"model,omitempty"`
@@ -35,6 +36,7 @@ type StorageDevices struct {
 	Status string `json:"status,omitempty"`
 }
 
+// Node provides the status of either a compute or a server
 type Node struct {
 	// Name is the Kubernetes name of the node
 	Name string `json:"name,omitempty"`
@@ -44,6 +46,7 @@ type Node struct {
 	Status string `json:"status,omitempty"`
 }
 
+// StorageAccess contains nodes and the protocol that may access the storage
 type StorageAccess struct {
 	// Protocol is the method that this storage can be accessed
 	// +kubebuilder:validation:Enum=PCIe
@@ -80,8 +83,8 @@ type StorageData struct {
 	Status string `json:"status,omitempty"`
 }
 
-//+kubebuilder:object:root=true
 // Storage is the Schema for the storages API
+//+kubebuilder:object:root=true
 type Storage struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
