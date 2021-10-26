@@ -37,6 +37,8 @@ spec:
                     description: Computes is the list of compute nodes that have access
                       to the storage
                     items:
+                      description: Node provides the status of either a compute or
+                        a server
                       properties:
                         name:
                           description: Name is the Kubernetes name of the node
@@ -60,6 +62,8 @@ spec:
                     description: Servers is the list of non-compute nodes that have
                       access to the storage
                     items:
+                      description: Node provides the status of either a compute or
+                        a server
                       properties:
                         name:
                           description: Name is the Kubernetes name of the node
@@ -85,6 +89,8 @@ spec:
                 description: Devices is the list of physical devices that make up
                   this storage
                 items:
+                  description: StorageDevices contains the details of the storage
+                    hardware
                   properties:
                     capacity:
                       description: Capacity in bytes of the device. The full capacity
