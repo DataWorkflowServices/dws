@@ -1,0 +1,31 @@
+apiVersion: dws.cray.hpe.com/v1alpha1
+kind: Storage
+metadata:
+  name: rabbit-01
+  labels:
+    dws.cray.hpe.com/storage: Rabbit
+data:
+  access:
+    computes:
+    - name: Compute 0
+      status: Ready
+    - name: Compute 1
+      status: Ready
+    - name: Compute 2
+      status: Ready
+    protocol: PCIe
+    servers:
+    - name: Rabbit
+      status: Ready
+  capacity: 39582418599936
+  devices:
+  - model: Samsung 1700
+    capacity: 123454321
+    wearLevel: 100
+    status: Ready
+  - model: Samsung 1700
+    capacity: 123454321
+    wearLevel: 50
+    status: Ready
+  status: Ready
+  type: NVMe
