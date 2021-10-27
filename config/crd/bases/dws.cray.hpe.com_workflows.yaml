@@ -216,6 +216,9 @@ spec:
                   - watchState
                   type: object
                 type: array
+              elapsedTimeLastState:
+                description: Duration of the last state change
+                type: string
               env:
                 description: "Set of DW environment variable settings for WLM to apply
                   to the job. \t\t- DW_JOB_STRIPED \t\t- DW_JOB_PRIVATE \t\t- DW_JOB_STRIPED_CACHE
