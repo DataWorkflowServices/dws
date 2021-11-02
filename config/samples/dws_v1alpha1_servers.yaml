@@ -2,19 +2,20 @@ apiVersion: dws.cray.hpe.com/v1alpha1
 kind: Servers
 metadata:
   name: servers-sample
-data:
-- allocationSize: 1073741824
-  hosts:
-  - allocationCount: 1
-    name: kind-worker
-  label: mgt
-- allocationSize: 1099511627776
-  hosts:
-  - allocationCount: 1
-    name: kind-worker2
-  label: mdt
-- allocationSize: 10995116277760
-  hosts:
-  - allocationCount: 1
-    name: kind-worker2
-  label: ost
+spec:
+  allocationSets:
+  - allocationSize: 1073741824
+    storage:
+    - allocationCount: 1
+      name: kind-worker
+    label: mgt
+  - allocationSize: 1099511627776
+    storage:
+    - allocationCount: 1
+      name: kind-worker2
+    label: mdt
+  - allocationSize: 10995116277760
+    storage:
+    - allocationCount: 1
+      name: kind-worker2
+    label: ost

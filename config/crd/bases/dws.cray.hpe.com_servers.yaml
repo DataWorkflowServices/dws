@@ -26,45 +26,6 @@ spec:
               of an object. Servers should convert recognized schemas to the latest
               internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
-          data:
-            items:
-              description: ServersData defines the desired state of Servers
-              properties:
-                allocationSize:
-                  description: Allocation size in bytes
-                  format: int64
-                  minimum: 1
-                  type: integer
-                hosts:
-                  description: List of hosts where allocations are created
-                  items:
-                    description: Host specifies info required to identify the host
-                      (name) on which to create storage, and the number of storage
-                      allocations on each Host. ServersData.AllocationSize specifies
-                      the size of each allocation.
-                    properties:
-                      allocationCount:
-                        description: The number of allocations to create of the size
-                          in bytes specified in ServerData
-                        minimum: 1
-                        type: integer
-                      name:
-                        description: The name of the host
-                        type: string
-                    required:
-                    - allocationCount
-                    - name
-                    type: object
-                  type: array
-                label:
-                  description: Label as specified in the DirectiveBreakdown
-                  type: string
-              required:
-              - allocationSize
-              - hosts
-              - label
-              type: object
-            type: array
           kind:
             description: 'Kind is a string value representing the REST resource this
               object represents. Servers may infer this from the endpoint the client
@@ -72,9 +33,95 @@ spec:
             type: string
           metadata:
             type: object
+          spec:
+            description: ServersSpec defines the desired state of Servers
+            properties:
+              allocationSets:
+                items:
+                  description: ServersSpecAllocationSet is a set of allocations that
+                    all share the same allocation size and allocation type (e.g.,
+                    XFS)
+                  properties:
+                    allocationSize:
+                      description: Allocation size in bytes
+                      format: int64
+                      minimum: 1
+                      type: integer
+                    label:
+                      description: Label as specified in the DirectiveBreakdown
+                      type: string
+                    storage:
+                      description: List of storage resources where allocations are
+                        created
+                      items:
+                        description: ServersSpecStorage specifies info required to
+                          identify the storage to use, and the number of allocations
+                          to make on that storage. ServersSpecAllocationSet.AllocationSize
+                          specifies the size of each allocation.
+                        properties:
+                          allocationCount:
+                            description: The number of allocations to create of the
+                              size in bytes specified in ServersSpecAllocationSet
+                            minimum: 1
+                            type: integer
+                          name:
+                            description: The name of the storage
+                            type: string
+                        required:
+                        - allocationCount
+                        - name
+                        type: object
+                      type: array
+                  required:
+                  - allocationSize
+                  - label
+                  - storage
+                  type: object
+                type: array
+            type: object
+          status:
+            properties:
+              allocationSets:
+                items:
+                  description: ServersStatusAllocationSet is the status of a set of
+                    allocations
+                  properties:
+                    label:
+                      description: Label as specified in the DirectiveBreakdown
+                      type: string
+                    storage:
+                      description: List of storage resources that have allocations
+                      items:
+                        description: ServersStatusStorage is the status of the allocations
+                          on a storage
+                        properties:
+                          allocationSize:
+                            description: Allocation size in bytes
+                            format: int64
+                            type: integer
+                          name:
+                            description: The name of the storage
+                            type: string
+                        required:
+                        - allocationSize
+                        - name
+                        type: object
+                      type: array
+                  required:
+                  - label
+                  - storage
+                  type: object
+                type: array
+              ready:
+                type: boolean
+            required:
+            - ready
+            type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""
