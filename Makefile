@@ -101,7 +101,7 @@ docker-push: ## Push docker image with the manager.
 	docker push ${IMG}
 
 kind-push: ## Push docker image to kind
-	kind load docker-image --nodes `kubectl get nodes -o json | jq -rM '.items[].metadata.name' | grep -v kind-control-plane | paste -d, -s -` ${IMG}
+	kind load docker-image --nodes `kubectl get node -l cray.wlm.manager=true --no-headers -o custom-columns=":metadata.name" | paste -d, -s -` ${IMG}
 
 ##@ Deployment
 
