@@ -112,6 +112,9 @@ spec:
                   - storage
                   type: object
                 type: array
+              lastUpdate:
+                format: date-time
+                type: string
               ready:
                 type: boolean
             required:
