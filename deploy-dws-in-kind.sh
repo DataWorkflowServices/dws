@@ -15,7 +15,7 @@ action_deploy="deploy"
 action_rollback="rollback"
 action_reapply_charts="reapply_charts"
 
-docker_image_name_prefix="arti.dev.cray.com/cray/cray-"
+docker_image_name_prefix="arti.dev.cray.com/kj-docker-master-local/cray-"
 
  # Build things in the current branch
  # Older implementations created this directory, 'git cloned' the branch into it,
