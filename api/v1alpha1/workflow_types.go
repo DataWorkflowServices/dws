@@ -28,10 +28,10 @@ const (
 var workflowStrings = [...]string{
 	"proposal",
 	"setup",
-	"pre_run",
 	"data_in",
-	"data_out",
+	"pre_run",
 	"post_run",
+	"data_out",
 	"teardown",
 }
 
