@@ -1,4 +1,4 @@
-module stash.us.cray.com/dpm/dws-operator
+module github.hpe.com/hpe/hpc-dpm-dws-operator
 
 go 1.16
 

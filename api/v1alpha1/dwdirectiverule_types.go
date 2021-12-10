@@ -1,8 +1,8 @@
 package v1alpha1
 
 import (
+	"github.hpe.com/hpe/hpc-dpm-dws-operator/utils/dwdparse"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"stash.us.cray.com/dpm/dws-operator/utils/dwdparse"
 )
 
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
