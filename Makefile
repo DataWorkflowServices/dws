@@ -56,6 +56,9 @@ SHELL = /usr/bin/env bash -o pipefail
 
 all: build
 
+vendor:
+	GOPRIVATE=github.hpe.com go mod vendor
+
 ##@ General
 
 # The help target prints out all targets with their descriptions organized

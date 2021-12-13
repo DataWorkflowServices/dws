@@ -32,8 +32,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	dwsv1alpha1 "stash.us.cray.com/dpm/dws-operator/api/v1alpha1"
-	"stash.us.cray.com/dpm/dws-operator/controllers"
+	dwsv1alpha1 "github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1"
+	"github.hpe.com/hpe/hpc-dpm-dws-operator/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
