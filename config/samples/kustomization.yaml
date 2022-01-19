@@ -7,4 +7,5 @@ resources:
 - dws_v1alpha1_servers.yaml
 - dws_v1alpha1_computes.yaml
 - dws_v1alpha1_storage.yaml
+- dws_v1alpha1_clientmount.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
