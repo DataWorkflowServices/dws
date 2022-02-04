@@ -220,12 +220,12 @@ spec:
                 description: Duration of the last state change
                 type: string
               env:
+                additionalProperties:
+                  type: string
                 description: "Set of DW environment variable settings for WLM to apply
                   to the job. \t\t- DW_JOB_STRIPED \t\t- DW_JOB_PRIVATE \t\t- DW_JOB_STRIPED_CACHE
                   \t\t- DW_JOB_LDBAL_CACHE \t\t- DW_PERSISTENT_STRIPED_{resname}"
-                items:
-                  type: string
-                type: array
+                type: object
               message:
                 type: string
               ready:

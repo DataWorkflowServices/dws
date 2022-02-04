@@ -1,0 +1,20 @@
+# permissions for end users to view clientmounts.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clientmount-viewer-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - clientmounts
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - clientmounts/status
+  verbs:
+  - get

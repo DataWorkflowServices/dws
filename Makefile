@@ -95,6 +95,8 @@ vet: ## Run go vet against code.
 	go vet ./...
 
 ##@ Build
+build-daemon: manifests generate fmt vet ## Build standalone clientMount daemon
+	go build -o bin/clientmountd mount-daemon/main.go
 
 build: manifests generate fmt vet ## Build manager binary.
 	go build -o bin/manager main.go
