@@ -14,3 +14,7 @@ images:
 - name: controller
   newName: arti.dev.cray.com/kj-docker-master-local/cray-dws-operator
   newTag: 0.0.1
+
+patchesStrategicMerge:
+#- manager_imagepullsecret_patch.yaml
+
