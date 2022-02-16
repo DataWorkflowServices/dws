@@ -40,8 +40,8 @@ var _ = Describe("Workflow Webhook", func() {
 	})
 
 	It("should have workflow environmental variables set successfully", func() {
-		Expect(workflow.Status.Env).To(HaveKeyWithValue("WORKFLOW_NAME", workflow.Name))
-		Expect(workflow.Status.Env).To(HaveKeyWithValue("WORKFLOW_NAMESPACE", workflow.Namespace))
+		Expect(workflow.Status.Env).To(HaveKeyWithValue("DW_WORKFLOW_NAME", workflow.Name))
+		Expect(workflow.Status.Env).To(HaveKeyWithValue("DW_WORKFLOW_NAMESPACE", workflow.Namespace))
 	})
 
 })

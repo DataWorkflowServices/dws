@@ -246,7 +246,6 @@ spec:
                   Updated by the controller once started.
                 type: string
             required:
-            - env
             - ready
             - state
             type: object

@@ -49,8 +49,8 @@ func (w *Workflow) Default() {
 		w.Status.Env = make(map[string]string)
 	}
 
-	w.Status.Env["WORKFLOW_NAME"] = w.Name
-	w.Status.Env["WORKFLOW_NAMESPACE"] = w.Namespace
+	w.Status.Env["DW_WORKFLOW_NAME"] = w.Name
+	w.Status.Env["DW_WORKFLOW_NAMESPACE"] = w.Namespace
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
