@@ -46,10 +46,12 @@ spec:
                         status:
                           description: Status of the node
                           enum:
+                          - Starting
                           - Ready
-                          - NotReady
+                          - Disabled
+                          - NotPresent
+                          - Offline
                           - Failed
-                          - Missing
                           type: string
                       type: object
                     type: array
@@ -71,10 +73,12 @@ spec:
                         status:
                           description: Status of the node
                           enum:
+                          - Starting
                           - Ready
-                          - NotReady
+                          - Disabled
+                          - NotPresent
+                          - Offline
                           - Failed
-                          - Missing
                           type: string
                       type: object
                     type: array
@@ -105,10 +109,12 @@ spec:
                     status:
                       description: Status of the individual device
                       enum:
+                      - Starting
                       - Ready
-                      - NotReady
+                      - Disabled
+                      - NotPresent
+                      - Offline
                       - Failed
-                      - Missing
                       type: string
                     wearLevel:
                       description: WearLevel in percent for SSDs
@@ -119,10 +125,12 @@ spec:
               status:
                 description: Status is the overall status of the storage
                 enum:
+                - Starting
                 - Ready
-                - NotReady
+                - Disabled
+                - NotPresent
+                - Offline
                 - Failed
-                - Missing
                 type: string
               type:
                 description: Type describes what type of storage this is
