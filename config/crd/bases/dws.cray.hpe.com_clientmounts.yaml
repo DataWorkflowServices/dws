@@ -47,6 +47,10 @@ spec:
                 items:
                   description: ClientMountInfo defines a single mount
                   properties:
+                    compute:
+                      description: Compute is the name of the compute node which shares
+                        this mount if present. Empty if not shared.
+                      type: string
                     device:
                       description: Description of the device to mount
                       properties:

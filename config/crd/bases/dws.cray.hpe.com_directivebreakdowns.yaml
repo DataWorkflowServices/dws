@@ -105,11 +105,12 @@ spec:
                             Storage resources to pick in relation to Storage resources
                             for other allocation sets.
                           items:
-                            description: A colocation constraint specifies how the
-                              location(s) of an allocation set should be selected
-                              with relation to other allocation sets. Locations for
-                              allocation sets with the same colocation key should
-                              be picked according to the colocation type.
+                            description: AllocationSetColocationConstraint specifies
+                              how to colocate storage resources. A colocation constraint
+                              specifies how the location(s) of an allocation set should
+                              be selected with relation to other allocation sets.
+                              Locations for allocation sets with the same colocation
+                              key should be picked according to the colocation type.
                             properties:
                               key:
                                 description: Key shared by all the allocation sets
