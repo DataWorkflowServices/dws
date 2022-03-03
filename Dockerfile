@@ -10,6 +10,7 @@ COPY go.sum go.sum
 COPY main.go main.go
 COPY api/ api/
 COPY controllers/ controllers/
+COPY mount-daemon/ mount-daemon/
 COPY utils/ utils/
 COPY vendor/ vendor/
 
