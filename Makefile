@@ -46,6 +46,20 @@ IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true,preserveUnknownFields=false"
 
+# Tell Kustomize to deploy the default config, or an overlay.
+# To use the 'craystack' overlay:
+#   export KUBECONFIG=/my/craystack/kubeconfig.file
+#   make deploy OVERLAY=craystack
+#
+# To use the 'dp0' overlay:
+#   export KUBECONFIG=/my/dp0/kubeconfig.file
+#   make deploy OVERLAY=dp0
+#
+# To use the 'kind' overlay:
+#   export KUBECONFIG=/my/kind/kubeconfig.file
+#   make deploy OVERLAY=kind
+OVERLAY ?= kind
+
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.22
 
@@ -129,10 +143,10 @@ uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified 
 
 deploy: kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
-	$(KUSTOMIZE) build config/default | kubectl apply -f -
+	$(KUSTOMIZE) build config/${OVERLAY} | kubectl apply -f -
 
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
-	$(KUSTOMIZE) build config/default | kubectl delete -f -
+	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete -f -
 
 
 CONTROLLER_GEN = $(shell pwd)/bin/controller-gen
