@@ -6,11 +6,15 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
+	"github.com/takama/daemon"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	kruntime "k8s.io/apimachinery/pkg/runtime"
@@ -24,19 +28,58 @@ import (
 	//+kubebuilder:scaffold:imports
 )
 
+const (
+	name        = "clientmount"
+	description = "Data Workflow Service (DWS) Client Mount Service"
+)
+
 var (
 	scheme   = kruntime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
 )
 
+type Service struct {
+	daemon.Daemon
+}
+
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
 	utilruntime.Must(dwsv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
-func main() {
+func (service *Service) Manage() (string, error) {
+
+	if len(os.Args) > 1 {
+		command := os.Args[1]
+		switch command {
+		case "install":
+			return service.Install(os.Args[2:]...)
+		case "remove":
+			return service.Remove()
+		case "start":
+			return service.Start()
+		case "stop":
+			return service.Stop()
+		case "status":
+			return service.Status()
+		}
+	}
+
+	// Set up channel on which to send signal notifications; must use a buffered
+	// channel or risk missing the signal if we're not setup to receive the signal
+	// when it is sent.
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
+
+	go startManager()
+
+	killSignal := <-interrupt
+	setupLog.Info("Daemon was killed", "signal", killSignal)
+	return "Exited", nil
+}
+
+func startManager() {
 	var namespace string
 	var mock bool
 	flag.StringVar(&namespace, "namespace", "default", "Namespace to monitor")
@@ -78,4 +121,29 @@ func main() {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
+}
+
+func main() {
+	kindFn := func() daemon.Kind {
+		if runtime.GOOS == "darwin" {
+			return daemon.UserAgent
+		}
+		return daemon.SystemDaemon
+	}
+
+	d, err := daemon.New(name, description, kindFn())
+	if err != nil {
+		setupLog.Error(err, "Could not create daemon")
+		os.Exit(1)
+	}
+
+	service := &Service{d}
+
+	status, err := service.Manage()
+	if err != nil {
+		setupLog.Error(err, status)
+		os.Exit(1)
+	}
+
+	fmt.Println(status)
 }
