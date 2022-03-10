@@ -10,6 +10,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.13.0
+	github.com/takama/daemon v1.0.0
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/zap v1.18.1 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
