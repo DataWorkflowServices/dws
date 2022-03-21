@@ -31,10 +31,10 @@ var dWDRules = []DWDirectiveRuleSpec{
 				IsValueRequired: true,
 			},
 			{
-				Key:             "modifiers",
-				Type:            "string",
+				Key:             "combined_mgtmdt",
+				Type:            "bool",
 				IsRequired:      false,
-				IsValueRequired: true,
+				IsValueRequired: false,
 			},
 			{
 				Key:             "external_mgs",
@@ -68,6 +68,12 @@ var dWDRules = []DWDirectiveRuleSpec{
 				Pattern:         "^([A-Za-z0-9_-]+)$",
 				IsRequired:      true,
 				IsValueRequired: true,
+			},
+			{
+				Key:             "combined_mgtmdt",
+				Type:            "bool",
+				IsRequired:      false,
+				IsValueRequired: false,
 			},
 			{
 				Key:             "external_mgs",
@@ -223,8 +229,11 @@ var dwDirectiveTests = []struct {
 	{"#DW jobdw type=raw    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=xfs    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=lustre capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
+	{"#DW jobdw type=lustre capacity=100GB combined_mgtmdt name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
+	{"#DW jobdw type=lustre capacity=100GB combined_mgtmdt=true name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 
 	{"#DW jobdw type=lustre external_mgs=rabbit-01@tcp capacity=100GB name=Extern1", allow, validDWOrAllowUnknownCommand},
+	{"#DW jobdw type=lustre external_mgs=rabbit-01@tcp combined_mgtmdt capacity=100GB name=Extern1", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=lustre external_mgs=rabbit-01@tcp0 capacity=100GB name=Extern1", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=lustre external_mgs=10.0.0.1@o2ib capacity=100GB name=Extern2", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=lustre external_mgs=rabbit-01@0tcp capacity=100GB name=Extern3", deny, invalidDW},
@@ -252,8 +261,11 @@ var dwDirectiveTests = []struct {
 	{"#DW create_persistent type=raw    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=xfs    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
+	{"#DW create_persistent type=lustre capacity=100GB combined_mgtmdt name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
+	{"#DW create_persistent type=lustre capacity=100GB combined_mgtmdt=true name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 
 	{"#DW create_persistent type=lustre external_mgs=rabbit-01@tcp capacity=100GB name=Extern1", allow, validDWOrAllowUnknownCommand},
+	{"#DW create_persistent type=lustre external_mgs=rabbit-01@tcp combined_mgtmdt capacity=100GB name=Extern1", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre external_mgs=rabbit-01@tcp0 capacity=100GB name=Extern1", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre external_mgs=10.0.0.1@o2ib capacity=100GB name=Extern2", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre external_mgs=rabbit-01@0tcp capacity=100GB name=Extern3", deny, invalidDW},
