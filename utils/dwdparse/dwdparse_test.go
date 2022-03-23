@@ -12,7 +12,7 @@ var dWDRules = []DWDirectiveRuleSpec{
 			{
 				Key:             "type",
 				Type:            "string",
-				Pattern:         "^(raw|xfs|lustre)$",
+				Pattern:         "^(raw|xfs|gfs2|lustre)$",
 				IsRequired:      true,
 				IsValueRequired: true,
 			},
@@ -51,7 +51,7 @@ var dWDRules = []DWDirectiveRuleSpec{
 			{
 				Key:             "type",
 				Type:            "string",
-				Pattern:         "^(raw|xfs|lustre)$",
+				Pattern:         "^(raw|xfs|gfs2|lustre)$",
 				IsRequired:      true,
 				IsValueRequired: true,
 			},
@@ -211,6 +211,7 @@ var dwDirectiveTests = []struct {
 }{
 	{"#DW jobdw type=raw    capacity=100GB name=prettyGoodName  ", deny, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=xfs    capacity=100GB name=pretty_GoodName ", deny, validDWOrAllowUnknownCommand},
+	{"#DW jobdw type=gfs2   capacity=100GB name=pretty_GoodName ", deny, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=lustre capacity=100GB name=prettyGood-Name ", deny, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=raw    capacity=100TB name=__prettyGoodName", deny, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=xfs    capacity=100TB name=-prettyGoodName-", deny, validDWOrAllowUnknownCommand},
@@ -244,6 +245,7 @@ var dwDirectiveTests = []struct {
 
 	{"#DW create_persistent type=raw    capacity=100GB name=prettyGoodName  ", deny, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=xfs    capacity=100GB name=prettyGoodName  ", deny, validDWOrAllowUnknownCommand},
+	{"#DW create_persistent type=gfs2   capacity=100GB name=prettyGoodName  ", deny, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre capacity=100GB name=prettyGoodName  ", deny, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=raw    capacity=100TB name=prettyGoodName  ", deny, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=xfs    capacity=100TB name=prettyGoodName  ", deny, validDWOrAllowUnknownCommand},
@@ -254,6 +256,7 @@ var dwDirectiveTests = []struct {
 
 	{"#DW create_persistent type=raw    capacity=100GB name=prettyGoodName  ", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=xfs    capacity=100GB name=prettyGoodName  ", allow, validDWOrAllowUnknownCommand},
+	{"#DW create_persistent type=gfs2   capacity=100GB name=prettyGoodName  ", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre capacity=100GB name=prettyGoodName  ", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=raw    capacity=100TB name=prettyGoodName  ", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=xfs    capacity=100TB name=prettyGoodName  ", allow, validDWOrAllowUnknownCommand},
