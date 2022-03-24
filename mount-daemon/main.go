@@ -7,6 +7,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"net"
 	"os"
 	"os/signal"
 	"runtime"
@@ -16,10 +18,12 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	"github.com/takama/daemon"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
+	"k8s.io/client-go/rest"
 
 	kruntime "k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	certutil "k8s.io/client-go/util/cert"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
@@ -66,38 +70,129 @@ func (service *Service) Manage() (string, error) {
 		}
 	}
 
+	opts := getOptions()
+
+	config, err := createManager(opts)
+	if err != nil {
+		return "Create", err
+	}
+
 	// Set up channel on which to send signal notifications; must use a buffered
 	// channel or risk missing the signal if we're not setup to receive the signal
 	// when it is sent.
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
 
-	go startManager()
+	go startManager(config)
 
 	killSignal := <-interrupt
 	setupLog.Info("Daemon was killed", "signal", killSignal)
 	return "Exited", nil
 }
 
-func startManager() {
-	var namespace string
-	var mock bool
-	flag.StringVar(&namespace, "namespace", "default", "Namespace to monitor")
-	flag.BoolVar(&mock, "mock", false, "Don't run commands on the host OS")
-	opts := zap.Options{
+type managerConfig struct {
+	config    *rest.Config
+	namespace string
+	mock      bool
+}
+
+type options struct {
+	host      string
+	port      string
+	name      string
+	nodeName  string
+	tokenFile string
+	certFile  string
+	mock      bool
+}
+
+func getOptions() *options {
+	opts := options{
+		host:      os.Getenv("KUBERNETES_SERVICE_HOST"),
+		port:      os.Getenv("KUBERNETES_SERVICE_PORT"),
+		name:      os.Getenv("NODE_NAME"),
+		tokenFile: os.Getenv("DWS_CLIENT_MOUNT_SERVICE_TOKEN_FILE"),
+		certFile:  os.Getenv("DWS_CLIENT_MOUNT_SERVICE_CERT_FILE"),
+		mock:      false,
+	}
+
+	flag.StringVar(&opts.host, "kubernetes-service-host", opts.host, "Kubernetes service host address")
+	flag.StringVar(&opts.port, "kubernetes-service-port", opts.port, "Kubernetes service port number")
+	flag.StringVar(&opts.name, "node-name", opts.name, "Name of this compute resource")
+	flag.StringVar(&opts.tokenFile, "dws-client-mount-service-token-file", opts.tokenFile, "Path to the DWS client mount service token")
+	flag.StringVar(&opts.certFile, "dws-client-mount-service-cert-file", opts.certFile, "Path to the DWS client mount service certificate")
+	flag.BoolVar(&opts.mock, "mock", opts.mock, "Run in mock mode where no client mount operations take place")
+
+	zapOptions := zap.Options{
 		Development: true,
 	}
-	opts.BindFlags(flag.CommandLine)
+	zapOptions.BindFlags(flag.CommandLine)
+
 	flag.Parse()
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&zapOptions)))
 
+	return &opts
+}
+
+func createManager(opts *options) (*managerConfig, error) {
+
+	var config *rest.Config
+	var err error
+
+	if len(opts.host) == 0 && len(opts.port) == 0 {
+		setupLog.Info("Using kubeconfig rest configuration")
+
+		config, err = ctrl.GetConfig()
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+		setupLog.Info("Using default reset configuration")
+
+		if len(opts.host) == 0 || len(opts.port) == 0 {
+			return nil, fmt.Errorf("kubernetes service host/port not defined")
+		}
+
+		if len(opts.tokenFile) == 0 {
+			return nil, fmt.Errorf("DWS client mount service token not defined")
+		}
+
+		token, err := ioutil.ReadFile(opts.tokenFile)
+		if err != nil {
+			return nil, fmt.Errorf("DWS client mount service token failed to read")
+		}
+
+		if len(opts.certFile) == 0 {
+			return nil, fmt.Errorf("DWS client mount service certificate file not defined")
+		}
+
+		if _, err := certutil.NewPool(opts.certFile); err != nil {
+			return nil, fmt.Errorf("DWS client mount service certificate invalid")
+		}
+
+		tlsClientConfig := rest.TLSClientConfig{}
+		tlsClientConfig.CAFile = opts.certFile
+
+		config = &rest.Config{
+			Host:            "https://" + net.JoinHostPort(opts.host, opts.port),
+			TLSClientConfig: tlsClientConfig,
+			BearerToken:     string(token),
+			BearerTokenFile: opts.tokenFile,
+		}
+	}
+
+	return &managerConfig{config: config, namespace: opts.name, mock: opts.mock}, nil
+}
+
+func startManager(config *managerConfig) {
 	setupLog.Info("GOMAXPROCS", "value", runtime.GOMAXPROCS(0))
 
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+	mgr, err := ctrl.NewManager(config.config, ctrl.Options{
 		Scheme:         scheme,
 		LeaderElection: false,
-		Namespace:      namespace,
+		Namespace:      config.namespace,
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -107,7 +202,7 @@ func startManager() {
 	if err = (&controllers.ClientMountReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("ClientMount"),
-		Mock:   mock,
+		Mock:   config.mock,
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ClientMount")
