@@ -6,7 +6,9 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"os/exec"
+	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -106,12 +108,12 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
-	if clientMount.Spec.DesiredState == "mounted" {
+	if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateMounted {
 		err := r.mountAll(ctx, clientMount)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
-	} else if clientMount.Spec.DesiredState == "unmounted" {
+	} else if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateUnmounted {
 		err := r.unmountAll(ctx, clientMount)
 		if err != nil {
 			return ctrl.Result{}, err
@@ -144,12 +146,12 @@ func (r *ClientMountReconciler) unmountAll(ctx context.Context, clientMount *dws
 
 // unmount unmounts a single mount point described in the ClientMountInfo object
 func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dwsv1alpha1.ClientMountInfo, log logr.Logger) error {
-	mounted, err := r.checkMount(clientMountInfo.MountPath)
+	state, err := r.checkMount(clientMountInfo.MountPath)
 	if err != nil {
 		return err
 	}
 
-	if mounted == false {
+	if state == dwsv1alpha1.ClientMountStateUnmounted {
 		return nil
 	}
 
@@ -189,12 +191,12 @@ func (r *ClientMountReconciler) mountAll(ctx context.Context, clientMount *dwsv1
 func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1alpha1.ClientMountInfo, log logr.Logger) error {
 
 	// Check whether the file system is already mounted
-	mounted, err := r.checkMount(clientMountInfo.MountPath)
+	state, err := r.checkMount(clientMountInfo.MountPath)
 	if err != nil {
 		return err
 	}
 
-	if mounted == true {
+	if state == dwsv1alpha1.ClientMountStateMounted {
 		log.Info("Already mounted")
 		return nil
 	}
@@ -227,7 +229,7 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 // getDevice builds the device string for the mount command. This is dependent on the type of file
 func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMountInfo) (string, error) {
 	switch clientMountInfo.Device.Type {
-	case "lustre":
+	case dwsv1alpha1.ClientMountDeviceTypeLustre:
 		var device string = ""
 
 		for _, mgsAddress := range clientMountInfo.Device.Lustre.MgsAddresses {
@@ -237,28 +239,70 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 		device = device + "/" + clientMountInfo.Device.Lustre.FileSystemName
 
 		return device, nil
+	case dwsv1alpha1.ClientMountDeviceTypeLVM:
+		if err := r.verifyLVMDevice(clientMountInfo.Device.LVM); err != nil {
+			return "", err
+		}
+
+		return filepath.Join("/dev", clientMountInfo.Device.LVM.VolumeGroup, clientMountInfo.Device.LVM.LogicalVolume), nil
 	}
 
-	return "", nil
+	return "", fmt.Errorf("Invalid device type")
 }
 
-// checkMount checks whether a file system is mounted at the path specified= in "mountPath"
-func (r *ClientMountReconciler) checkMount(mountPath string) (bool, error) {
+// verifyLVMDevice checks if the VG/LV pair exists, and activates it if necessary.
+func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM) error {
+	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
+	if err != nil {
+		return err
+	}
+
+	// Parse the lvs output. Example with headings:
+	// [root@rabbit-compute-2 mattr]# lvs
+	// LV                          VG                          Attr       LSize
+	//  default-mattr2-0-xfs-0-1_lv default-mattr2-0-xfs-0-1_vg -wi-------  46.59g
+	for _, line := range strings.Split(strings.TrimSuffix(output, "\n"), "\n") {
+		fields := strings.Fields(line)
+		if fields[0] != lvm.LogicalVolume {
+			continue
+		}
+
+		if fields[1] != lvm.VolumeGroup {
+			continue
+		}
+
+		// Check the 5th letter of the attributes map to see if the LV is activated
+		if string(fields[2][4]) != "a" {
+			// Activate the LV if needed
+			_, err = r.run(fmt.Sprintf("vgchange --activate y %s", lvm.VolumeGroup))
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+
+	return fmt.Errorf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)
+}
+
+// checkMount checks whether a file system is mounted at the path specified in "mountPath"
+func (r *ClientMountReconciler) checkMount(mountPath string) (dwsv1alpha1.ClientMountState, error) {
 	output, err := r.run("mount")
 	if err != nil {
-		return false, err
+		return dwsv1alpha1.ClientMountStateUnmounted, err
 	}
 
 	for _, line := range strings.Split(output, "\n") {
 		fields := strings.Fields(line)
 		if len(fields) >= 3 {
 			if fields[2] == mountPath {
-				return true, nil
+				return dwsv1alpha1.ClientMountStateMounted, nil
 			}
 		}
 	}
 
-	return false, nil
+	return dwsv1alpha1.ClientMountStateUnmounted, nil
 }
 
 // run runs a command on the host OS and returns the output as a string.
