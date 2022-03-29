@@ -240,7 +240,7 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 
 		return device, nil
 	case dwsv1alpha1.ClientMountDeviceTypeLVM:
-		if err := r.verifyLVMDevice(clientMountInfo.Device.LVM); err != nil {
+		if err := r.verifyLVMDevice(clientMountInfo.Device.LVM, clientMountInfo.Type == "gfs2"); err != nil {
 			return "", err
 		}
 
@@ -251,7 +251,7 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 }
 
 // verifyLVMDevice checks if the VG/LV pair exists, and activates it if necessary.
-func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM) error {
+func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM, shared bool) error {
 	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
 	if err != nil {
 		return err
@@ -273,8 +273,19 @@ func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDevi
 
 		// Check the 5th letter of the attributes map to see if the LV is activated
 		if string(fields[2][4]) != "a" {
+
+			sharedOption := ""
+			// Start lock if needed
+			if shared {
+				if _, err := r.run(fmt.Sprintf("vgchange --lock-start %s", lvm.VolumeGroup)); err != nil {
+					return err
+				}
+
+				sharedOption = "s" // activate with shared option
+			}
+
 			// Activate the LV if needed
-			_, err = r.run(fmt.Sprintf("vgchange --activate y %s", lvm.VolumeGroup))
+			_, err = r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
 			if err != nil {
 				return err
 			}
