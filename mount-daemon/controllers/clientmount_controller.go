@@ -263,6 +263,10 @@ func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDevi
 	//  default-mattr2-0-xfs-0-1_lv default-mattr2-0-xfs-0-1_vg -wi-------  46.59g
 	for _, line := range strings.Split(strings.TrimSuffix(output, "\n"), "\n") {
 		fields := strings.Fields(line)
+		if len(fields) < 3 {
+			continue
+		}
+
 		if fields[0] != lvm.LogicalVolume {
 			continue
 		}
@@ -291,6 +295,10 @@ func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDevi
 			}
 		}
 
+		return nil
+	}
+
+	if r.Mock {
 		return nil
 	}
 
