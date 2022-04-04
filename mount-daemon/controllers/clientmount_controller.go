@@ -257,6 +257,10 @@ func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDevi
 		return err
 	}
 
+	if r.Mock {
+		return nil
+	}
+
 	// Parse the lvs output. Example with headings:
 	// [root@rabbit-compute-2 mattr]# lvs
 	// LV                          VG                          Attr       LSize
