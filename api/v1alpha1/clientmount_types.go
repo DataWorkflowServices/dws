@@ -66,7 +66,7 @@ type ClientMountDeviceReference struct {
 	Data int `json:"data,omitempty"`
 }
 
-// ClientMountDeviceType specifies the go type for device type for DeviceType
+// ClientMountDeviceType specifies the go type for device type
 type ClientMountDeviceType string
 
 const (
@@ -116,9 +116,7 @@ type ClientMountInfo struct {
 type ClientMountState string
 
 const (
-	// ClientMountStateMounted specifies the mounted state for a client mount
-	ClientMountStateMounted ClientMountState = "mounted"
-	// ClientMountStateUnmounted specifies the unmounted state for a client mount
+	ClientMountStateMounted   ClientMountState = "mounted"
 	ClientMountStateUnmounted ClientMountState = "unmounted"
 )
 

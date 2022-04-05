@@ -38,16 +38,24 @@ spec:
             description: PersistentStorageInstanceSpec defines the desired state of
               PersistentStorageInstance
             properties:
+              dwDirective:
+                description: 'DWDirective is a copy of the #DW for this instance'
+                type: string
               fsType:
                 description: FsType describes the File System Type for this storage
                   instance.
+                enum:
+                - raw
+                - xfs
+                - gfs2
+                - lustre
                 type: string
               name:
                 description: Name is the name given to this persistent storage instance.
                 type: string
               servers:
-                description: Servers refers to the Servers that provide the backing
-                  storage for this storage instance
+                description: Servers refers to the Servers resource that provides
+                  the backing storage for this storage instance
                 properties:
                   apiVersion:
                     description: API version of the referent.
@@ -82,6 +90,10 @@ spec:
                     description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                     type: string
                 type: object
+            required:
+            - dwDirective
+            - fsType
+            - name
             type: object
           status:
             description: PersistentStorageInstanceStatus defines the observed state

@@ -164,7 +164,7 @@ spec:
                           type: object
                         type:
                           description: ClientMountDeviceType specifies the go type
-                            for device type for DeviceType
+                            for device type
                           enum:
                           - lustre
                           - lvm

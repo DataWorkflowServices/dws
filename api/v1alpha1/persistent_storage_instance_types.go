@@ -12,12 +12,16 @@ import (
 // PersistentStorageInstanceSpec defines the desired state of PersistentStorageInstance
 type PersistentStorageInstanceSpec struct {
 	// Name is the name given to this persistent storage instance.
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// FsType describes the File System Type for this storage instance.
-	FsType string `json:"fsType,omitempty"`
+	// +kubebuilder:validation:Enum=raw;xfs;gfs2;lustre
+	FsType string `json:"fsType"`
 
-	// Servers refers to the Servers that provide the backing storage for this storage instance
+	// DWDirective is a copy of the #DW for this instance
+	DWDirective string `json:"dwDirective"`
+
+	// Servers refers to the Servers resource that provides the backing storage for this storage instance
 	Servers corev1.ObjectReference `json:"servers,omitempty"`
 }
 
