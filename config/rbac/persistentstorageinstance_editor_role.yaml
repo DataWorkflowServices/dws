@@ -1,0 +1,24 @@
+# permissions for end users to edit persistentstorageinstances.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: persistentstorageinstance-editor-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - persistentstorageinstances
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - persistentstorageinstances/status
+  verbs:
+  - get
