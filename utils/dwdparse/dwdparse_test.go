@@ -31,6 +31,13 @@ var dWDRules = []DWDirectiveRuleSpec{
 				IsValueRequired: true,
 			},
 			{
+				Key:             "profile",
+				Type:            "string",
+				Pattern:         "^[A-Za-z][A-Za-z0-9_-]+$",
+				IsRequired:      false,
+				IsValueRequired: true,
+			},
+			{
 				Key:             "combined_mgtmdt",
 				Type:            "bool",
 				IsRequired:      false,
@@ -67,6 +74,13 @@ var dWDRules = []DWDirectiveRuleSpec{
 				Type:            "string",
 				Pattern:         "^([A-Za-z0-9_-]+)$",
 				IsRequired:      true,
+				IsValueRequired: true,
+			},
+			{
+				Key:             "profile",
+				Type:            "string",
+				Pattern:         "^[A-Za-z][A-Za-z0-9_-]+$",
+				IsRequired:      false,
 				IsValueRequired: true,
 			},
 			{
@@ -230,6 +244,14 @@ var dwDirectiveTests = []struct {
 	{"#DW jobdw type=raw    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=xfs    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=lustre capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
+
+	{"#DW jobdw type=lustre capacity=100GB name=CoolProfile1 profile=this-TYPE_profile08", allow, validDWOrAllowUnknownCommand},
+	{"#DW jobdw type=lustre capacity=100GB name=CoolProfile2 profile=this_TYPE_profile08", allow, validDWOrAllowUnknownCommand},
+	{"#DW jobdw type=lustre capacity=100GB name=UncoolProfile1 profile=0this", deny, invalidDW},
+	{"#DW jobdw type=lustre capacity=100GB name=UncoolProfile2 profile=this!", deny, invalidDW},
+	{"#DW jobdw type=lustre capacity=100GB name=UncoolProfile3 profile=_this", deny, invalidDW},
+	{"#DW jobdw type=lustre capacity=100GB name=UncoolProfile4 profile=-this", deny, invalidDW},
+
 	{"#DW jobdw type=lustre capacity=100GB combined_mgtmdt name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW jobdw type=lustre capacity=100GB combined_mgtmdt=true name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 
@@ -264,6 +286,14 @@ var dwDirectiveTests = []struct {
 	{"#DW create_persistent type=raw    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=xfs    capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre capacity=100GB name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
+
+	{"#DW create_persistent type=lustre capacity=100GB name=CoolProfile1 profile=this-TYPE_profile08", allow, validDWOrAllowUnknownCommand},
+	{"#DW create_persistent type=lustre capacity=100GB name=CoolProfile2 profile=this_TYPE_profile08", allow, validDWOrAllowUnknownCommand},
+	{"#DW create_persistent type=lustre capacity=100GB name=UncoolProfile1 profile=0this", deny, invalidDW},
+	{"#DW create_persistent type=lustre capacity=100GB name=UncoolProfile2 profile=this!", deny, invalidDW},
+	{"#DW create_persistent type=lustre capacity=100GB name=UncoolProfile3 profile=_this", deny, invalidDW},
+	{"#DW create_persistent type=lustre capacity=100GB name=UncoolProfile4 profile=-this", deny, invalidDW},
+
 	{"#DW create_persistent type=lustre capacity=100GB combined_mgtmdt name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 	{"#DW create_persistent type=lustre capacity=100GB combined_mgtmdt=true name=prettierGoodName", allow, validDWOrAllowUnknownCommand},
 
