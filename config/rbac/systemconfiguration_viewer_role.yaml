@@ -1,0 +1,20 @@
+# permissions for end users to view systemconfigurations.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: systemconfiguration-viewer-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - systemconfigurations
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - systemconfigurations/status
+  verbs:
+  - get

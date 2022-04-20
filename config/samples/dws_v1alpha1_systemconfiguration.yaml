@@ -1,0 +1,11 @@
+apiVersion: dws.cray.hpe.com/v1alpha1
+kind: SystemConfiguration
+metadata:
+  name: default
+spec:
+  storageNodes:
+  - type: rabbit
+    name: kind-worker
+    computeAccess:
+    - name: compute0
+      index: 2

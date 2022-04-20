@@ -9,4 +9,5 @@ resources:
 - dws_v1alpha1_storage.yaml
 - dws_v1alpha1_clientmount.yaml
 - dws_v1alpha1_persistentstorageinstance.yaml
+- dws_v1alpha1_systemconfiguration.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
