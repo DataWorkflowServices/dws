@@ -1,9 +1,17 @@
-# dws operator
+# dws - Data Workflow Services
+
+Data Workflow Services (DWS) contains the schema for the Data Workflow Services API. HPC batch software integrates with the DWS API on HPE HPC systems and HPC storage systems to provide intelligent data movement and ephemeral storage resources to user workloads.
+
+## Contributing
+
+Before opening an issue or pull request, please read the [Contributing] guide.
+
+[contributing]: CONTRIBUTING.md
 
 ## Build
 
-To build locally (outside of Jenkins), you will need docker and Make packages
-installed.  For all commands, you must be at the top of the source tree.
+To build locally you need docker and Make packages installed.
+For all commands, you must be at the top of the source tree.
 
 To create a deployable image with the dws-operator installed and rebuild:
 
