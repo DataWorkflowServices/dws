@@ -5,7 +5,7 @@ plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
 projectName: dws-operator
-repo: github.hpe.com/hpe/hpc-dpm-dws-operator
+repo: github.com/HewlettPackard/dws
 resources:
 - api:
     crdVersion: v1
@@ -14,7 +14,7 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: Workflow
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
   webhooks:
     defaulting: true
@@ -26,7 +26,7 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: DirectiveBreakdown
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -34,7 +34,7 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: Servers
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -42,7 +42,7 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: Computes
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -50,7 +50,7 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: Storage
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -59,7 +59,7 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: ClientMount
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -67,7 +67,7 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: PersistentStorageInstance
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -75,6 +75,6 @@ resources:
   domain: cray.hpe.com
   group: dws
   kind: SystemConfiguration
-  path: github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1
+  path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
 version: "3"

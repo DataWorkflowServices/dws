@@ -32,7 +32,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	"github.hpe.com/hpe/hpc-dpm-dws-operator/utils/dwdparse"
+	"github.com/HewlettPackard/dws/utils/dwdparse"
 )
 
 //+kubebuilder:rbac:groups=dws.cray.hpe.com,resources=dwdirectiverules,verbs=get;list;watch

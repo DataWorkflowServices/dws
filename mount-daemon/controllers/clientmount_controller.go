@@ -38,7 +38,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	dwsv1alpha1 "github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1"
+	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
 )
 
 // ClientMountReconciler reconciles a ClientMount object

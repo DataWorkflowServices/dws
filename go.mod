@@ -1,4 +1,4 @@
-module github.hpe.com/hpe/hpc-dpm-dws-operator
+module github.com/HewlettPackard/dws
 
 go 1.16
 
