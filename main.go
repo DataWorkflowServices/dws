@@ -32,9 +32,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	dwsv1alpha1 "github.hpe.com/hpe/hpc-dpm-dws-operator/api/v1alpha1"
-	"github.hpe.com/hpe/hpc-dpm-dws-operator/controllers"
-	daemon "github.hpe.com/hpe/hpc-dpm-dws-operator/mount-daemon/controllers"
+	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
+	"github.com/HewlettPackard/dws/controllers"
+	daemon "github.com/HewlettPackard/dws/mount-daemon/controllers"
 	//+kubebuilder:scaffold:imports
 )
 

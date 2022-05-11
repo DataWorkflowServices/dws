@@ -25,7 +25,7 @@
 package v1alpha1
 
 import (
-	"github.hpe.com/hpe/hpc-dpm-dws-operator/utils/dwdparse"
+	"github.com/HewlettPackard/dws/utils/dwdparse"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
