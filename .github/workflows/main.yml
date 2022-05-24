@@ -2,12 +2,14 @@ name: Docker build and push
 
 on:
  push:
-   branches: [ master ]
  pull_request:
    branches: [ master ]
  workflow_dispatch:
 
 env:
+  # IMAGE_NAME: Name of the resulting container
+  IMAGE_TAG_BASE: hewlettpackard/cray-dws-operator
+
   # TEST_TARGET: Name of the testing target in the Dockerfile
   TEST_TARGET: testing
 
@@ -72,15 +74,15 @@ jobs:
         tags: ${{ env.HPE_BUILD_REPO }}:${{ env.TAG }}
 
     - name: Tag the build
-      run: docker tag docker.io/${HPE_BUILD_REPO}:${TAG} ghcr.io/${HPE_DEPLOY_REPO}:${TAG}
+      run: docker tag docker.io/${HPE_BUILD_REPO}:${TAG} ghcr.io/${IMAGE_TAG_BASE}:${TAG}
 
     - name: Tag the build as latest
-      run: docker tag ${HPE_BUILD_REPO}:${TAG} ghcr.io/${HPE_DEPLOY_REPO}:${LATESTTAG}
+      run: docker tag ${HPE_BUILD_REPO}:${TAG} ghcr.io/${IMAGE_TAG_BASE}:${LATESTTAG}
 
     - name: Push the tagged build
       if: ${{ env.DO_PUSH == 'true' }}
-      run: docker push ghcr.io/${HPE_DEPLOY_REPO}:${TAG}
+      run: docker push ghcr.io/${IMAGE_TAG_BASE}:${TAG}
 
     - name: Push the build tagged as latest
       if: ${{ env.DO_PUSH == 'true' }}
-      run: docker push ghcr.io/${HPE_DEPLOY_REPO}:${LATESTTAG}
+      run: docker push ghcr.io/${IMAGE_TAG_BASE}:${LATESTTAG}
