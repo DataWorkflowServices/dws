@@ -16,5 +16,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
 - name: controller
-  newName: arti.dev.cray.com/kj-docker-master-local/cray-dws-operator
-  newTag: 0.0.1
+  newName: ghcr.io/hewlettpackard/dws
+  newTag: c781b2ec850b09e06a6974e58e1f9a69b05d1760
