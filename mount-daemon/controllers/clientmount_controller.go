@@ -181,11 +181,11 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 
 	if clientMountInfo.Device.Type == dwsv1alpha1.ClientMountDeviceTypeLVM {
 
-		if clientMountInfo.Type == "gfs2" {
-			if _, err := r.run(fmt.Sprintf("vgchange --activate n %s", clientMountInfo.Device.LVM.VolumeGroup)); err != nil {
-				return err
-			}
+		if _, err := r.run(fmt.Sprintf("vgchange --activate n %s", clientMountInfo.Device.LVM.VolumeGroup)); err != nil {
+			return err
+		}
 
+		if clientMountInfo.Type == "gfs2" {
 			if _, err := r.run(fmt.Sprintf("vgchange --lockstop %s", clientMountInfo.Device.LVM.VolumeGroup)); err != nil {
 				return err
 			}
