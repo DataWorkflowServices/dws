@@ -264,7 +264,7 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 
 	output, err := r.run(mountCmd)
 	if err != nil {
-		log.Info("Could not unmount file system", "mount path", clientMountInfo.MountPath, "device", device, "Error output", output)
+		log.Info("Could not mount file system", "mount path", clientMountInfo.MountPath, "device", device, "Error output", output)
 		return err
 	}
 
