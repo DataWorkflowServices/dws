@@ -126,7 +126,7 @@ type ComputeBreakdown struct {
 	Constraints ComputeConstraints `json:"constraints,omitempty"`
 }
 
-// DirectiveBreakdownSpec defines the storage information WLM needs to select NNF Nodes and request storage from the selected nodes
+// DirectiveBreakdownSpec defines the directive string to breakdown
 type DirectiveBreakdownSpec struct {
 	// Directive is a copy of the #DW for this breakdown
 	Directive string `json:"directive"`
