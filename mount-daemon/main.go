@@ -164,7 +164,7 @@ func createManager(opts *options) (*managerConfig, error) {
 		}
 
 	} else {
-		setupLog.Info("Using default reset configuration")
+		setupLog.Info("Using default rest configuration")
 
 		if len(opts.host) == 0 || len(opts.port) == 0 {
 			return nil, fmt.Errorf("kubernetes service host/port not defined")
@@ -241,7 +241,7 @@ func main() {
 		return daemon.SystemDaemon
 	}
 
-	d, err := daemon.New(name, description, kindFn())
+	d, err := daemon.New(name, description, kindFn(), "network-online.target")
 	if err != nil {
 		setupLog.Error(err, "Could not create daemon")
 		os.Exit(1)
