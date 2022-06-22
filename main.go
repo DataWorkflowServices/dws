@@ -34,7 +34,6 @@ import (
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
 	"github.com/HewlettPackard/dws/controllers"
-	daemon "github.com/HewlettPackard/dws/mount-daemon/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -92,10 +91,9 @@ func main() {
 	}
 
 	if os.Getenv("ENVIRONMENT") == "kind" {
-		if err = (&daemon.ClientMountReconciler{
+		if err = (&controllers.ClientMountReconciler{
 			Client: mgr.GetClient(),
 			Log:    ctrl.Log.WithName("controllers").WithName("ClientMount"),
-			Mock:   true,
 			Scheme: mgr.GetScheme(),
 		}).SetupWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create controller", "controller", "Workflow")
