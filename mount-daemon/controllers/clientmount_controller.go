@@ -180,6 +180,7 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 	if clientMountInfo.Device.Type == dwsv1alpha1.ClientMountDeviceTypeLVM {
 		if err := r.configureLVMDevice(clientMountInfo.Device.LVM, false, clientMountInfo.Type == "gfs2"); err != nil {
 			log.Error(err, "Could not deactivate LVM volume", "mount path", clientMountInfo.MountPath)
+			return err
 		}
 	}
 
@@ -351,6 +352,9 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 
 		return nil
 	}
+
+	log := r.Log.WithValues("VG", lvm.VolumeGroup, "LV", lvm.LogicalVolume, "Output", output)
+	log.Info("VG/LV pair not found")
 
 	return fmt.Errorf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)
 }
