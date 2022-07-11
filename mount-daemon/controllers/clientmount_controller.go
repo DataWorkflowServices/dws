@@ -168,27 +168,18 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 		return err
 	}
 
-	if state == dwsv1alpha1.ClientMountStateUnmounted {
-		return nil
-	}
+	if state == dwsv1alpha1.ClientMountStateMounted {
 
-	output, err := r.run("umount " + clientMountInfo.MountPath)
-
-	if err != nil {
-		log.Info("Could not unmount file system", "mount path", clientMountInfo.MountPath, "Error output", output)
-		return err
+		output, err := r.run("umount " + clientMountInfo.MountPath)
+		if err != nil {
+			log.Info("Could not unmount file system", "mount path", clientMountInfo.MountPath, "Error output", output)
+			return err
+		}
 	}
 
 	if clientMountInfo.Device.Type == dwsv1alpha1.ClientMountDeviceTypeLVM {
-
-		if _, err := r.run(fmt.Sprintf("vgchange --activate n %s", clientMountInfo.Device.LVM.VolumeGroup)); err != nil {
-			return err
-		}
-
-		if clientMountInfo.Type == "gfs2" {
-			if _, err := r.run(fmt.Sprintf("vgchange --lockstop %s", clientMountInfo.Device.LVM.VolumeGroup)); err != nil {
-				return err
-			}
+		if err := r.configureLVMDevice(clientMountInfo.Device.LVM, false, clientMountInfo.Type == "gfs2"); err != nil {
+			log.Error(err, "Could not deactivate LVM volume", "mount path", clientMountInfo.MountPath)
 		}
 	}
 
@@ -287,7 +278,7 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 
 		return device, nil
 	case dwsv1alpha1.ClientMountDeviceTypeLVM:
-		if err := r.verifyLVMDevice(clientMountInfo.Device.LVM, clientMountInfo.Type == "gfs2"); err != nil {
+		if err := r.configureLVMDevice(clientMountInfo.Device.LVM, true, clientMountInfo.Type == "gfs2"); err != nil {
 			return "", err
 		}
 
@@ -297,8 +288,8 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 	return "", fmt.Errorf("Invalid device type")
 }
 
-// verifyLVMDevice checks if the VG/LV pair exists, and activates it if necessary.
-func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM, shared bool) error {
+// configureLVMDevice will configure the provided LVM device with the desired activate/deactivate option
+func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM, activate bool, shared bool) error {
 	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
 	if err != nil {
 		return err
@@ -327,7 +318,8 @@ func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDevi
 		}
 
 		// Check the 5th letter of the attributes map to see if the LV is activated
-		if string(fields[2][4]) != "a" {
+		isActive := string(fields[2][4]) == "a"
+		if activate && !isActive {
 
 			sharedOption := ""
 			// Start lock if needed
@@ -344,12 +336,19 @@ func (r *ClientMountReconciler) verifyLVMDevice(lvm *dwsv1alpha1.ClientMountDevi
 			if err != nil {
 				return err
 			}
+
+		} else if !activate && isActive {
+			if _, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup)); err != nil {
+				return err
+			}
+
+			if shared {
+				if _, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup)); err != nil {
+					return err
+				}
+			}
 		}
 
-		return nil
-	}
-
-	if r.Mock {
 		return nil
 	}
 
