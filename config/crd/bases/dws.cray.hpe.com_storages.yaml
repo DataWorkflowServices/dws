@@ -84,6 +84,7 @@ spec:
                     type: array
                 type: object
               capacity:
+                default: 0
                 description: Capacity is the number of bytes this storage provides.
                   This is the total accessible bytes as determined by the driver and
                   may be different than the sum of the devices' capacities.
