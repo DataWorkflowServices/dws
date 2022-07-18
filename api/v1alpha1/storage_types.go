@@ -92,6 +92,7 @@ type StorageData struct {
 	// Capacity is the number of bytes this storage provides. This is the
 	// total accessible bytes as determined by the driver and may be different
 	// than the sum of the devices' capacities.
+	// +kubebuilder:default:=0
 	Capacity int64 `json:"capacity"`
 
 	// Status is the overall status of the storage
