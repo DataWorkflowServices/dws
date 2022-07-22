@@ -91,23 +91,21 @@ func checkDriverStatus(instance *dwsv1alpha1.Workflow) (bool, error) {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.9.2/pkg/reconcile
-func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (res ctrl.Result, err error) {
 	log := r.Log.WithValues("Workflow", req.NamespacedName)
 	log.Info("Reconciling Workflow")
 
 	// Fetch the Workflow workflow
 	workflow := &dwsv1alpha1.Workflow{}
 
-	err := r.Get(ctx, req.NamespacedName, workflow)
-	if err != nil {
+	if err := r.Get(ctx, req.NamespacedName, workflow); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
 	statusUpdater := newWorkflowStatusUpdater(workflow)
 	defer func() {
-		updateErr := statusUpdater.close(ctx, r)
-		if err == nil && updateErr != nil {
-			err = updateErr
+		if err == nil {
+			err = statusUpdater.close(ctx, r)
 		}
 	}()
 
@@ -160,12 +158,6 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		ts := metav1.NowMicro()
 		workflow.Status.DesiredStateChange = &ts
 
-		err = r.Update(ctx, workflow)
-		if err != nil {
-			log.Error(err, "Failed to update Workflow state")
-			return ctrl.Result{}, err
-		}
-
 		return ctrl.Result{}, nil
 	}
 
@@ -217,7 +209,6 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		} else {
 			// Driver not ready, update Status if not already in DriverWait
 			if workflow.Status.Status != "DriverWait" {
-				workflow.Status.Ready = ConditionFalse
 				workflow.Status.Status = "DriverWait"
 				workflow.Status.Message = "Workflow " + workflow.Status.State + " waiting for driver completion"
 				log.Info("Workflow state=" + workflow.Status.State + " waiting for driver completion")
