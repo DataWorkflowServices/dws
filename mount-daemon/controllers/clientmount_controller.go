@@ -269,13 +269,7 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMountInfo) (string, error) {
 	switch clientMountInfo.Device.Type {
 	case dwsv1alpha1.ClientMountDeviceTypeLustre:
-		var device string = ""
-
-		for _, mgsAddress := range clientMountInfo.Device.Lustre.MgsAddresses {
-			device = device + mgsAddress + ":"
-		}
-
-		device = device + "/" + clientMountInfo.Device.Lustre.FileSystemName
+		device := clientMountInfo.Device.Lustre.MgsAddresses + ":/" + clientMountInfo.Device.Lustre.FileSystemName
 
 		return device, nil
 	case dwsv1alpha1.ClientMountDeviceTypeLVM:
