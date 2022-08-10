@@ -21,7 +21,6 @@ package controllers
 
 import (
 	"context"
-	myerror "errors"
 	"reflect"
 	"runtime"
 	"strings"
@@ -57,24 +56,6 @@ type WorkflowReconciler struct {
 	Scheme       *kruntime.Scheme
 	Log          logr.Logger
 	ChildObjects []dwsv1alpha1.ObjectList
-}
-
-// checkDriverStatus returns true if all registered drivers for the current state completed successfully
-func checkDriverStatus(instance *dwsv1alpha1.Workflow) (bool, error) {
-	completed := ConditionTrue
-
-	for _, d := range instance.Status.Drivers {
-		if d.WatchState == instance.Status.State {
-			if strings.ToLower(d.Reason) == "error" {
-				// Return errors
-				return ConditionFalse, myerror.New(d.Message)
-			}
-			if d.Completed == ConditionFalse {
-				completed = ConditionFalse
-			}
-		}
-	}
-	return completed, nil
 }
 
 //+kubebuilder:rbac:groups=dws.cray.hpe.com,resources=workflows,verbs=get;list;watch;update;patch
@@ -186,37 +167,45 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 		}
 	}
 
-	driverDone, err := checkDriverStatus(workflow)
-	if err != nil {
-		if workflow.Status.Status != "Error" {
-			log.Info("Workflow state transitioning to Error")
+	// If the workflow has already been marked as complete for this state, then
+	// we don't need to check the drivers. The drivers can't transition from complete
+	// to not complete
+	if workflow.Status.Ready == true {
+		return ctrl.Result{}, nil
+	}
+
+	workflow.Status.Ready = true
+	workflow.Status.Status = "Completed"
+	workflow.Status.Message = ""
+
+	// Loop through the driver status array and update the workflow
+	// status as necessary
+	for _, driver := range workflow.Status.Drivers {
+		if driver.WatchState != workflow.Status.State {
+			continue
 		}
 
-		workflow.Status.Status = "Error"
-		workflow.Status.Message = err.Error()
-	} else {
-		// Set Ready/Status based on driverDone condition
-		// All drivers achieving the current desiredStatus means we've achieved the desired state
-		if driverDone == ConditionTrue {
-			if workflow.Status.Ready != ConditionTrue {
-				ts := metav1.NowMicro()
-				workflow.Status.ReadyChange = &ts
-				workflow.Status.ElapsedTimeLastState = ts.Time.Sub(workflow.Status.DesiredStateChange.Time).Round(time.Microsecond).String()
-				workflow.Status.Status = "Completed"
-				workflow.Status.Message = "Workflow " + workflow.Status.State + " completed successfully"
-				log.Info("Workflow transitioning to ready state " + workflow.Status.State)
-			}
-		} else {
-			// Driver not ready, update Status if not already in DriverWait
-			if workflow.Status.Status != "DriverWait" {
-				workflow.Status.Status = "DriverWait"
-				workflow.Status.Message = "Workflow " + workflow.Status.State + " waiting for driver completion"
-				log.Info("Workflow state=" + workflow.Status.State + " waiting for driver completion")
-			}
+		if driver.Completed == false {
+			workflow.Status.Ready = false
+			workflow.Status.Status = "DriverWait"
+		}
+
+		if driver.Message != "" {
+			workflow.Status.Message = driver.Message
+		}
+
+		if strings.ToLower(driver.Reason) == "error" {
+			workflow.Status.Status = "Error"
+			break
 		}
 	}
 
-	workflow.Status.Ready = driverDone
+	if workflow.Status.Ready == true {
+		ts := metav1.NowMicro()
+		workflow.Status.ReadyChange = &ts
+		workflow.Status.ElapsedTimeLastState = ts.Time.Sub(workflow.Status.DesiredStateChange.Time).Round(time.Microsecond).String()
+		log.Info("Workflow transitioning to ready state " + workflow.Status.State)
+	}
 
 	return ctrl.Result{}, nil
 }
