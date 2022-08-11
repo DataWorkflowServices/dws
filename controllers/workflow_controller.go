@@ -23,7 +23,6 @@ import (
 	"context"
 	"reflect"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/go-logr/logr"
@@ -134,7 +133,7 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 		log.Info("Workflow state transitioning to " + workflow.Spec.DesiredState)
 		workflow.Status.State = workflow.Spec.DesiredState
 		workflow.Status.Ready = ConditionFalse
-		workflow.Status.Status = "DriverWait"
+		workflow.Status.Status = dwsv1alpha1.StatusDriverWait
 		workflow.Status.Message = ""
 		ts := metav1.NowMicro()
 		workflow.Status.DesiredStateChange = &ts
@@ -175,7 +174,7 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 	}
 
 	workflow.Status.Ready = true
-	workflow.Status.Status = "Completed"
+	workflow.Status.Status = dwsv1alpha1.StatusCompleted
 	workflow.Status.Message = ""
 
 	// Loop through the driver status array and update the workflow
@@ -187,15 +186,15 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 
 		if driver.Completed == false {
 			workflow.Status.Ready = false
-			workflow.Status.Status = "DriverWait"
+			workflow.Status.Status = dwsv1alpha1.StatusDriverWait
 		}
 
 		if driver.Message != "" {
 			workflow.Status.Message = driver.Message
 		}
 
-		if strings.ToLower(driver.Reason) == "error" {
-			workflow.Status.Status = "Error"
+		if driver.Status == dwsv1alpha1.StatusError {
+			workflow.Status.Status = dwsv1alpha1.StatusError
 			break
 		}
 	}
