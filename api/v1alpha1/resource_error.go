@@ -56,30 +56,6 @@ func NewResourceError(message string, err error) *ResourceError {
 	return resourceError
 }
 
-func (e *ResourceError) GetDebugMessage() string {
-	return e.DebugMessage
-}
-
-func (e *ResourceError) GetUserMessage() string {
-	return e.UserMessage
-}
-
-func (e *ResourceError) GetRecoverable() bool {
-	return e.Recoverable
-}
-
-func (e *ResourceError) SetDebugMessage(message string) {
-	e.DebugMessage = message
-}
-
-func (e *ResourceError) SetUserMessage(message string) {
-	e.UserMessage = message
-}
-
-func (e *ResourceError) SetRecoverable(recoverable bool) {
-	e.Recoverable = recoverable
-}
-
 func (e *ResourceError) WithFatal() *ResourceError {
 	e.Recoverable = false
 	return e
