@@ -27,6 +27,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/go-logr/logr"
 
@@ -109,7 +110,6 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		for i := 0; i < len(clientMount.Status.Mounts); i++ {
 			clientMount.Status.Mounts[i].State = clientMount.Spec.DesiredState
 			clientMount.Status.Mounts[i].Ready = false
-			clientMount.Status.Mounts[i].Message = ""
 		}
 
 		return ctrl.Result{}, nil
@@ -125,15 +125,25 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
+	clientMount.Status.Error = nil
+
 	if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateMounted {
 		err := r.mountAll(ctx, clientMount)
 		if err != nil {
-			return ctrl.Result{}, err
+			resourceError := dwsv1alpha1.NewResourceError("Mount failed", err)
+			log.Info(resourceError.Error())
+
+			clientMount.Status.Error = resourceError
+			return ctrl.Result{RequeueAfter: time.Second * time.Duration(10)}, nil
 		}
 	} else if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateUnmounted {
 		err := r.unmountAll(ctx, clientMount)
 		if err != nil {
-			return ctrl.Result{}, err
+			resourceError := dwsv1alpha1.NewResourceError("Unmount failed", err)
+			log.Info(resourceError.Error())
+
+			clientMount.Status.Error = resourceError
+			return ctrl.Result{RequeueAfter: time.Second * time.Duration(10)}, nil
 		}
 	}
 
@@ -151,9 +161,8 @@ func (r *ClientMountReconciler) unmountAll(ctx context.Context, clientMount *dws
 			if firstError == nil {
 				firstError = err
 			}
-			clientMount.Status.Mounts[i].Message = err.Error()
+			clientMount.Status.Mounts[i].Ready = false
 		} else {
-			clientMount.Status.Mounts[i].Message = ""
 			clientMount.Status.Mounts[i].Ready = true
 		}
 	}
@@ -199,9 +208,8 @@ func (r *ClientMountReconciler) mountAll(ctx context.Context, clientMount *dwsv1
 			if firstError == nil {
 				firstError = err
 			}
-			clientMount.Status.Mounts[i].Message = err.Error()
+			clientMount.Status.Mounts[i].Ready = false
 		} else {
-			clientMount.Status.Mounts[i].Message = ""
 			clientMount.Status.Mounts[i].Ready = true
 		}
 	}
@@ -319,27 +327,30 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			sharedOption := ""
 			// Start lock if needed
 			if shared {
-				if _, err := r.run(fmt.Sprintf("vgchange --lockstart %s", lvm.VolumeGroup)); err != nil {
-					return err
+				output, err := r.run(fmt.Sprintf("vgchange --lockstart %s", lvm.VolumeGroup))
+				if err != nil {
+					return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
 				}
 
 				sharedOption = "s" // activate with shared option
 			}
 
 			// Activate the LV if needed
-			_, err = r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
+			output, err := r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
 			if err != nil {
-				return err
+				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
 			}
 
 		} else if !activate && isActive {
-			if _, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup)); err != nil {
-				return err
+			output, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup))
+			if err != nil {
+				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
 			}
 
 			if shared {
-				if _, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup)); err != nil {
-					return err
+				output, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
+				if err != nil {
+					return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
 				}
 			}
 		}
@@ -347,17 +358,17 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 		return nil
 	}
 
-	log := r.Log.WithValues("VG", lvm.VolumeGroup, "LV", lvm.LogicalVolume, "Output", output)
-	log.Info("VG/LV pair not found")
+	err = dwsv1alpha1.NewResourceError(fmt.Sprintf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)+": "+output, nil).WithFatal()
+	r.Log.Info(err.Error())
 
-	return fmt.Errorf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)
+	return err
 }
 
 // checkMount checks whether a file system is mounted at the path specified in "mountPath"
 func (r *ClientMountReconciler) checkMount(mountPath string) (dwsv1alpha1.ClientMountState, error) {
 	output, err := r.run("mount")
 	if err != nil {
-		return dwsv1alpha1.ClientMountStateUnmounted, err
+		return dwsv1alpha1.ClientMountStateUnmounted, dwsv1alpha1.NewResourceError(output, err)
 	}
 
 	for _, line := range strings.Split(output, "\n") {

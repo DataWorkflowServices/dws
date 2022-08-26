@@ -21,6 +21,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"runtime"
 	"time"
@@ -193,7 +194,7 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 		}
 
 		if driver.Message != "" {
-			workflow.Status.Message = driver.Message
+			workflow.Status.Message = fmt.Sprintf("DW Directive %d: %s", driver.DWDIndex, driver.Message)
 		}
 
 		if driver.Status == dwsv1alpha1.StatusError {
