@@ -237,7 +237,7 @@ func checkDirectives(workflow *Workflow, ruleParser RuleParser) error {
 }
 
 // RuleParser defines the interface a rule parser must provide
-//+kubebuilder:object:generate=false
+// +kubebuilder:object:generate=false
 type RuleParser interface {
 	ReadRules() error
 	GetRuleList() []dwdparse.DWDirectiveRuleSpec
@@ -245,7 +245,7 @@ type RuleParser interface {
 }
 
 // RuleList contains the rules to be applied for a particular driver
-//+kubebuilder:object:generate=false
+// +kubebuilder:object:generate=false
 type RuleList struct {
 	rules []dwdparse.DWDirectiveRuleSpec
 }
@@ -289,7 +289,7 @@ func (r *RuleList) GetRuleList() []dwdparse.DWDirectiveRuleSpec {
 var _ RuleParser = &MutatingRuleParser{}
 
 // MutatingRuleParser provides the rulelist
-//+kubebuilder:object:generate=false
+// +kubebuilder:object:generate=false
 type MutatingRuleParser struct {
 	RuleList
 }
@@ -336,7 +336,7 @@ func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates st
 var _ RuleParser = &ValidatingRuleParser{}
 
 // ValidatingRuleParser provides the rulelist
-//+kubebuilder:object:generate=false
+// +kubebuilder:object:generate=false
 type ValidatingRuleParser struct {
 	RuleList
 }
