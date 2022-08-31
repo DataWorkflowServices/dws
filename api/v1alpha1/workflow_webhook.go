@@ -75,7 +75,6 @@ var _ webhook.Validator = &Workflow{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (w *Workflow) ValidateCreate() error {
-	workflowlog.Info("validate create", "name", w.Name)
 
 	if w.Spec.DesiredState != "proposal" {
 		return fmt.Errorf("desired state must start in 'proposal'")
@@ -86,7 +85,6 @@ func (w *Workflow) ValidateCreate() error {
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (w *Workflow) ValidateUpdate(old runtime.Object) error {
-	workflowlog.Info("validate update", "name", w.Name)
 
 	oldWorkflow, ok := old.(*Workflow)
 	if !ok {
@@ -170,7 +168,6 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
 func (w *Workflow) ValidateDelete() error {
-	workflowlog.Info("validate delete", "name", w.Name)
 	return nil
 }
 
