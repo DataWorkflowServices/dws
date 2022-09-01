@@ -319,11 +319,13 @@ func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates st
 			continue
 		}
 
-		driverStatus := WorkflowDriverStatus{}
-		driverStatus.DriverID = label
 		// Register states for this driver
-		driverStatus.DWDIndex = index
-		driverStatus.WatchState = state
+		driverStatus := WorkflowDriverStatus{
+			DriverID:   label,
+			DWDIndex:   index,
+			WatchState: state,
+			Status:     StatusPending,
+		}
 		workflow.Status.Drivers = append(workflow.Status.Drivers, driverStatus)
 		workflowlog.Info("Registering driver", "Driver", driverStatus.DriverID, "Watch state", driverStatus.WatchState)
 	}
