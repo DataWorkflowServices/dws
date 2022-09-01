@@ -267,8 +267,10 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW jobdw type=xfs    capacity=100GB name=prettierGoodName"}, allow, validDWOrAllowUnknownCommand},
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=prettierGoodName"}, allow, validDWOrAllowUnknownCommand},
 
-	{[]string{"#DW jobdw type=raw    capacity=100GB name=uniqueName1 ", "#DW jobdw type=raw    capacity=100GB name=uniqueName2 "}, allow, validDWOrAllowUnknownCommand},
-	{[]string{"#DW jobdw type=raw    capacity=100GB name=conflictName", "#DW jobdw type=raw    capacity=100GB name=conflictName"}, deny, invalidDW},
+	{[]string{"#DW jobdw type=raw    capacity=100GB name=uniqueName1 ",
+		"#DW jobdw type=raw    capacity=100GB name=uniqueName2 "}, allow, validDWOrAllowUnknownCommand},
+	{[]string{"#DW jobdw type=raw    capacity=100GB name=conflictName",
+		"#DW jobdw type=raw    capacity=100GB name=conflictName"}, deny, invalidDW},
 
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=CoolProfile1 profile=this-TYPE_profile08"}, allow, validDWOrAllowUnknownCommand},
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=CoolProfile2 profile=this_TYPE_profile08"}, allow, validDWOrAllowUnknownCommand},
@@ -308,8 +310,10 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW create_persistent type=xfs    capacity=100GB name=prettierGoodName"}, allow, validDWOrAllowUnknownCommand},
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=prettierGoodName"}, allow, validDWOrAllowUnknownCommand},
 
-	{[]string{"#DW create_persistent type=raw    capacity=100GB name=uniqueName1 ", "#DW create_persistent type=raw    capacity=100GB name=uniqueName2 "}, allow, validDWOrAllowUnknownCommand},
-	{[]string{"#DW create_persistent type=raw    capacity=100GB name=conflictName", "#DW create_persistent type=raw    capacity=100GB name=conflictName"}, deny, invalidDW},
+	{[]string{"#DW create_persistent type=raw    capacity=100GB name=uniqueName1 ",
+		"#DW create_persistent type=raw    capacity=100GB name=uniqueName2 "}, allow, validDWOrAllowUnknownCommand},
+	{[]string{"#DW create_persistent type=raw    capacity=100GB name=conflictName",
+		"#DW create_persistent type=raw    capacity=100GB name=conflictName"}, deny, invalidDW},
 
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=CoolProfile1 profile=this-TYPE_profile08"}, allow, validDWOrAllowUnknownCommand},
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=CoolProfile2 profile=this_TYPE_profile08"}, allow, validDWOrAllowUnknownCommand},
@@ -346,8 +350,10 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW destroy_persistent name=evenBetterName"}, deny, validDWOrAllowUnknownCommand},
 	{[]string{"#DW destroy_persistent name=evenBetterName"}, allow, validDWOrAllowUnknownCommand},
 
-	{[]string{"#DW destroy_persistent name=uniqueName1 ", "#DW destroy_persistent name=uniqueName2 "}, allow, validDWOrAllowUnknownCommand},
-	{[]string{"#DW destroy_persistent name=conflictName", "#DW destroy_persistent name=conflictName"}, deny, invalidDW},
+	{[]string{"#DW destroy_persistent name=uniqueName1 ",
+		"#DW destroy_persistent name=uniqueName2 "}, allow, validDWOrAllowUnknownCommand},
+	{[]string{"#DW destroy_persistent name=conflictName",
+		"#DW destroy_persistent name=conflictName"}, deny, invalidDW},
 
 	{[]string{"#DW container name=mycontainer spec=some-repo-name                                                                         supervisor=rabbit"}, deny, validDWOrAllowUnknownCommand},
 	{[]string{"#DW container name=mycontainer spec=some-repo-name job_storage={stor1}                                                     supervisor=rabbit"}, deny, validDWOrAllowUnknownCommand},
