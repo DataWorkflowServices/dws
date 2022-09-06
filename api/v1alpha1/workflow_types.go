@@ -58,6 +58,7 @@ var workflowStrings = [...]string{
 	"teardown",
 }
 
+// Strings associated with workflow statuses
 const (
 	StatusPending    = "Pending"
 	StatusQueued     = "Queued"
@@ -118,7 +119,7 @@ type WorkflowDriverStatus struct {
 	// User readable reason.
 	// For the CDS driver, this could be the state of the underlying
 	// data movement request:  Pending, Queued, Running, Completed or Error
-	// +kubebuilder:validation:Enum=Pending;Queued;Running;Completed;Error
+	// +kubebuilder:validation:Enum=Pending;Queued;Running;Completed;Error;DriverWait
 	Status string `json:"status,omitempty"`
 
 	Message string `json:"message,omitempty"`
