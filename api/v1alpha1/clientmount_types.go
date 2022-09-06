@@ -137,6 +137,7 @@ type ClientMountInfo struct {
 // ClientMountState specifies the go type for MountState
 type ClientMountState string
 
+// ClientMountState string constants
 const (
 	ClientMountStateMounted   ClientMountState = "mounted"
 	ClientMountStateUnmounted ClientMountState = "unmounted"
@@ -196,6 +197,7 @@ type ClientMountList struct {
 	Items           []ClientMount `json:"items"`
 }
 
+// GetObjectList returns a list of Client references.
 func (c *ClientMountList) GetObjectList() []client.Object {
 	objectList := []client.Object{}
 
