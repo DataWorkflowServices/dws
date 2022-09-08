@@ -10,7 +10,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-var _ = Describe("Status Updater Tests", func() {
+var _ = FDescribe("Status Updater Tests", func() {
 	It("works", func() {
 
 		By("Create a dummy client mount")
@@ -53,7 +53,7 @@ var _ = Describe("Status Updater Tests", func() {
 			},
 		}
 		cm.Status.Error = NewResourceError("Status Updater Test Error",
-			fmt.Errorf("Error")).WithFatal()
+			fmt.Errorf("ERROR")).WithFatal()
 
 		Expect(updater.Close(context.TODO(), k8sClient)).To(Succeed())
 

@@ -195,7 +195,6 @@ type Workflow struct {
 	Status WorkflowStatus `json:"status,omitempty"`
 }
 
-
 func (c *Workflow) GetStatus() status[*WorkflowStatus] {
 	return &c.Status
 }

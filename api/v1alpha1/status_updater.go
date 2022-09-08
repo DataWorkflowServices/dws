@@ -18,8 +18,8 @@ type status[T any] interface {
 }
 
 type statusUpdater[T any] struct {
-	rsrc   resource[T]
-	status T
+	resource resource[T]
+	status   T
 }
 
 // NewStatusUpdater returns a status updater meant for updating the status of the
@@ -45,8 +45,8 @@ type statusUpdater[T any] struct {
 //		...
 func NewStatusUpdater[T resource[S], S status[S]](rsrc T) *statusUpdater[S] {
 	return &statusUpdater[S]{
-		rsrc:   rsrc,
-		status: rsrc.GetStatus().DeepCopy(),
+		resource: rsrc,
+		status:   rsrc.GetStatus().DeepCopy(),
 	}
 }
 
@@ -54,8 +54,8 @@ func NewStatusUpdater[T resource[S], S status[S]](rsrc T) *statusUpdater[S] {
 // from the initially recorded status. Close will NOT return an error if there is a
 // conflict as it's expected the Reconcile() method will be called again.
 func (updater *statusUpdater[S]) Close(ctx context.Context, c client.Client) error {
-	if !reflect.DeepEqual(updater.rsrc.GetStatus(), updater.status) {
-		err := c.Status().Update(ctx, updater.rsrc)
+	if !reflect.DeepEqual(updater.resource.GetStatus(), updater.status) {
+		err := c.Status().Update(ctx, updater.resource)
 		if !errors.IsConflict(err) {
 			return err
 		}
