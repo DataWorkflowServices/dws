@@ -73,7 +73,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	// Create a status updater that handles the call to status().Update() if any of the fields
 	// in clientMount.Status change
-	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.ClientMount, *dwsv1alpha1.ClientMountStatus](clientMount)
+	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.ClientMountStatus](clientMount)
 	defer func() {
 		if err == nil {
 			err = statusUpdater.Close(ctx, r.Client)
@@ -411,29 +411,6 @@ func (r *ClientMountReconciler) run(c string) (string, error) {
 	output, err := exec.Command("bash", "-c", c).Output()
 
 	return string(output), err
-}
-
-type clientMountStatusUpdater struct {
-	clientMount    *dwsv1alpha1.ClientMount
-	existingStatus dwsv1alpha1.ClientMountStatus
-}
-
-func newClientMountStatusUpdater(c *dwsv1alpha1.ClientMount) *clientMountStatusUpdater {
-	return &clientMountStatusUpdater{
-		clientMount:    c,
-		existingStatus: (*c.DeepCopy()).Status,
-	}
-}
-
-func (c *clientMountStatusUpdater) close(ctx context.Context, r *ClientMountReconciler) error {
-	if !reflect.DeepEqual(c.clientMount.Status, c.existingStatus) {
-		err := r.Status().Update(ctx, c.clientMount)
-		if !apierrors.IsConflict(err) {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {

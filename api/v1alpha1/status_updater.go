@@ -43,7 +43,7 @@ type statusUpdater[T any] struct {
 //		}()
 //
 //		...
-func NewStatusUpdater[T resource[S], S status[S]](rsrc T) *statusUpdater[S] {
+func NewStatusUpdater[S status[S]](rsrc resource[S]) *statusUpdater[S] {
 	return &statusUpdater[S]{
 		resource: rsrc,
 		status:   rsrc.GetStatus().DeepCopy(),

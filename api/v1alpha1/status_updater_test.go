@@ -37,7 +37,7 @@ var _ = FDescribe("Status Updater Tests", func() {
 			},
 		}
 
-		updater := NewStatusUpdater[*ClientMount, *ClientMountStatus](cm)
+		updater := NewStatusUpdater[*ClientMountStatus](cm)
 
 		Expect(k8sClient.Create(context.TODO(), cm)).To(Succeed())
 

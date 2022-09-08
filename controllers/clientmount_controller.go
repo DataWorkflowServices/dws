@@ -64,7 +64,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	// Create a status updater that handles the call to status().Update() if any of the fields
 	// in clientMount.Status change
-	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.ClientMount, *dwsv1alpha1.ClientMountStatus](clientMount)
+	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.ClientMountStatus](clientMount)
 	defer func() {
 		if err == nil {
 			err = statusUpdater.Close(ctx, r)

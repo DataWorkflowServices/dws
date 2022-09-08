@@ -16,7 +16,9 @@
                 "-ginkgo.failFast",
             ],
             "env": {
-                "KUBEBUILDER_ASSETS": "/Users/roiger/Library/Application Support/io.kubebuilder.envtest/k8s/1.25.0-darwin-amd64"
+                "KUBEBUILDER_ASSETS": "YOUR ENV PATH HERE",
+                "GOMEGA_DEFAULT_EVENTUALLY_TIMEOUT": "10m",
+                "GOMEGA_DEFAULT_EVENTUALLY_POLLING_INTERVAL": "100ms",
             },
             "showLog": true
         },
