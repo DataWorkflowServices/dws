@@ -81,15 +81,14 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 
 	// Fetch the Workflow workflow
 	workflow := &dwsv1alpha1.Workflow{}
-
 	if err := r.Get(ctx, req.NamespacedName, workflow); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	statusUpdater := newWorkflowStatusUpdater(workflow)
+	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.Workflow, *dwsv1alpha1.WorkflowStatus](workflow)
 	defer func() {
 		if err == nil {
-			err = statusUpdater.close(ctx, r)
+			err = statusUpdater.Close(ctx, r.Client)
 		}
 	}()
 
