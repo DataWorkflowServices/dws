@@ -53,7 +53,7 @@ func NewStatusUpdater[T resource[S], S status[S]](rsrc T) *statusUpdater[S] {
 // Close will attempt to update the status of the updating resource if it has changed
 // from the initially recorded status. Close will NOT return an error if there is a
 // conflict as it's expected the Reconcile() method will be called again.
-func (updater *statusUpdater[S]) Close(ctx context.Context, c client.Client) error {
+func (updater *statusUpdater[S]) Close(ctx context.Context, c client.StatusClient) error {
 	if !reflect.DeepEqual(updater.resource.GetStatus(), updater.status) {
 		err := c.Status().Update(ctx, updater.resource)
 		if !errors.IsConflict(err) {
