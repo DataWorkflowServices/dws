@@ -188,6 +188,10 @@ type ClientMount struct {
 	Status ClientMountStatus `json:"status,omitempty"`
 }
 
+func (c *ClientMount) GetStatus() status[*ClientMountStatus] {
+	return &c.Status
+}
+
 //+kubebuilder:object:root=true
 
 // ClientMountList contains a list of ClientMount
