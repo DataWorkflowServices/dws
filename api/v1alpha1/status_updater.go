@@ -35,7 +35,7 @@ type statusUpdater[T any] struct {
 //			return err
 //		}
 //
-//		updater := NewStatusUpdater[*MyResource, *MyResourceStatus](rsrc)
+//		updater := NewStatusUpdater[*MyResourceStatus](rsrc)
 //		defer func() {
 //			if err == nil {
 //				err = updater.Close(ctx, r)

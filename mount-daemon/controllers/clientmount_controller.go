@@ -74,7 +74,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.ClientMountStatus](clientMount)
 	defer func() {
 		if err == nil {
-			err = statusUpdater.Close(ctx, r.Client)
+			err = statusUpdater.Close(ctx, r)
 		}
 	}()
 
