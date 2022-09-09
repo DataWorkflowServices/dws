@@ -22,6 +22,7 @@ package v1alpha1
 import (
 	"fmt"
 
+	"github.com/HewlettPackard/dws/utils/updater"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -195,7 +196,7 @@ type Workflow struct {
 	Status WorkflowStatus `json:"status,omitempty"`
 }
 
-func (c *Workflow) GetStatus() status[*WorkflowStatus] {
+func (c *Workflow) GetStatus() updater.Status[*WorkflowStatus] {
 	return &c.Status
 }
 

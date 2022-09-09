@@ -38,6 +38,7 @@ import (
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
 	"github.com/HewlettPackard/dws/controllers/metrics"
+	"github.com/HewlettPackard/dws/utils/updater"
 )
 
 const (
@@ -85,7 +86,10 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.WorkflowStatus](workflow)
+	// Create a status updater that handles the call to r.Update() if any of the fields
+	// in workflow.Status{} change. This is necessary since Status is not a subresource
+	// of the workflow.
+	statusUpdater := updater.NewStatusUpdater[*dwsv1alpha1.WorkflowStatus](workflow)
 	defer func() {
 		if err == nil {
 			err = statusUpdater.CloseWithUpdate(ctx, r)

@@ -20,6 +20,7 @@
 package v1alpha1
 
 import (
+	"github.com/HewlettPackard/dws/utils/updater"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -188,7 +189,7 @@ type ClientMount struct {
 	Status ClientMountStatus `json:"status,omitempty"`
 }
 
-func (c *ClientMount) GetStatus() status[*ClientMountStatus] {
+func (c *ClientMount) GetStatus() updater.Status[*ClientMountStatus] {
 	return &c.Status
 }
 

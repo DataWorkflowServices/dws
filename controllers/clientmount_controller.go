@@ -33,6 +33,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
+	"github.com/HewlettPackard/dws/utils/updater"
 )
 
 // ClientMountReconciler reconciles a ClientMount object
@@ -62,9 +63,9 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	// Create a status updater that handles the call to status().Update() if any of the fields
-	// in clientMount.Status change
-	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.ClientMountStatus](clientMount)
+	// Create a status updater that handles the call to r.Status().Update() if any of the fields
+	// in clientMount.Status{} change
+	statusUpdater := updater.NewStatusUpdater[*dwsv1alpha1.ClientMountStatus](clientMount)
 	defer func() {
 		if err == nil {
 			err = statusUpdater.CloseWithStatusUpdate(ctx, r)
