@@ -2,7 +2,6 @@ package v1alpha1
 
 import (
 	"context"
-	"fmt"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -10,18 +9,17 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-var _ = FDescribe("Status Updater Tests", func() {
-	It("works", func() {
-
-		By("Create a dummy client mount")
-		cm := &ClientMount{
+var _ = Describe("Status Updater Test", func() {
+	var cm = &ClientMount{}
+	BeforeEach(func() {
+		cm = &ClientMount{
 			ObjectMeta: v1.ObjectMeta{
 				Name:      "test",
 				Namespace: "default",
 			},
 			Spec: ClientMountSpec{
 				Node:         "test",
-				DesiredState: "mounted",
+				DesiredState: "unmounted",
 				Mounts: []ClientMountInfo{
 					{
 						MountPath: "/",
@@ -37,31 +35,40 @@ var _ = FDescribe("Status Updater Tests", func() {
 			},
 		}
 
-		updater := NewStatusUpdater[*ClientMountStatus](cm)
-
 		Expect(k8sClient.Create(context.TODO(), cm)).To(Succeed())
 
 		Eventually(func() error {
 			return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(cm), cm)
 		}).Should(Succeed())
+	})
 
-		By("Update the Status section using the updater")
+	AfterEach(func() {
+		Expect(k8sClient.Delete(context.TODO(), cm)).To(Succeed())
+	})
+
+	It("Updates Status Only", func() {
+
+		By("Create new status updater")
+		updater := NewStatusUpdater[*ClientMountStatus](cm)
+
+		By("Toggle some spec and status fields")
+		cm.Spec.DesiredState = "mounted"
 		cm.Status.Mounts = []ClientMountInfoStatus{
 			{
 				State: "mounted",
-				Ready: false,
+				Ready: true,
 			},
 		}
-		cm.Status.Error = NewResourceError("Status Updater Test Error",
-			fmt.Errorf("ERROR")).WithFatal()
 
-		Expect(updater.Close(context.TODO(), k8sClient)).To(Succeed())
+		By("Updating the status, not the spec, using the updater")
+		Expect(updater.CloseWithStatusUpdate(context.TODO(), k8sClient)).To(Succeed())
 
-		Eventually(func(g Gomega) string {
+		By("Expect the status to change but the spec to remain the same")
+		Eventually(func(g Gomega) bool {
 			newcm := &ClientMount{}
 			g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(cm), newcm)).To(Succeed())
-			return newcm.Status.Error.Error()
-		}).Should(Equal(cm.Status.Error.Error()))
-
+			g.Expect(newcm.Status.Mounts).To(HaveLen(1))
+			return newcm.Status.Mounts[0].Ready && newcm.Spec.DesiredState == "unmounted"
+		}).Should(BeTrue())
 	})
 })

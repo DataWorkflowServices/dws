@@ -85,10 +85,10 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	statusUpdater := newWorkflowStatusUpdater(workflow)
+	statusUpdater := dwsv1alpha1.NewStatusUpdater[*dwsv1alpha1.WorkflowStatus](workflow)
 	defer func() {
 		if err == nil {
-			err = statusUpdater.close(ctx, r)
+			err = statusUpdater.CloseWithUpdate(ctx, r)
 		}
 	}()
 

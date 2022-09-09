@@ -25,7 +25,7 @@ type statusUpdater[T any] struct {
 // NewStatusUpdater returns a status updater meant for updating the status of the
 // supplied resource when the updater is closed. Typically users will want to
 // create a status updater early on in a controller's Reconcile() method and add a
-// deferred method to close the updater when returning reconcile.
+// deferred method to close the updater when returning from reconcile.
 //
 // i.e.
 //
@@ -50,12 +50,28 @@ func NewStatusUpdater[S status[S]](rsrc resource[S]) *statusUpdater[S] {
 	}
 }
 
-// Close will attempt to update the status of the updating resource if it has changed
-// from the initially recorded status. Close will NOT return an error if there is a
-// conflict as it's expected the Reconcile() method will be called again.
-func (updater *statusUpdater[S]) Close(ctx context.Context, c client.StatusClient) error {
+// CloseWithUpdate will attempt to update the resource if any of the status fields have
+// changed from the initially recorded status. CloseWithUpdate will NOT return an error
+// if there is a resource conflict as it's expected the Reconcile() method will be called again.
+func (updater *statusUpdater[S]) CloseWithUpdate(ctx context.Context, c client.Writer) error {
+	return updater.close(ctx, c)
+}
+
+// CloseWithStatusUpdate will attempt to update the resource's status if any of the status
+// fields have changed from the initially recorded status. CloseWithStatusUpdate will NOT
+// return an error if there is a resource conflict as it's expected the Reconcile() method
+// will be called again.
+func (updater *statusUpdater[S]) CloseWithStatusUpdate(ctx context.Context, c client.StatusClient) error {
+	return updater.close(ctx, c.Status())
+}
+
+type clientUpdater interface {
+	Update(ctx context.Context, obj client.Object, opts ...client.UpdateOption) error
+}
+
+func (updater *statusUpdater[S]) close(ctx context.Context, c clientUpdater) error {
 	if !reflect.DeepEqual(updater.resource.GetStatus(), updater.status) {
-		err := c.Status().Update(ctx, updater.resource)
+		err := c.Update(ctx, updater.resource)
 		if !errors.IsConflict(err) {
 			return err
 		}

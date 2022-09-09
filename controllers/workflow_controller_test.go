@@ -13,7 +13,7 @@ import (
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
 )
 
-var _ = FDescribe("Workflow Controller Test", func() {
+var _ = Describe("Workflow Controller Test", func() {
 	It("Creates workflow", func() {
 		wf := &dwsv1alpha1.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
