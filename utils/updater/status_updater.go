@@ -72,15 +72,16 @@ func NewStatusUpdater[S Status[S]](rsrc resource[S]) *statusUpdater[S] {
 
 // CloseWithUpdate will attempt to update the resource if any of the status fields have
 // changed from the initially recorded status. CloseWithUpdate will NOT return an error
-// if there is a resource conflict as it's expected the Reconcile() method will be called again.
+// if there is a resource conflict on this version of the resource. The reconciler will
+// already have an event queued for the new version of the resource.
 func (updater *statusUpdater[S]) CloseWithUpdate(ctx context.Context, c client.Writer) error {
 	return updater.close(ctx, c)
 }
 
 // CloseWithStatusUpdate will attempt to update the resource's status if any of the status
 // fields have changed from the initially recorded status. CloseWithStatusUpdate will NOT
-// return an error if there is a resource conflict as it's expected the Reconcile() method
-// will be called again.
+// return an error if there is a resource conflict on this version of the resource. The
+// reconciler will already have an event queued for the new version of the resource.
 func (updater *statusUpdater[S]) CloseWithStatusUpdate(ctx context.Context, c client.StatusClient) error {
 	return updater.close(ctx, c.Status())
 }
@@ -92,6 +93,9 @@ type clientUpdater interface {
 func (updater *statusUpdater[S]) close(ctx context.Context, c clientUpdater) error {
 	if !reflect.DeepEqual(updater.resource.GetStatus(), updater.status) {
 		err := c.Update(ctx, updater.resource)
+
+		// Do not return an error if there is a resource conflict on this version of the resource.
+		// The reconciler will already have an event queued for the new version of the resource.
 		if !errors.IsConflict(err) {
 			return err
 		}
