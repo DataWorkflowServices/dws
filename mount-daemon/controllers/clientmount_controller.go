@@ -25,13 +25,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"time"
 
 	"github.com/go-logr/logr"
 
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -40,6 +38,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
+	"github.com/HewlettPackard/dws/utils/updater"
 )
 
 // ClientMountReconciler reconciles a ClientMount object
@@ -71,12 +70,12 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	// Create a status updater that handles the call to status().Update() if any of the fields
-	// in clientMount.Status change
-	statusUpdater := newClientMountStatusUpdater(clientMount)
+	// Create a status updater that handles the call to r.Status().Update() if any of the fields
+	// in clientMount.Status{} change
+	statusUpdater := updater.NewStatusUpdater[*dwsv1alpha1.ClientMountStatus](clientMount)
 	defer func() {
 		if err == nil {
-			err = statusUpdater.close(ctx, r)
+			err = statusUpdater.CloseWithStatusUpdate(ctx, r)
 		}
 	}()
 
@@ -411,29 +410,6 @@ func (r *ClientMountReconciler) run(c string) (string, error) {
 	output, err := exec.Command("bash", "-c", c).Output()
 
 	return string(output), err
-}
-
-type clientMountStatusUpdater struct {
-	clientMount    *dwsv1alpha1.ClientMount
-	existingStatus dwsv1alpha1.ClientMountStatus
-}
-
-func newClientMountStatusUpdater(c *dwsv1alpha1.ClientMount) *clientMountStatusUpdater {
-	return &clientMountStatusUpdater{
-		clientMount:    c,
-		existingStatus: (*c.DeepCopy()).Status,
-	}
-}
-
-func (c *clientMountStatusUpdater) close(ctx context.Context, r *ClientMountReconciler) error {
-	if !reflect.DeepEqual(c.clientMount.Status, c.existingStatus) {
-		err := r.Status().Update(ctx, c.clientMount)
-		if !apierrors.IsConflict(err) {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {
