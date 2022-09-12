@@ -22,6 +22,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/pkg/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -64,18 +65,21 @@ func (*testWriter) Update(ctx context.Context, obj client.Object, opts ...client
 
 func (*testWriter) Status() client.StatusWriter { return &testStatusWriter{} }
 
-func TestUpdate(t *testing.T)   { testUpdate(t, true) }
-func TestNoUpdate(t *testing.T) { testUpdate(t, false) }
+func TestUpdate(t *testing.T)          { testUpdate(t, true, nil) }
+func TestUpdateWithError(t *testing.T) { testUpdate(t, true, errors.Errorf("err")) }
+func TestNoUpdate(t *testing.T)        { testUpdate(t, false, nil) }
 
 // Test that when a change occurs to the object's status, only the object is updated
 // and not the status
-func testUpdate(t *testing.T, changed bool) {
+func testUpdate(t *testing.T, changed bool, err error) {
 	obj := &testObject{updated: false}
 	updater := NewStatusUpdater[*testStatus](obj)
 
 	obj.status.changed = changed
 
-	updater.CloseWithUpdate(context.TODO(), &testWriter{})
+	if updateErr := updater.CloseWithUpdate(context.TODO(), &testWriter{}, err); updateErr != err {
+		t.Errorf("Close expected error %v, not %v", err, updateErr)
+	}
 
 	if obj.updated != changed {
 		t.Errorf("Test object not updated")
@@ -101,18 +105,21 @@ func (*testStatusWriter) Update(ctx context.Context, obj client.Object, opts ...
 	return nil
 }
 
-func TestStatusUpdate(t *testing.T)   { testStatusUpdate(t, true) }
-func TestNoStatusUpdate(t *testing.T) { testStatusUpdate(t, false) }
+func TestStatusUpdate(t *testing.T)          { testStatusUpdate(t, true, nil) }
+func TestStatusUpdateWithError(t *testing.T) { testStatusUpdate(t, true, errors.Errorf("err")) }
+func TestNoStatusUpdate(t *testing.T)        { testStatusUpdate(t, false, nil) }
 
 // Test when a change occurs to an object's status, only the status fields are
 // updated and not the object.
-func testStatusUpdate(t *testing.T, changed bool) {
+func testStatusUpdate(t *testing.T, changed bool, err error) {
 	obj := &testObject{updated: false}
 	updater := NewStatusUpdater[*testStatus](obj)
 
 	obj.status.changed = changed // toggle the status changed field so the update occurs
 
-	updater.CloseWithStatusUpdate(context.TODO(), &testWriter{})
+	if updateErr := updater.CloseWithStatusUpdate(context.TODO(), &testWriter{}, err); updateErr != err {
+		t.Errorf("Close expected error %v, not %v", err, updateErr)
+	}
 
 	if obj.updated {
 		t.Errorf("Test object incorrectly updated")

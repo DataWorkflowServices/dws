@@ -20,6 +20,8 @@
 package v1alpha1
 
 import (
+	"github.com/HewlettPackard/dws/utils/updater"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -69,7 +71,6 @@ type PersistentStorageInstanceStatus struct {
 	Servers corev1.ObjectReference `json:"servers,omitempty"`
 	// Current state of the PersistentStorageInstance
 	// +kubebuilder:validation:Enum=creating;active;deleting
-	// +kubebuilder:default:=creating
 	State PersistentStorageInstanceState `json:"state"`
 }
 
@@ -83,6 +84,10 @@ type PersistentStorageInstance struct {
 
 	Spec   PersistentStorageInstanceSpec   `json:"spec,omitempty"`
 	Status PersistentStorageInstanceStatus `json:"status,omitempty"`
+}
+
+func (psi *PersistentStorageInstance) GetStatus() updater.Status[*PersistentStorageInstanceStatus] {
+	return &psi.Status
 }
 
 //+kubebuilder:object:root=true
