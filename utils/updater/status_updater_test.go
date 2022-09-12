@@ -75,7 +75,7 @@ func testUpdate(t *testing.T, changed bool) {
 
 	obj.status.changed = changed
 
-	updater.CloseWithUpdate(context.TODO(), &testWriter{})
+	updater.CloseWithUpdate(context.TODO(), &testWriter{}, nil)
 
 	if obj.updated != changed {
 		t.Errorf("Test object not updated")
@@ -112,7 +112,7 @@ func testStatusUpdate(t *testing.T, changed bool) {
 
 	obj.status.changed = changed // toggle the status changed field so the update occurs
 
-	updater.CloseWithStatusUpdate(context.TODO(), &testWriter{})
+	updater.CloseWithStatusUpdate(context.TODO(), &testWriter{}, nil)
 
 	if obj.updated {
 		t.Errorf("Test object incorrectly updated")
