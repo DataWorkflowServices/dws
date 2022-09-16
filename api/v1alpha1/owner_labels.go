@@ -21,6 +21,7 @@ package v1alpha1
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 
 	"golang.org/x/sync/errgroup"
@@ -34,13 +35,6 @@ const (
 	OwnerKindLabel      = "dws.cray.hpe.com/owner.kind"
 	OwnerNameLabel      = "dws.cray.hpe.com/owner.name"
 	OwnerNamespaceLabel = "dws.cray.hpe.com/owner.namespace"
-)
-
-type DeleteStatus int
-
-const (
-	DeleteRetry DeleteStatus = iota
-	DeleteComplete
 )
 
 // +kubebuilder:object:generate=false
@@ -146,6 +140,31 @@ func InheritParentLabels(child metav1.Object, owner metav1.Object) {
 	child.SetLabels(labels)
 }
 
+// DeleteStatus provides information about the status of Delete operation (i.e. DeleteChildren,
+// DeleteChildrenWithLabels).
+type DeleteStatus struct {
+	complete bool
+	pending  bool
+	object   client.Object
+}
+
+func (d *DeleteStatus) Complete() bool        { return d.complete }
+func (d *DeleteStatus) Object() client.Object { return d.object }
+func (d *DeleteStatus) Info() string {
+	return fmt.Sprintf("complete: %v pending: %v", d.complete, d.pending)
+}
+
+var DeleteRetry = DeleteStatus{complete: false}
+var DeleteComplete = DeleteStatus{complete: true}
+
+func DeletePending(object client.Object) DeleteStatus {
+	return DeleteStatus{
+		complete: false,
+		pending:  true,
+		object:   object,
+	}
+}
+
 // deleteChildrenSingle deletes all the children of a single type. Children are found using
 // the owner labels
 func deleteChildrenSingle(ctx context.Context, c client.Client, childObjectList ObjectList, parent metav1.Object, matchingLabels client.MatchingLabels) (DeleteStatus, error) {
@@ -170,10 +189,9 @@ func deleteChildrenSingle(ctx context.Context, c client.Client, childObjectList 
 
 		namespace = obj.GetNamespace()
 
-		// Wait for any deletes to finish if the resource is already
-		// marked for deletion
+		// Wait for any deletes to finish if the resource is already marked for deletion
 		if !obj.GetDeletionTimestamp().IsZero() {
-			return DeleteRetry, nil
+			return DeletePending(obj), nil
 		}
 	}
 
@@ -216,8 +234,8 @@ func DeleteChildrenWithLabels(ctx context.Context, c client.Client, childObjectL
 			return DeleteRetry, err
 		}
 
-		if deleteStatus == DeleteRetry {
-			return DeleteRetry, nil
+		if !deleteStatus.Complete() {
+			return deleteStatus, nil
 		}
 	}
 

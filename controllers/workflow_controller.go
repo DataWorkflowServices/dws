@@ -109,7 +109,7 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 			return ctrl.Result{}, err
 		}
 
-		if deleteStatus == dwsv1alpha1.DeleteRetry {
+		if !deleteStatus.Complete() {
 			return ctrl.Result{}, nil
 		}
 
