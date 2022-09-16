@@ -142,11 +142,14 @@ func InheritParentLabels(child metav1.Object, owner metav1.Object) {
 // DeleteStatus provides information about the status of DeleteChildren* operation
 type DeleteStatus struct {
 	complete bool
-	objects   []client.Object
+	objects  []client.Object
 }
 
-func (d *DeleteStatus) Complete() bool        { return d.complete }
+// Complete returns true if the delete is complete, and false otherwise
+func (d *DeleteStatus) Complete() bool { return d.complete }
 
+// Info returns key/value pairs that describe the delete status operation; the returned array
+// must alternate string keys and arbitrary values so it can be passed to logr.Logging.Info()
 func (d *DeleteStatus) Info() []interface{} {
 	args := make([]interface{}, 0)
 	args = append(args, "complete", d.complete)
