@@ -140,8 +140,7 @@ func InheritParentLabels(child metav1.Object, owner metav1.Object) {
 	child.SetLabels(labels)
 }
 
-// DeleteStatus provides information about the status of Delete operation (i.e. DeleteChildren,
-// DeleteChildrenWithLabels).
+// DeleteStatus provides information about the status of DeleteChildren* operation
 type DeleteStatus struct {
 	complete bool
 	pending  bool
@@ -154,10 +153,10 @@ func (d *DeleteStatus) Info() string {
 	return fmt.Sprintf("complete: %v pending: %v", d.complete, d.pending)
 }
 
-var DeleteRetry = DeleteStatus{complete: false}
-var DeleteComplete = DeleteStatus{complete: true}
+var deleteRetry = DeleteStatus{complete: false}
+var deleteComplete = DeleteStatus{complete: true}
 
-func DeletePending(object client.Object) DeleteStatus {
+func deletePending(object client.Object) DeleteStatus {
 	return DeleteStatus{
 		complete: false,
 		pending:  true,
@@ -171,12 +170,12 @@ func deleteChildrenSingle(ctx context.Context, c client.Client, childObjectList 
 	// List all the children and filter by the owner labels
 	err := c.List(ctx, childObjectList.(client.ObjectList), matchingLabels)
 	if err != nil {
-		return DeleteRetry, err
+		return deleteRetry, err
 	}
 
 	objectList := childObjectList.GetObjectList()
 	if len(objectList) == 0 {
-		return DeleteComplete, nil
+		return deleteComplete, nil
 	}
 
 	// Check whether the child objects span multiple namespaces.
@@ -191,7 +190,7 @@ func deleteChildrenSingle(ctx context.Context, c client.Client, childObjectList 
 
 		// Wait for any deletes to finish if the resource is already marked for deletion
 		if !obj.GetDeletionTimestamp().IsZero() {
-			return DeletePending(obj), nil
+			return deletePending(obj), nil
 		}
 	}
 
@@ -199,10 +198,10 @@ func deleteChildrenSingle(ctx context.Context, c client.Client, childObjectList 
 	if !multipleNamespaces {
 		err = c.DeleteAllOf(ctx, objectList[0], client.InNamespace(namespace), matchingLabels)
 		if err != nil {
-			return DeleteRetry, err
+			return deleteRetry, err
 		}
 
-		return DeleteRetry, nil
+		return deleteRetry, nil
 	}
 
 	// If the child resources span multiple namespaces, then we have to delete them
@@ -217,7 +216,7 @@ func deleteChildrenSingle(ctx context.Context, c client.Client, childObjectList 
 		})
 	}
 
-	return DeleteRetry, g.Wait()
+	return deleteRetry, g.Wait()
 }
 
 // DeleteChildrenWithLabels deletes all the children of a parent with the resource types defined
@@ -229,17 +228,17 @@ func DeleteChildrenWithLabels(ctx context.Context, c client.Client, childObjectL
 	}
 
 	for _, childObjectList := range childObjectLists {
-		deleteStatus, err := deleteChildrenSingle(ctx, c, childObjectList, parent, matchingLabels)
+		DeleteStatus, err := deleteChildrenSingle(ctx, c, childObjectList, parent, matchingLabels)
 		if err != nil {
-			return DeleteRetry, err
+			return deleteRetry, err
 		}
 
-		if !deleteStatus.Complete() {
-			return deleteStatus, nil
+		if !DeleteStatus.Complete() {
+			return DeleteStatus, nil
 		}
 	}
 
-	return DeleteComplete, nil
+	return deleteComplete, nil
 }
 
 // DeleteChildren deletes all the children of a parent with the resource types defined
