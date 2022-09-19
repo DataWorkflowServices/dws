@@ -55,6 +55,8 @@ const (
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request) (res ctrl.Result, err error) {
+	log := r.Log.WithValues("ClientMountComp", req.NamespacedName)
+
 	clientMount := &dwsv1alpha1.ClientMount{}
 	if err := r.Get(ctx, req.NamespacedName, clientMount); err != nil {
 		// ignore not-found errors, since they can't be fixed by an immediate
@@ -70,12 +72,15 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	// Handle cleanup if the resource is being deleted
 	if !clientMount.GetDeletionTimestamp().IsZero() {
+		log.Info("DELETE", "finalizer", controllerutil.ContainsFinalizer(clientMount, finalizerClientMount))
+
 		if !controllerutil.ContainsFinalizer(clientMount, finalizerClientMount) {
 			return ctrl.Result{}, nil
 		}
 
 		controllerutil.RemoveFinalizer(clientMount, finalizerClientMount)
 		if err := r.Update(ctx, clientMount); err != nil {
+			log.Error(err, "DELETE UPDATE ERR")
 			return ctrl.Result{}, err
 		}
 
@@ -94,6 +99,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			clientMount.Status.Mounts[i].Ready = false
 		}
 
+		log.Info("INIT STATUS")
 		return ctrl.Result{}, nil
 	}
 
@@ -101,6 +107,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	if !controllerutil.ContainsFinalizer(clientMount, finalizerClientMount) {
 		controllerutil.AddFinalizer(clientMount, finalizerClientMount)
 		if err := r.Update(ctx, clientMount); err != nil {
+			log.Error(err, "UPDATE ERR")
 			return ctrl.Result{Requeue: true}, nil
 		}
 
