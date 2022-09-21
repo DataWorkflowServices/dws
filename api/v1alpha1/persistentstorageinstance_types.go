@@ -78,7 +78,7 @@ type PersistentStorageInstanceStatus struct {
 	State PersistentStorageInstanceState `json:"state"`
 
 	// Error information
-	Error *ResourceError `json:"error,omitempty"`
+	ResourceError `json:",inline"`
 }
 
 //+kubebuilder:object:root=true
