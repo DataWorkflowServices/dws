@@ -1,0 +1,12 @@
+apiVersion: v1alpha1
+kind: ClientMount
+spec:
+  desiredState: mounted
+  node: node1
+  mounts:
+    - type: lustre
+      device:
+        type: lustre
+      mountPath: /lus
+      options: --mgs 127.0.0.1
+      targetType: directory
