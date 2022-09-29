@@ -37,7 +37,7 @@ var _ = Describe("Workflow Controller Test", func() {
 		Eventually(func(g Gomega) string {
 			g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(wf), wf)).To(Succeed())
 			return wf.Status.Status
-		}).Should(Equal(dwsv1alpha1.StatusDriverWait))
+		}).Should(Equal(dwsv1alpha1.StatusCompleted))
 
 	})
 })
