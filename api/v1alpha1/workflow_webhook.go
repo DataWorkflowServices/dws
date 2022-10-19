@@ -76,8 +76,11 @@ var _ webhook.Validator = &Workflow{}
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (w *Workflow) ValidateCreate() error {
 
-	if w.Spec.DesiredState != "proposal" {
-		return fmt.Errorf("desired state must start in 'proposal'")
+	if w.Spec.DesiredState != StateProposal.String() {
+		return fmt.Errorf("desired state must start in %s", StateProposal.String())
+	}
+	if w.Spec.Hurry == true {
+		return fmt.Errorf("The hurry flag may not be set on creation")
 	}
 
 	return checkDirectives(w, &ValidatingRuleParser{})
@@ -94,6 +97,10 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
+	if w.Spec.Hurry == true && w.Spec.DesiredState != StateTeardown.String() {
+		return fmt.Errorf("The hurry flag may only be set for %s", StateTeardown.String())
+	}
+
 	// Check that immutable fields haven't changed.
 	err := validateWorkflowImmutable(w, oldWorkflow)
 	if err != nil {
@@ -102,7 +109,7 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 
 	// Initial setup of the Workflow by the dws controller requires setting the status
 	// state to proposal and adding a finalizer.
-	if oldWorkflow.Status.State == "" && w.Spec.DesiredState == "proposal" {
+	if oldWorkflow.Status.State == "" && w.Spec.DesiredState == StateProposal.String() {
 		return nil
 	}
 
@@ -135,13 +142,13 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 	// New state is the desired state in the Spec
 	newState, err := GetWorkflowState(w.Spec.DesiredState)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to parse DesiredState: %w", err)
 	}
 
 	// Old state is the current state we're on. This is found in the status
 	oldState, err := GetWorkflowState(oldWorkflow.Status.State)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to find current state: %w", err)
 	}
 
 	// Progressing to teardown is allowed at any time, and changes to the
