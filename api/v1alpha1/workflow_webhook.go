@@ -80,7 +80,7 @@ func (w *Workflow) ValidateCreate() error {
 		return fmt.Errorf("desired state must start in %s", StateProposal.String())
 	}
 	if w.Spec.Hurry == true {
-		return fmt.Errorf("The hurry flag may not be set on creation")
+		return fmt.Errorf("the hurry flag may not be set on creation")
 	}
 
 	return checkDirectives(w, &ValidatingRuleParser{})
@@ -98,7 +98,7 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 	}
 
 	if w.Spec.Hurry == true && w.Spec.DesiredState != StateTeardown.String() {
-		return fmt.Errorf("The hurry flag may only be set for %s", StateTeardown.String())
+		return fmt.Errorf("the hurry flag may only be set for %s", StateTeardown.String())
 	}
 
 	// Check that immutable fields haven't changed.
@@ -118,7 +118,7 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 		// Elements with watchStates not equal to the current state should not change
 		if driverStatus.WatchState != oldWorkflow.Status.State {
 			if !reflect.DeepEqual(oldWorkflow.Status.Drivers[i], driverStatus) {
-				return fmt.Errorf("Driver entry for non-current state cannot be changed")
+				return fmt.Errorf("driver entry for non-current state cannot be changed")
 			}
 
 			continue
@@ -126,15 +126,15 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 
 		if driverStatus.Completed == true {
 			if driverStatus.Status != StatusCompleted {
-				return fmt.Errorf("Driver cannot be completed without status=Completed")
+				return fmt.Errorf("driver cannot be completed without status=Completed")
 			}
 
 			if driverStatus.Error != "" {
-				return fmt.Errorf("Driver cannot be completed when error is present")
+				return fmt.Errorf("driver cannot be completed when error is present")
 			}
 		} else {
 			if oldWorkflow.Status.Drivers[i].Completed == true {
-				return fmt.Errorf("Driver cannot change from completed state")
+				return fmt.Errorf("driver cannot change from completed state")
 			}
 		}
 	}
@@ -270,7 +270,7 @@ func (r *RuleList) ReadRules() error {
 	}
 
 	if len(ruleSetList.Items) == 0 {
-		return fmt.Errorf("Unable to find ruleset in namespace: %s", ns)
+		return fmt.Errorf("unable to find ruleset in namespace: %s", ns)
 	}
 
 	r.rules = []dwdparse.DWDirectiveRuleSpec{}
