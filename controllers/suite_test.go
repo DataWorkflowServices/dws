@@ -24,13 +24,15 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	zapcr "sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
 	//+kubebuilder:scaffold:imports
@@ -52,12 +54,18 @@ func TestAPIs(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
+
+	encoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+	zaplogger := zapcr.New(zapcr.WriteTo(GinkgoWriter), zapcr.Encoder(encoder), zapcr.UseDevMode(true))
+	logf.SetLogger(zaplogger)
 
 	ctx, cancel = context.WithCancel(context.TODO())
 
 	By("bootstrapping test environment")
 	testEnv = &envtest.Environment{
+		WebhookInstallOptions: envtest.WebhookInstallOptions{
+			Paths: []string{filepath.Join("..", "config", "webhook")},
+		},
 		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
 	}
@@ -72,12 +80,19 @@ var _ = BeforeSuite(func() {
 	//+kubebuilder:scaffold:scheme
 
 	// start webhook server using Manager
+	webhookInstallOptions := &testEnv.WebhookInstallOptions
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme: scheme.Scheme,
+		Scheme:  scheme.Scheme,
+		Host:    webhookInstallOptions.LocalServingHost,
+		Port:    webhookInstallOptions.LocalServingPort,
+		CertDir: webhookInstallOptions.LocalServingCertDir,
 	})
 	Expect(err).NotTo(HaveOccurred())
 
 	// start reconcilers
+
+	err = (&dwsv1alpha1.Workflow{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
 
 	err = (&WorkflowReconciler{
 		Client: k8sManager.GetClient(),

@@ -21,7 +21,9 @@ package v1alpha1
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -36,9 +38,10 @@ var _ = Describe("Workflow Webhook", func() {
 	)
 
 	BeforeEach(func() {
+		wfid := uuid.NewString()[0:8]
 		workflow = &Workflow{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "test",
+				Name:      fmt.Sprintf("w%s", wfid),
 				Namespace: metav1.NamespaceDefault,
 			},
 			Spec: WorkflowSpec{
@@ -46,17 +49,23 @@ var _ = Describe("Workflow Webhook", func() {
 				DWDirectives: []string{},
 			},
 		}
-
-		Expect(k8sClient.Create(context.TODO(), workflow)).To(Succeed())
 	})
 
 	AfterEach(func() {
-		Expect(k8sClient.Delete(context.TODO(), workflow)).To(Succeed())
+		if workflow != nil {
+			Expect(k8sClient.Delete(context.TODO(), workflow)).To(Succeed())
+		}
 	})
 
 	It("should have workflow environmental variables set successfully", func() {
+		Expect(k8sClient.Create(context.TODO(), workflow)).To(Succeed())
 		Expect(workflow.Status.Env).To(HaveKeyWithValue("DW_WORKFLOW_NAME", workflow.Name))
 		Expect(workflow.Status.Env).To(HaveKeyWithValue("DW_WORKFLOW_NAMESPACE", workflow.Namespace))
 	})
 
+	It("Fails to create workflow with hurry flag set", func() {
+		workflow.Spec.Hurry = true
+		Expect(k8sClient.Create(context.TODO(), workflow)).ToNot(Succeed())
+		workflow = nil
+	})
 })
