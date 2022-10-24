@@ -69,13 +69,4 @@ var _ = Describe("Workflow Webhook", func() {
 		Expect(k8sClient.Create(context.TODO(), workflow)).ToNot(Succeed())
 		workflow = nil
 	})
-
-	It("Create workflow, then fail to update hurry flag", func() {
-		Expect(k8sClient.Create(context.TODO(), workflow)).To(Succeed())
-		Eventually(func(g Gomega) {
-			g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(workflow), workflow)).To(Succeed())
-		}).Should(Succeed(), "get new workflow")
-		workflow.Spec.Hurry = true
-		Expect(k8sClient.Update(context.TODO(), workflow)).ToNot(Succeed())
-	})
 })
