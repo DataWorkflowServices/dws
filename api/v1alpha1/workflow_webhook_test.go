@@ -69,21 +69,38 @@ var _ = Describe("Workflow Webhook", func() {
 		workflow = nil
 	})
 
-	It("Fails to create workflow with Status.State set", func() {
-		stateStrings := []string{StateProposal.String(),
-			StateSetup.String(),
-			StateDataIn.String(),
-			StatePreRun.String(),
-			StatePostRun.String(),
-			StateDataOut.String(),
-			StateTeardown.String(),
-		}
+	DescribeTable("Workflow created only when Spec.DesiredState is Proposal",
+		func(statusState string, expectSuccess bool) {
+			workflow.Spec.DesiredState = statusState
+			if expectSuccess {
+				Expect(k8sClient.Create(context.TODO(), workflow)).Should(Succeed())
+			} else {
+				Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
+			}
 
-		for _, s := range stateStrings {
-			workflow.Status.State = s
+			workflow = nil
+		},
+		Entry("When Spec.DesiredState Proposal", StateProposal.String(), true),
+		Entry("When Spec.DesiredState Setup", StateSetup.String(), false),
+		Entry("When Spec.DesiredState DataIn", StateDataIn.String(), false),
+		Entry("When Spec.DesiredState PreRun", StatePreRun.String(), false),
+		Entry("When Spec.DesiredState PostRun", StatePostRun.String(), false),
+		Entry("When Spec.DesiredState DataOut", StateDataOut.String(), false),
+		Entry("When Spec.DesiredState Teardown", StateTeardown.String(), false),
+	)
+
+	DescribeTable("Fails to create workflow with Status.State set",
+		func(statusState string) {
+			workflow.Status.State = statusState
 			Expect(k8sClient.Create(context.TODO(), workflow)).ToNot(Succeed())
-		}
-		workflow = nil
-	})
-
+			workflow = nil
+		},
+		Entry("When Status.State Proposal", StateProposal.String()),
+		Entry("When Status.State Setup", StateSetup.String()),
+		Entry("When Status.State DataIn", StateDataIn.String()),
+		Entry("When Status.State PreRun", StatePreRun.String()),
+		Entry("When Status.State PostRun", StatePostRun.String()),
+		Entry("When Status.State DataOut", StateDataOut.String()),
+		Entry("When Status.State Teardown", StateTeardown.String()),
+	)
 })
