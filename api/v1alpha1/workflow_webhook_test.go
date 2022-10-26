@@ -68,4 +68,22 @@ var _ = Describe("Workflow Webhook", func() {
 		Expect(k8sClient.Create(context.TODO(), workflow)).ToNot(Succeed())
 		workflow = nil
 	})
+
+	It("Fails to create workflow with Status.State set", func() {
+		stateStrings := []string{StateProposal.String(),
+			StateSetup.String(),
+			StateDataIn.String(),
+			StatePreRun.String(),
+			StatePostRun.String(),
+			StateDataOut.String(),
+			StateTeardown.String(),
+		}
+
+		for _, s := range stateStrings {
+			workflow.Status.State = s
+			Expect(k8sClient.Create(context.TODO(), workflow)).ToNot(Succeed())
+		}
+		workflow = nil
+	})
+
 })
