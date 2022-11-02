@@ -65,9 +65,10 @@ func (*testWriter) Update(ctx context.Context, obj client.Object, opts ...client
 
 func (*testWriter) Status() client.StatusWriter { return &testStatusWriter{} }
 
-func TestUpdate(t *testing.T)          { testUpdate(t, true, nil) }
-func TestUpdateWithError(t *testing.T) { testUpdate(t, true, errors.Errorf("err")) }
-func TestNoUpdate(t *testing.T)        { testUpdate(t, false, nil) }
+func TestUpdate(t *testing.T)            { testUpdate(t, true, nil) }
+func TestUpdateWithError(t *testing.T)   { testUpdate(t, true, errors.Errorf("err")) }
+func TestNoUpdateWithError(t *testing.T) { testUpdate(t, false, errors.Errorf("err")) }
+func TestNoUpdate(t *testing.T)          { testUpdate(t, false, nil) }
 
 // Test that when a change occurs to the object's status, only the object is updated
 // and not the status
@@ -105,9 +106,10 @@ func (*testStatusWriter) Update(ctx context.Context, obj client.Object, opts ...
 	return nil
 }
 
-func TestStatusUpdate(t *testing.T)          { testStatusUpdate(t, true, nil) }
-func TestStatusUpdateWithError(t *testing.T) { testStatusUpdate(t, true, errors.Errorf("err")) }
-func TestNoStatusUpdate(t *testing.T)        { testStatusUpdate(t, false, nil) }
+func TestStatusUpdate(t *testing.T)            { testStatusUpdate(t, true, nil) }
+func TestStatusUpdateWithError(t *testing.T)   { testStatusUpdate(t, true, errors.Errorf("err")) }
+func TestNoStatusUpdateWithError(t *testing.T) { testStatusUpdate(t, false, errors.Errorf("err")) }
+func TestNoStatusUpdate(t *testing.T)          { testStatusUpdate(t, false, nil) }
 
 // Test when a change occurs to an object's status, only the status fields are
 // updated and not the object.
