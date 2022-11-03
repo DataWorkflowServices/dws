@@ -85,6 +85,8 @@ func (service *Service) Manage() (string, error) {
 		}
 	}
 
+	// mgr := manager.New()
+	// 
 	opts := getOptions()
 
 	config, err := createManager(opts)
@@ -134,8 +136,8 @@ func getOptions() *options {
 	flag.StringVar(&opts.host, "kubernetes-service-host", opts.host, "Kubernetes service host address")
 	flag.StringVar(&opts.port, "kubernetes-service-port", opts.port, "Kubernetes service port number")
 	flag.StringVar(&opts.name, "node-name", opts.name, "Name of this compute resource")
-	flag.StringVar(&opts.tokenFile, "dws-client-mount-service-token-file", opts.tokenFile, "Path to the DWS client mount service token")
-	flag.StringVar(&opts.certFile, "dws-client-mount-service-cert-file", opts.certFile, "Path to the DWS client mount service certificate")
+	flag.StringVar(&opts.tokenFile, "service-token-file", opts.tokenFile, "Path to the DWS client mount service token")
+	flag.StringVar(&opts.certFile, "service-cert-file", opts.certFile, "Path to the DWS client mount service certificate")
 	flag.BoolVar(&opts.mock, "mock", opts.mock, "Run in mock mode where no client mount operations take place")
 
 	zapOptions := zap.Options{
