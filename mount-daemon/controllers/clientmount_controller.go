@@ -188,6 +188,11 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 		}
 	}
 
+	// Remove the mount directory. It's not a big deal if this fails, so we just log a failure and don't return it
+	if err := r.rmdir(clientMountInfo.MountPath); err != nil {
+		log.Error(err, "Unable to remove mount directory", "Path", clientMountInfo.MountPath)
+	}
+
 	log.Info("Unmounted file system", "mount path", clientMountInfo.MountPath)
 	return nil
 }
@@ -385,6 +390,15 @@ func (r *ClientMountReconciler) createFile(path string) error {
 	}
 
 	return os.WriteFile(path, []byte(""), 0644)
+}
+
+func (r *ClientMountReconciler) rmdir(path string) error {
+	if r.Mock {
+		r.Log.Info("rmdir", "Path", path)
+		return nil
+	}
+
+	return os.Remove(path)
 }
 
 func (r *ClientMountReconciler) mkdir(path string) error {
