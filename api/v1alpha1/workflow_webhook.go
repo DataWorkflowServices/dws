@@ -170,10 +170,6 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 		return field.Invalid(field.NewPath("Spec").Child("DesiredState"), w.Spec.DesiredState, "states cannot be skipped")
 	}
 
-	if oldState.last() {
-		return fmt.Errorf("cannot progress beyond last state")
-	}
-
 	if !oldWorkflow.Status.Ready {
 		return field.Invalid(field.NewPath("Status").Child("State"), oldWorkflow.Status.State, "current desired state not yet achieved")
 	}
