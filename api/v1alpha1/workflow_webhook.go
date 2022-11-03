@@ -79,8 +79,8 @@ func (w *Workflow) ValidateCreate() error {
 
 	specPath := field.NewPath("Spec")
 
-	if w.Spec.DesiredState != StateProposal.String() {
-		s := fmt.Sprintf("desired state must start in %s", StateProposal.String())
+	if w.Spec.DesiredState != StateProposal {
+		s := fmt.Sprintf("desired state must start in %s", StateProposal)
 		return field.Invalid(specPath.Child("DesiredState"), w.Spec.DesiredState, s)
 	}
 	if w.Spec.Hurry == true {
@@ -104,8 +104,8 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
-	if w.Spec.Hurry == true && w.Spec.DesiredState != StateTeardown.String() {
-		s := fmt.Sprintf("the hurry flag may be set only in %s", StateTeardown.String())
+	if w.Spec.Hurry == true && w.Spec.DesiredState != StateTeardown {
+		s := fmt.Sprintf("the hurry flag may be set only in %s", StateTeardown)
 		return field.Invalid(field.NewPath("Spec").Child("Hurry"), w.Spec.Hurry, s)
 	}
 
@@ -117,7 +117,7 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 
 	// Initial setup of the Workflow by the dws controller requires setting the status
 	// state to proposal and adding a finalizer.
-	if oldWorkflow.Status.State == "" && w.Spec.DesiredState == StateProposal.String() {
+	if oldWorkflow.Status.State == "" && w.Spec.DesiredState == StateProposal {
 		return nil
 	}
 
@@ -151,35 +151,31 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 		}
 	}
 
-	// New state is the desired state in the Spec
-	newState, err := GetWorkflowState(w.Spec.DesiredState)
-	if err != nil {
-		return fmt.Errorf("unable to parse DesiredState: %w", err)
-	}
+	oldState := oldWorkflow.Status.State
+	newState := w.Spec.DesiredState
 
-	// Old state is the current state we're in. This is found in the status
-	oldState, err := GetWorkflowState(oldWorkflow.Status.State)
-	if err != nil {
-		return fmt.Errorf("unable to find current state: %w", err)
-	}
-
-	// Progressing to teardown is allowed at any time, and changes to the
-	// Workflow that don't change the state are fine too (immutable fields were
-	// already checked)
-	if newState == StateTeardown || newState == oldState {
+	// Allow updates without changes to state, or to the next state. Teardown is always permitted
+	if newState == oldState || oldState.next() != newState || newState == StateTeardown {
 		return nil
-	}
-
-	if newState < oldState {
-		return field.Invalid(field.NewPath("Spec").Child("DesiredState"), w.Spec.DesiredState, "DesiredState cannot progress backwards")
-	}
-
-	if newState > oldState+1 {
-		return field.Invalid(field.NewPath("Spec").Child("DesiredState"), w.Spec.DesiredState, "states cannot be skipped")
 	}
 
 	if !oldWorkflow.Status.Ready {
 		return field.Invalid(field.NewPath("Status").Child("State"), oldWorkflow.Status.State, "current desired state not yet achieved")
+	}
+
+	// Error checks
+	// TODO: These (and other errors) should move to validation field errors. Refer to
+	//       https://pkg.go.dev/k8s.io/apimachinery@v0.24.2/pkg/util/validation/field
+	if oldState.after(newState) {
+		return fmt.Errorf("state cannot progress backwards")
+	}
+
+	if oldState.next() != newState {
+		return fmt.Errorf("states cannot be skipped")
+	}
+
+	if oldState.last() {
+		return fmt.Errorf("cannot progress beyond last state")
 	}
 
 	return nil
@@ -319,12 +315,12 @@ type MutatingRuleParser struct {
 
 // MatchedDirective updates the driver status entries to indicate driver availability
 func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates string, index int, label string) {
-	if watchStates == "" {
+	if len(watchStates) == 0 {
 		// Nothing to do
 		return
 	}
 
-	registrationMap := make(map[string]bool)
+	registrationMap := make(map[WorkflowState]bool)
 	// Build a map of previously registered states for this driver
 	for _, s := range workflow.Status.Drivers {
 		if s.DWDIndex != index {
@@ -340,6 +336,8 @@ func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates st
 
 	// Update driver status entries to indicate driver availability
 	for _, state := range strings.Split(watchStates, ",") {
+		state := WorkflowState(state)
+
 		// If this driver is already registered for this directive, skip it
 		if registrationMap[state] {
 			continue
@@ -353,7 +351,7 @@ func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates st
 			Status:     StatusPending,
 		}
 		workflow.Status.Drivers = append(workflow.Status.Drivers, driverStatus)
-		workflowlog.Info("Registering driver", "Driver", driverStatus.DriverID, "Watch state", driverStatus.WatchState)
+		workflowlog.Info("Registering driver", "Driver", driverStatus.DriverID, "Watch state", state)
 	}
 }
 
