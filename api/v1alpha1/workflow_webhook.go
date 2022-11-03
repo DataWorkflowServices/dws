@@ -154,28 +154,28 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 	oldState := oldWorkflow.Status.State
 	newState := w.Spec.DesiredState
 
-	// Allow updates without changes to state, or to the next state. Teardown is always permitted
-	if newState == oldState || oldState.next() != newState || newState == StateTeardown {
+	// Progressing to teardown is allowed at any time, and changes to the
+	// Workflow that don't change the state are fine too (immutable fields were
+	// already checked)
+	if newState == StateTeardown || newState == oldState {
 		return nil
 	}
 
-	if !oldWorkflow.Status.Ready {
-		return field.Invalid(field.NewPath("Status").Child("State"), oldWorkflow.Status.State, "current desired state not yet achieved")
-	}
-
 	// Error checks
-	// TODO: These (and other errors) should move to validation field errors. Refer to
-	//       https://pkg.go.dev/k8s.io/apimachinery@v0.24.2/pkg/util/validation/field
 	if oldState.after(newState) {
-		return fmt.Errorf("state cannot progress backwards")
+		return field.Invalid(field.NewPath("Spec").Child("DesiredState"), w.Spec.DesiredState, "DesiredState cannot progress backwards")
 	}
 
 	if oldState.next() != newState {
-		return fmt.Errorf("states cannot be skipped")
+		return field.Invalid(field.NewPath("Spec").Child("DesiredState"), w.Spec.DesiredState, "states cannot be skipped")
 	}
 
 	if oldState.last() {
 		return fmt.Errorf("cannot progress beyond last state")
+	}
+
+	if !oldWorkflow.Status.Ready {
+		return field.Invalid(field.NewPath("Status").Child("State"), oldWorkflow.Status.State, "current desired state not yet achieved")
 	}
 
 	return nil
