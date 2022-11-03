@@ -104,5 +104,35 @@ var _ = Describe("Workflow Webhook", func() {
 		Entry("When Status.State Teardown", StateTeardown),
 	)
 
-	// Describe Fail transitions
+	Describe("Invalid transitions after create", Ordered, func() {
+		BeforeEach(func() {
+			Expect(k8sClient.Create(context.TODO(), workflow)).Should(Succeed())
+		})
+
+		DescribeTable("Fails to transition out of proposal", func(desiredState WorkflowState) {
+			workflow.Spec.DesiredState = desiredState
+			Expect(k8sClient.Update(context.TODO(), workflow)).ShouldNot(Succeed())
+		},
+			Entry("When Spec.DesiredState Setup", StateSetup), // This is a valid state transition, but status is not ready
+			Entry("When Spec.DesiredState DataIn", StateDataIn),
+			Entry("When Spec.DesiredState PreRun", StatePreRun),
+			Entry("When Spec.DesiredState PostRun", StatePostRun),
+			Entry("When Spec.DesiredState DataOut", StateDataOut),
+			//Entry("When Spec.DesiredState Teardown", StateTeardown), // Transition to Teardown is always permitted
+		)
+
+		DescribeTable("Fails to transition out of teardown", func(desiredState WorkflowState) {
+			workflow.Spec.DesiredState = StateTeardown
+			Expect(k8sClient.Update(context.TODO(), workflow)).Should(Succeed())
+
+			workflow.Spec.DesiredState = desiredState
+			Expect(k8sClient.Update(context.TODO(), workflow)).ShouldNot(Succeed())
+		},
+			Entry("When Spec.DesiredState Setup", StateSetup),
+			Entry("When Spec.DesiredState DataIn", StateDataIn),
+			Entry("When Spec.DesiredState PreRun", StatePreRun),
+			Entry("When Spec.DesiredState PostRun", StatePostRun),
+			Entry("When Spec.DesiredState DataOut", StateDataOut),
+		)
+	})
 })
