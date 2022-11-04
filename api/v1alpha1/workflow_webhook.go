@@ -104,11 +104,9 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
-	specPath := field.NewPath("Spec")
-
 	if w.Spec.Hurry == true && w.Spec.DesiredState != StateTeardown.String() {
 		s := fmt.Sprintf("the hurry flag may be set only in %s", StateTeardown.String())
-		return field.Invalid(specPath.Child("Hurry"), w.Spec.Hurry, s)
+		return field.Invalid(field.NewPath("Spec").Child("Hurry"), w.Spec.Hurry, s)
 	}
 
 	// Check that immutable fields haven't changed.
@@ -123,30 +121,32 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 		return nil
 	}
 
-	statusPath := field.NewPath("Status")
-
 	// Validate the elements in the Drivers array
 	for i, driverStatus := range w.Status.Drivers {
+
+		driverError := func(errString string) error {
+			return field.InternalError(field.NewPath("Status").Child("Drivers").Index(i), fmt.Errorf(errString))
+		}
 
 		// Elements with watchStates not equal to the current state should not change
 		if driverStatus.WatchState != oldWorkflow.Status.State {
 			if !reflect.DeepEqual(oldWorkflow.Status.Drivers[i], driverStatus) {
-				return field.InternalError(statusPath.Child("Drivers"), fmt.Errorf("driver entry for non-current state cannot be changed"))
+				return driverError("driver entry for non-current state cannot be changed")
 			}
 			continue
 		}
 
 		if driverStatus.Completed == true {
 			if driverStatus.Status != StatusCompleted {
-				return field.InternalError(statusPath.Child("Drivers").Child("Completed"), fmt.Errorf("driver cannot be completed without status=Completed"))
+				return driverError("driver cannot be completed without status=Completed")
 			}
 
 			if driverStatus.Error != "" {
-				return field.InternalError(statusPath.Child("Drivers").Child("Completed"), fmt.Errorf("driver cannot be completed when error is present"))
+				return driverError("driver cannot be completed when error is present")
 			}
 		} else {
 			if oldWorkflow.Status.Drivers[i].Completed == true {
-				return field.InternalError(statusPath.Child("Drivers").Child("Completed"), fmt.Errorf("driver cannot change from completed state"))
+				return driverError("driver cannot change from completed state")
 			}
 		}
 	}
@@ -171,15 +171,15 @@ func (w *Workflow) ValidateUpdate(old runtime.Object) error {
 	}
 
 	if newState < oldState {
-		return field.Invalid(specPath.Child("DesiredState"), w.Spec.DesiredState, "DesiredState cannot progress backwards")
+		return field.Invalid(field.NewPath("Spec").Child("DesiredState"), w.Spec.DesiredState, "DesiredState cannot progress backwards")
 	}
 
 	if newState > oldState+1 {
-		return field.Invalid(specPath.Child("DesiredState"), w.Spec.DesiredState, "states cannot be skipped")
+		return field.Invalid(field.NewPath("Spec").Child("DesiredState"), w.Spec.DesiredState, "states cannot be skipped")
 	}
 
 	if !oldWorkflow.Status.Ready {
-		return field.Invalid(statusPath.Child("State"), oldWorkflow.Status.State, "current desired state not yet achieved")
+		return field.Invalid(field.NewPath("Status").Child("State"), oldWorkflow.Status.State, "current desired state not yet achieved")
 	}
 
 	return nil
@@ -190,27 +190,30 @@ func (w *Workflow) ValidateDelete() error {
 	return nil
 }
 
-func validateWorkflowImmutable(wfNew *Workflow, wfOld *Workflow) error {
+func validateWorkflowImmutable(newWorkflow *Workflow, oldWorkflow *Workflow) error {
 
-	specPath := field.NewPath("Spec")
-	if wfNew.Spec.WLMID != wfOld.Spec.WLMID {
-		return field.Forbidden(specPath.Child("WLMID"), "field is immutable")
+	immutableError := func(childField string) error {
+		return field.Forbidden(field.NewPath("Spec").Child(childField), "field is immutable")
 	}
 
-	if wfNew.Spec.JobID != wfOld.Spec.JobID {
-		return field.Forbidden(specPath.Child("JobID"), "field is immutable")
+	if newWorkflow.Spec.WLMID != oldWorkflow.Spec.WLMID {
+		return immutableError("WLMID")
 	}
 
-	if wfNew.Spec.UserID != wfOld.Spec.UserID {
-		return field.Forbidden(specPath.Child("UserID"), "field is immutable")
+	if newWorkflow.Spec.JobID != oldWorkflow.Spec.JobID {
+		return immutableError("JobID")
 	}
 
-	if wfNew.Spec.GroupID != wfOld.Spec.GroupID {
-		return field.Forbidden(specPath.Child("GroupID"), "field is immutable")
+	if newWorkflow.Spec.UserID != oldWorkflow.Spec.UserID {
+		return immutableError("UserID")
 	}
 
-	if !reflect.DeepEqual(wfNew.Spec.DWDirectives, wfOld.Spec.DWDirectives) {
-		return field.Forbidden(specPath.Child("DWDirectives"), "field is immutable")
+	if newWorkflow.Spec.GroupID != oldWorkflow.Spec.GroupID {
+		return immutableError("GroupID")
+	}
+
+	if !reflect.DeepEqual(newWorkflow.Spec.DWDirectives, oldWorkflow.Spec.DWDirectives) {
+		return immutableError("DWDirectives")
 	}
 
 	return nil
