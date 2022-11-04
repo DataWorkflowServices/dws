@@ -194,23 +194,23 @@ func validateWorkflowImmutable(wfNew *Workflow, wfOld *Workflow) error {
 
 	specPath := field.NewPath("Spec")
 	if wfNew.Spec.WLMID != wfOld.Spec.WLMID {
-		return field.Forbidden(specPath.Child("WLMID"), "cannot change immutable field WLMID")
+		return field.Forbidden(specPath.Child("WLMID"), "field is immutable")
 	}
 
 	if wfNew.Spec.JobID != wfOld.Spec.JobID {
-		return field.Forbidden(specPath.Child("JobID"), "cannot change immutable field JobID")
+		return field.Forbidden(specPath.Child("JobID"), "field is immutable")
 	}
 
 	if wfNew.Spec.UserID != wfOld.Spec.UserID {
-		return field.Forbidden(specPath.Child("UserID"), "cannot change immutable field UserID")
+		return field.Forbidden(specPath.Child("UserID"), "field is immutable")
 	}
 
 	if wfNew.Spec.GroupID != wfOld.Spec.GroupID {
-		return field.Forbidden(specPath.Child("GroupID"), "cannot change immutable field GroupID")
+		return field.Forbidden(specPath.Child("GroupID"), "field is immutable")
 	}
 
 	if !reflect.DeepEqual(wfNew.Spec.DWDirectives, wfOld.Spec.DWDirectives) {
-		return field.Forbidden(specPath.Child("DWDirectives"), "cannot change immutable field DWDirectives")
+		return field.Forbidden(specPath.Child("DWDirectives"), "field is immutable")
 	}
 
 	return nil
