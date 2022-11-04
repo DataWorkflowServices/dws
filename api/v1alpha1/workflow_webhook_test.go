@@ -65,7 +65,7 @@ var _ = Describe("Workflow Webhook", func() {
 
 	It("Fails to create workflow with hurry flag set", func() {
 		workflow.Spec.Hurry = true
-		Expect(k8sClient.Create(context.TODO(), workflow)).ToNot(Succeed())
+		Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
 		workflow = nil
 	})
 
@@ -92,7 +92,7 @@ var _ = Describe("Workflow Webhook", func() {
 	DescribeTable("Fails to create workflow with Status.State set",
 		func(statusState string) {
 			workflow.Status.State = statusState
-			Expect(k8sClient.Create(context.TODO(), workflow)).ToNot(Succeed())
+			Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
 			workflow = nil
 		},
 		Entry("When Status.State Proposal", StateProposal.String()),
