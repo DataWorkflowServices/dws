@@ -85,8 +85,6 @@ func (service *Service) Manage() (string, error) {
 		}
 	}
 
-	// mgr := manager.New()
-	// 
 	opts := getOptions()
 
 	config, err := createManager(opts)
