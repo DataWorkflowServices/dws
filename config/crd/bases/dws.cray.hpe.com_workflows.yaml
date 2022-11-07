@@ -76,13 +76,13 @@ spec:
                   to the teardown state, this can only be set to the next state when
                   the current desired state has been achieved.
                 enum:
-                - proposal
-                - setup
-                - data_in
-                - pre_run
-                - post_run
-                - data_out
-                - teardown
+                - Proposal
+                - Setup
+                - DataIn
+                - PreRun
+                - PostRun
+                - DataOut
+                - Teardown
                 type: string
               dwDirectives:
                 description: 'List of #DW strings from a WLM job script'

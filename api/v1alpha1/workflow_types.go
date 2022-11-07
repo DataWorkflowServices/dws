@@ -38,13 +38,13 @@ type WorkflowState string
 
 // WorkflowState values
 const (
-	StateProposal WorkflowState = "proposal"
-	StateSetup    WorkflowState = "setup"
-	StateDataIn   WorkflowState = "data_in"
-	StatePreRun   WorkflowState = "pre_run"
-	StatePostRun  WorkflowState = "post_run"
-	StateDataOut  WorkflowState = "data_out"
-	StateTeardown WorkflowState = "teardown"
+	StateProposal WorkflowState = "Proposal"
+	StateSetup    WorkflowState = "Setup"
+	StateDataIn   WorkflowState = "DataIn"
+	StatePreRun   WorkflowState = "PreRun"
+	StatePostRun  WorkflowState = "PostRun"
+	StateDataOut  WorkflowState = "DataOut"
+	StateTeardown WorkflowState = "Teardown"
 )
 
 // Next reports the next state after state s
@@ -100,7 +100,7 @@ const (
 type WorkflowSpec struct {
 	// Desired state for the workflow to be in. Unless progressing to the teardown state,
 	// this can only be set to the next state when the current desired state has been achieved.
-	// +kubebuilder:validation:Enum:=proposal;setup;data_in;pre_run;post_run;data_out;teardown
+	// +kubebuilder:validation:Enum:=Proposal;Setup;DataIn;PreRun;PostRun;DataOut;Teardown
 	// +kubebuilder:validation:Type:=string
 	DesiredState WorkflowState `json:"desiredState"`
 
