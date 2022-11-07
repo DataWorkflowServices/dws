@@ -45,7 +45,7 @@ var _ = Describe("Workflow Webhook", func() {
 				Namespace: metav1.NamespaceDefault,
 			},
 			Spec: WorkflowSpec{
-				DesiredState: StateProposal.String(),
+				DesiredState: StateProposal,
 				DWDirectives: []string{},
 			},
 		}
@@ -70,8 +70,8 @@ var _ = Describe("Workflow Webhook", func() {
 	})
 
 	DescribeTable("Workflow created only when Spec.DesiredState is Proposal",
-		func(statusState string, expectSuccess bool) {
-			workflow.Spec.DesiredState = statusState
+		func(desiredState WorkflowState, expectSuccess bool) {
+			workflow.Spec.DesiredState = desiredState
 			if expectSuccess {
 				Expect(k8sClient.Create(context.TODO(), workflow)).Should(Succeed())
 			} else {
@@ -80,27 +80,59 @@ var _ = Describe("Workflow Webhook", func() {
 
 			workflow = nil
 		},
-		Entry("When Spec.DesiredState Proposal", StateProposal.String(), true),
-		Entry("When Spec.DesiredState Setup", StateSetup.String(), false),
-		Entry("When Spec.DesiredState DataIn", StateDataIn.String(), false),
-		Entry("When Spec.DesiredState PreRun", StatePreRun.String(), false),
-		Entry("When Spec.DesiredState PostRun", StatePostRun.String(), false),
-		Entry("When Spec.DesiredState DataOut", StateDataOut.String(), false),
-		Entry("When Spec.DesiredState Teardown", StateTeardown.String(), false),
+		Entry("When Spec.DesiredState Proposal", StateProposal, true),
+		Entry("When Spec.DesiredState Setup", StateSetup, false),
+		Entry("When Spec.DesiredState DataIn", StateDataIn, false),
+		Entry("When Spec.DesiredState PreRun", StatePreRun, false),
+		Entry("When Spec.DesiredState PostRun", StatePostRun, false),
+		Entry("When Spec.DesiredState DataOut", StateDataOut, false),
+		Entry("When Spec.DesiredState Teardown", StateTeardown, false),
 	)
 
 	DescribeTable("Fails to create workflow with Status.State set",
-		func(statusState string) {
+		func(statusState WorkflowState) {
 			workflow.Status.State = statusState
 			Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
 			workflow = nil
 		},
-		Entry("When Status.State Proposal", StateProposal.String()),
-		Entry("When Status.State Setup", StateSetup.String()),
-		Entry("When Status.State DataIn", StateDataIn.String()),
-		Entry("When Status.State PreRun", StatePreRun.String()),
-		Entry("When Status.State PostRun", StatePostRun.String()),
-		Entry("When Status.State DataOut", StateDataOut.String()),
-		Entry("When Status.State Teardown", StateTeardown.String()),
+		Entry("When Status.State Proposal", StateProposal),
+		Entry("When Status.State Setup", StateSetup),
+		Entry("When Status.State DataIn", StateDataIn),
+		Entry("When Status.State PreRun", StatePreRun),
+		Entry("When Status.State PostRun", StatePostRun),
+		Entry("When Status.State DataOut", StateDataOut),
+		Entry("When Status.State Teardown", StateTeardown),
 	)
+
+	Describe("Invalid transitions after create", Ordered, func() {
+		BeforeEach(func() {
+			Expect(k8sClient.Create(context.TODO(), workflow)).Should(Succeed())
+		})
+
+		DescribeTable("Fails to transition out of proposal", func(desiredState WorkflowState) {
+			workflow.Spec.DesiredState = desiredState
+			Expect(k8sClient.Update(context.TODO(), workflow)).ShouldNot(Succeed())
+		},
+			Entry("When Spec.DesiredState Setup", StateSetup), // This is a valid state transition, but status is not ready
+			Entry("When Spec.DesiredState DataIn", StateDataIn),
+			Entry("When Spec.DesiredState PreRun", StatePreRun),
+			Entry("When Spec.DesiredState PostRun", StatePostRun),
+			Entry("When Spec.DesiredState DataOut", StateDataOut),
+			//Entry("When Spec.DesiredState Teardown", StateTeardown), // Transition to Teardown is always permitted
+		)
+
+		DescribeTable("Fails to transition out of teardown", func(desiredState WorkflowState) {
+			workflow.Spec.DesiredState = StateTeardown
+			Expect(k8sClient.Update(context.TODO(), workflow)).Should(Succeed())
+
+			workflow.Spec.DesiredState = desiredState
+			Expect(k8sClient.Update(context.TODO(), workflow)).ShouldNot(Succeed())
+		},
+			Entry("When Spec.DesiredState Setup", StateSetup),
+			Entry("When Spec.DesiredState DataIn", StateDataIn),
+			Entry("When Spec.DesiredState PreRun", StatePreRun),
+			Entry("When Spec.DesiredState PostRun", StatePostRun),
+			Entry("When Spec.DesiredState DataOut", StateDataOut),
+		)
+	})
 })

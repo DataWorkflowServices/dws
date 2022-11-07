@@ -277,6 +277,8 @@ spec:
                     taskID:
                       type: string
                     watchState:
+                      description: WorkflowState is the enumeration of the state of
+                        the workflow
                       type: string
                   required:
                   - completed
@@ -309,7 +311,6 @@ spec:
                 format: date-time
                 type: string
               state:
-                default: proposal
                 description: The state the resource is currently transitioning to.
                   Updated by the controller once started.
                 type: string

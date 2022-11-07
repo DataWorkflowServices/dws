@@ -29,7 +29,7 @@ var _ = Describe("Workflow Controller Test", func() {
 				Namespace: corev1.NamespaceDefault,
 			},
 			Spec: dwsv1alpha1.WorkflowSpec{
-				DesiredState: dwsv1alpha1.StateProposal.String(),
+				DesiredState: dwsv1alpha1.StateProposal,
 				WLMID:        "test",
 				JobID:        0,
 				UserID:       0,
@@ -86,7 +86,7 @@ var _ = Describe("Workflow Controller Test", func() {
 			return wf.Status.Status
 		}).Should(Equal(dwsv1alpha1.StatusCompleted))
 
-		wf.Spec.DesiredState = dwsv1alpha1.StateTeardown.String()
+		wf.Spec.DesiredState = dwsv1alpha1.StateTeardown
 		wf.Spec.Hurry = true
 		Expect(k8sClient.Update(context.TODO(), wf)).To(Succeed())
 	})
