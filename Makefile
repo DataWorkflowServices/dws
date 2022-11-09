@@ -166,7 +166,7 @@ deploy: kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/c
 	$(KUSTOMIZE) build config/${OVERLAY} | kubectl apply -f -
 
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
-	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete -f -
+	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete --ignore-not-found -f -
 
 ## Location to install dependencies to
 LOCALBIN ?= $(shell pwd)/bin
