@@ -150,8 +150,9 @@ docker-build: manifests generate fmt vet ## Build docker image with the manager.
 docker-push: ## Push docker image with the manager.
 	${DOCKER} push ${IMG}
 
+KIND_CLUSTER ?= "kind"
 kind-push: ## Push docker image to kind
-	kind load docker-image --nodes `kubectl get node -l cray.wlm.manager=true --no-headers -o custom-columns=":metadata.name" | paste -d, -s -` ${IMG}
+	kind load docker-image --name $(KIND_CLUSTER) --nodes `kubectl get node -l cray.wlm.manager=true --no-headers -o custom-columns=":metadata.name" | paste -d, -s -` ${IMG}
 
 ##@ Deployment
 
