@@ -1,0 +1,37 @@
+# Use DP0 (real hardware) for the base.
+bases:
+- ../dp0
+
+# Adjustments for CSM 0.9.3:
+#  - The kube-rbac-proxy will be in the local container registry.
+#  - The cert-manager is ancient, at v0.14.1.
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: registry.local/kube-rbac-proxy:v0.13.0
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: dws-operator-controller-manager
+  - patch: |-
+      - op: replace
+        path: /apiVersion
+        value: cert-manager.io/v1alpha3
+    target:
+      group: cert-manager.io
+      version: v1
+      kind: Certificate
+      name: dws-operator-serving-cert
+  - patch: |-
+      - op: replace
+        path: /apiVersion
+        value: cert-manager.io/v1alpha3
+    target:
+      group: cert-manager.io
+      version: v1
+      kind: Issuer
+      name: dws-operator-selfsigned-issuer
+
+
