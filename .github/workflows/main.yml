@@ -53,15 +53,16 @@ jobs:
         images: |
           ghcr.io/${{ env.REPO_NAME }}
         tags: |
-          # for merge to master branch, tag example: 'master'
+          # For merge to master branch, tag example: 'master'
           type=ref,event=branch
-          # for PR event, tag example: 'pr-3'
+          # For PR event, tag example: 'pr-3'
           type=ref,event=pr
-          # for PR event or merge event, tag example: 0.0.1.12-5667
+          # For PR event or merge event, tag example: 0.0.1.12-5667
           type=raw,value=${{ env.VERSION_TAG }}
-          # for PR event or merge, tag example: 566769e04d2436cf5f42ae4f46092c7dff6e668e
+          # For PR event or merge, tag example: 566769e04d2436cf5f42ae4f46092c7dff6e668e
           type=raw,value=${{ env.SHA_TAG }}          
-          # for push to semver tag, tag example: 0.0.2
+          # For push to semver tag, tag example: 0.0.2
+          # This also sets 'latest'.
           type=semver,pattern={{version}}
 
     - name: "Docker login"
