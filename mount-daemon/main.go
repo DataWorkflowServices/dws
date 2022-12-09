@@ -115,7 +115,6 @@ type options struct {
 	host      string
 	port      string
 	name      string
-	nodeName  string
 	tokenFile string
 	certFile  string
 	mock      bool
@@ -154,6 +153,15 @@ func createManager(opts *options) (*managerConfig, error) {
 
 	var config *rest.Config
 	var err error
+
+	if len(opts.name) == 0 {
+		setupLog.Info("Using system hostname")
+
+		opts.name, err = os.Hostname()
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	if len(opts.host) == 0 && len(opts.port) == 0 {
 		setupLog.Info("Using kubeconfig rest configuration")
