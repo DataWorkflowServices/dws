@@ -29,4 +29,5 @@ kind-*.yaml
 
 nnf-sos
 mount-daemon/clientmount
+.version
 
