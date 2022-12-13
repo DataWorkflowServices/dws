@@ -1,3 +1,7 @@
+# Release v0.0.3
+
+Just a test
+
 # dws - Data Workflow Services
 
 Data Workflow Services (DWS) contains the schema for the Data Workflow Services API. HPC batch software integrates with the DWS API on HPE HPC systems and HPC storage systems to provide intelligent data movement and ephemeral storage resources to user workloads.
