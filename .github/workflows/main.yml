@@ -38,8 +38,7 @@ jobs:
     - name: "Set tags for main/master"
       id: set_tags
       run: |
-        echo "VERSION_TAG=$(./git-version-gen)" >> ${GITHUB_ENV}
-        echo "LATEST_TAG=latest" >> ${GITHUB_ENV}
+        echo "VERSION_TAG=$(./git-version-gen | grep -v UNKNOWN)" >> ${GITHUB_ENV}
         echo "TEST_TAG=$(git rev-parse HEAD)-test" >> ${GITHUB_ENV}
         echo "SHA_TAG=$(git rev-parse HEAD)" >> ${GITHUB_ENV}
         echo "${GITHUB_ENV}:"
@@ -57,13 +56,15 @@ jobs:
           type=ref,event=branch
           # For PR event, tag example: 'pr-3'
           type=ref,event=pr
-          # For PR event or merge event, tag example: 0.0.1.12-5667
+          # For PR event or merge event, tag example: 1.0.1.12-5667
           type=raw,value=${{ env.VERSION_TAG }}
           # For PR event or merge, tag example: 566769e04d2436cf5f42ae4f46092c7dff6e668e
           type=raw,value=${{ env.SHA_TAG }}          
-          # For push to semver tag, tag example: 0.0.2
+          # For push to semver tag, tag example: 1.0.2
           # This also sets 'latest'.
           type=semver,pattern={{version}}
+          # For push to semver tag, tag example: 1.0
+          type=semver,pattern={{major}}.{{minor}}
 
     - name: "Docker login"
       id: docker_login
