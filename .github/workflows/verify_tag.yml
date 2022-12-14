@@ -1,6 +1,6 @@
 # Pushing a tag triggers this workflow, which verifies that it is an
 # annotated tag.
-name: VerifyTag
+name: Verify tag
 
 on:
   push:
