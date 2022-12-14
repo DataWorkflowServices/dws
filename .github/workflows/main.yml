@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - 'master'
+      - 'releases/v*'
     tags:
       - 'v*'
   pull_request:
-    branches: [ master ]
+    branches:
+      - 'master'
+      - 'releases/v*'
 
 env:
   # TEST_TARGET: Name of the testing target in the Dockerfile
