@@ -1,9 +1,7 @@
-# Release workflow: Pushing a tag triggers this workflow,
-# which uses the name of the tag as the container tag/version
-# that goes into GHCR.
-name: Release
+# Pushing a tag triggers this workflow, which verifies that it is an
+# annotated tag.
+name: Verify tag
 
-# Build and publish Docker image upon pushing a tag
 on:
   push:
     tags:
