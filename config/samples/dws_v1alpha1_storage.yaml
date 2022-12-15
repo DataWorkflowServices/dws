@@ -4,7 +4,9 @@ metadata:
   name: rabbit-01
   labels:
     dws.cray.hpe.com/storage: Rabbit
-data:
+spec:
+  state: Enabled
+status:
   access:
     computes:
     - name: Compute 0

@@ -50,7 +50,7 @@ spec:
             properties:
               state:
                 default: Enabled
-                description: State describes the desired state of the Storage resource
+                description: State describes the desired state of the Storage resource.
                 enum:
                 - Enabled
                 - Disabled
@@ -181,6 +181,8 @@ spec:
             required:
             - capacity
             type: object
+        required:
+        - spec
         type: object
     served: true
     storage: true
