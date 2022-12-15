@@ -171,7 +171,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete --ignore-not-found -f -
 
 .version: ## Uses the git-version-gen script to generate a tag version
-	./git-version-gen > .version
+	./git-version-gen --fallback `git rev-parse HEAD` > .version
 
 clean:
 	rm -f .version
