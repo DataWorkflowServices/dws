@@ -21,6 +21,7 @@ spec:
     metadata:
       labels:
         control-plane: controller-manager
+        app: dws
     spec:
       nodeSelector:
         cray.wlm.manager: "true"
