@@ -108,6 +108,9 @@ type StorageStatus struct {
 	// Status is the overall status of the storage
 	// +kubebuilder:validation:Enum:=Starting;Ready;Disabled;NotPresent;Offline;Failed
 	Status string `json:"status,omitempty"`
+
+	// Message provides additional details on the current status of the resource
+	Message string `json:"message,omitempty"`
 }
 
 //+kubebuilder:object:root=true

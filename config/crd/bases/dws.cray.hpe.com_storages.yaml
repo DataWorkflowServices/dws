@@ -163,6 +163,10 @@ spec:
                       type: integer
                   type: object
                 type: array
+              message:
+                description: Message provides additional details on the current status
+                  of the resource
+                type: string
               status:
                 description: Status is the overall status of the storage
                 enum:
