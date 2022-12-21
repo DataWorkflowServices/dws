@@ -21,7 +21,7 @@ jobs:
       - name: "Repair tag"
         run: git fetch -f origin ${{ github.ref }}:${{ github.ref }}
       - name: "Verify that this is a release branch"
-        run: [[ `git branch --show-current` != "releases/v"* ]] && /bin/false
+        run: if [[ `git branch --show-current` != "releases/v"* ]]; then /bin/false; else /bin/true; fi
       - name: "Verify tag is annotated"
         run: if test x$(git for-each-ref ${{ github.ref }} | awk '{print $2}') = xtag; then /bin/true; else echo "\"${{ github.ref }}\" does not look like an annotated tag!"; /bin/false; fi
       - name: "Echo release tag"
