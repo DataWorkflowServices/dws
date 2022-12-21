@@ -11,7 +11,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  verify-tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
