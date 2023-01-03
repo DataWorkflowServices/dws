@@ -1,4 +1,4 @@
-# Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+# Copyright 2021-2023 Hewlett Packard Enterprise Development LP
 # Other additional copyright holders may be indicated within.
 #
 # The entirety of this work is licensed under the Apache License,
@@ -51,7 +51,7 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 # This variable is used to construct full image tags for bundle and catalog images.
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
-# cray.hpe.com/dws-operator-bundle:$VERSION and cray.hpe.com/dws-operator-catalog:$VERSION.
+# dataworkflowservices.github.io/dws-operator-bundle:$VERSION and dataworkflowservices.github.io/dws-operator-catalog:$VERSION.
 IMAGE_TAG_BASE ?= ghcr.io/hewlettpackard/dws-operator
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
@@ -88,9 +88,6 @@ SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
 all: build
-
-vendor:
-	GOPRIVATE=github.hpe.com go mod vendor
 
 ##@ General
 
@@ -152,7 +149,7 @@ docker-push: .version ## Push docker image with the manager.
 KIND_CLUSTER ?= "kind"
 kind-push: VERSION ?= $(shell cat .version)
 kind-push: .version ## Push docker image to kind
-	kind load docker-image --name $(KIND_CLUSTER) --nodes `kubectl get node -l cray.wlm.manager=true --no-headers -o custom-columns=":metadata.name" | paste -d, -s -` $(IMAGE_TAG_BASE):$(VERSION)
+	kind load docker-image --name $(KIND_CLUSTER) --nodes `kubectl get node -l dws.wlm.manager=true --no-headers -o custom-columns=":metadata.name" | paste -d, -s -` $(IMAGE_TAG_BASE):$(VERSION)
 
 ##@ Deployment
 

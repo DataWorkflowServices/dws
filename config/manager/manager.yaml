@@ -24,7 +24,7 @@ spec:
         app: dws
     spec:
       nodeSelector:
-        cray.wlm.manager: "true"
+        dws.wlm.manager: "true"
       securityContext:
         runAsNonRoot: true
       containers:

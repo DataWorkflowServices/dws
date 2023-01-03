@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2021-2023 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -20,17 +20,17 @@
 package v1alpha1
 
 import (
-	"github.com/HewlettPackard/dws/utils/updater"
+	"github.com/DataWorkflowServices/dwsforkcheck/utils/updater"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
 	// WorkflowNameLabel is defined for resources that relate to the name of a DWS Workflow
-	WorkflowNameLabel = "dws.cray.hpe.com/workflow.name"
+	WorkflowNameLabel = "dataworkflowservices.github.io/workflow.name"
 
 	// WorkflowNamespaceLabel is defined for resources that relate to the namespace of a DWS Workflow
-	WorkflowNamespaceLabel = "dws.cray.hpe.com/workflow.namespace"
+	WorkflowNamespaceLabel = "dataworkflowservices.github.io/workflow.namespace"
 )
 
 // WorkflowState is the enumeration of the state of the workflow

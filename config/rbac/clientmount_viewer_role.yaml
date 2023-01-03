@@ -5,7 +5,7 @@ metadata:
   name: clientmount-viewer-role
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dws.dataworkflowservices.github.io
   resources:
   - clientmounts
   verbs:
@@ -13,7 +13,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dws.dataworkflowservices.github.io
   resources:
   - clientmounts/status
   verbs:

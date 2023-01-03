@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2021-2023 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -25,8 +25,8 @@ import (
 
 const (
 	// StorageTypeLabel is the label key used for tagging Storage resources
-	// with a driver specific label. For example: dws.cray.hpe.com/storage=Rabbit
-	StorageTypeLabel = "dws.cray.hpe.com/storage"
+	// with a driver specific label. For example: dataworkflowservices.github.io/storage=Rabbit
+	StorageTypeLabel = "dataworkflowservices.github.io/storage"
 )
 
 // StorageSpec defines the desired specifications of Storage resource

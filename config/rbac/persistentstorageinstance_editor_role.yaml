@@ -5,7 +5,7 @@ metadata:
   name: persistentstorageinstance-editor-role
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dws.dataworkflowservices.github.io
   resources:
   - persistentstorageinstances
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dws.dataworkflowservices.github.io
   resources:
   - persistentstorageinstances/status
   verbs:

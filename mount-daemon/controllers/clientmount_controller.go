@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2021-2023 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -37,8 +37,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
-	"github.com/HewlettPackard/dws/utils/updater"
+	dwsv1alpha1 "github.com/DataWorkflowServices/dwsforkcheck/api/v1alpha1"
+	"github.com/DataWorkflowServices/dwsforkcheck/utils/updater"
 )
 
 // ClientMountReconciler reconciles a ClientMount object
@@ -51,12 +51,12 @@ type ClientMountReconciler struct {
 
 const (
 	// finalizerClientMount defines the key used for the finalizer
-	finalizerClientMount = "dws.cray.hpe.com/client_mount"
+	finalizerClientMount = "dataworkflowservices.github.io/client_mount"
 )
 
-//+kubebuilder:rbac:groups=dws.cray.hpe.com,resources=clientmounts,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=dws.cray.hpe.com,resources=clientmounts/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=dws.cray.hpe.com,resources=clientmounts/finalizers,verbs=update
+//+kubebuilder:rbac:groups=dws.dataworkflowservices.github.io,resources=clientmounts,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=dws.dataworkflowservices.github.io,resources=clientmounts/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=dws.dataworkflowservices.github.io,resources=clientmounts/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

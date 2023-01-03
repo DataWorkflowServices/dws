@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
-  name: workflows.dws.cray.hpe.com
+  name: workflows.dws.dataworkflowservices.github.io
 spec:
-  group: dws.cray.hpe.com
+  group: dws.dataworkflowservices.github.io
   names:
     kind: Workflow
     listKind: WorkflowList
