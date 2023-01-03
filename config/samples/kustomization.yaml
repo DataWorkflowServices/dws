@@ -2,7 +2,6 @@
 resources:
 - dws_v1alpha1_workflow.yaml
 - dws_v1alpha1_dwdirectiverule.yaml
-- dws_v1alpha1_storagepool.yaml
 - dws_v1alpha1_directivebreakdown.yaml
 - dws_v1alpha1_servers.yaml
 - dws_v1alpha1_computes.yaml

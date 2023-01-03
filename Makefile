@@ -170,6 +170,9 @@ deploy: .version kustomize ## Deploy controller to the K8s cluster specified in 
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete --ignore-not-found -f -
 
+# Let .version be phony so that a git update to the workarea can be reflected
+# in it each time it's needed.
+.PHONY: .version
 .version: ## Uses the git-version-gen script to generate a tag version
 	./git-version-gen --fallback `git rev-parse HEAD` > .version
 

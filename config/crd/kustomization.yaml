@@ -4,7 +4,6 @@
 resources:
 - bases/dws.cray.hpe.com_workflows.yaml
 - bases/dws.cray.hpe.com_dwdirectiverules.yaml
-- bases/dws.cray.hpe.com_storagepools.yaml
 - bases/dws.cray.hpe.com_directivebreakdowns.yaml
 - bases/dws.cray.hpe.com_computes.yaml
 - bases/dws.cray.hpe.com_servers.yaml
@@ -19,7 +18,6 @@ patchesStrategicMerge:
 # patches here are for enabling the conversion webhook for each CRD
 #- patches/webhook_in_workflows.yaml
 #- patches/webhook_in_dwdirectiverules.yaml
-#- patches/webhook_in_storagepools.yaml
 #- patches/webhook_in_directivebreakdowns.yaml
 #- patches/webhook_in_computes.yaml
 #- patches/webhook_in_servers.yaml
@@ -33,7 +31,6 @@ patchesStrategicMerge:
 # patches here are for enabling the CA injection for each CRD
 #- patches/cainjection_in_workflows.yaml
 #- patches/cainjection_in_dwdirectiverules.yaml
-#- patches/cainjection_in_storagepools.yaml
 #- patches/cainjection_in_directivebreakdowns.yaml
 #- patches/cainjection_in_computes.yaml
 #- patches/cainjection_in_servers.yaml
