@@ -34,6 +34,7 @@ const (
 )
 
 // WorkflowState is the enumeration of the state of the workflow
+// +kubebuilder:validation:Enum:=Proposal;Setup;DataIn;PreRun;PostRun;DataOut;Teardown
 type WorkflowState string
 
 // WorkflowState values
@@ -100,8 +101,6 @@ const (
 type WorkflowSpec struct {
 	// Desired state for the workflow to be in. Unless progressing to the teardown state,
 	// this can only be set to the next state when the current desired state has been achieved.
-	// +kubebuilder:validation:Enum:=Proposal;Setup;DataIn;PreRun;PostRun;DataOut;Teardown
-	// +kubebuilder:validation:Type:=string
 	DesiredState WorkflowState `json:"desiredState"`
 
 	WLMID string `json:"wlmID"`
