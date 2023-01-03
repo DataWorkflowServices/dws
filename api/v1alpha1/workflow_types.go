@@ -158,7 +158,7 @@ type WorkflowDriverStatus struct {
 type WorkflowStatus struct {
 	// The state the resource is currently transitioning to.
 	// Updated by the controller once started.
-	State WorkflowState `json:"state"`
+	State WorkflowState `json:"state,omitempty"`
 
 	// Ready can be 'True', 'False'
 	// Indicates whether State has been reached.
