@@ -13,11 +13,10 @@
             "args": [
                 "-ginkgo.v",
                 "-ginkgo.progress",
-                "-ginkgo.failFast",
+                "-ginkgo.fail-fast",
             ],
             "env": {
-                //"KUBEBUILDER_ASSETS": "/Users/roiger/Library/Application Support/io.kubebuilder.envtest/k8s/1.25.0-darwin-amd64",
-                "KUBEBUILDER_ASSETS": "YOUR LOCATION OF ENVTEST (run './bin/setup-envtest use' and locate the folder)",
+                "KUBEBUILDER_ASSETS": "${workspaceFolder}/bin/k8s/1.25.0-darwin-amd64",
                 "GOMEGA_DEFAULT_EVENTUALLY_TIMEOUT": "10m",
                 "GOMEGA_DEFAULT_EVENTUALLY_POLLING_INTERVAL": "100ms",
             },
