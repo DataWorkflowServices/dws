@@ -23,8 +23,6 @@ spec:
         control-plane: controller-manager
         app: dws
     spec:
-      nodeSelector:
-        cray.wlm.manager: "true"
       securityContext:
         runAsNonRoot: true
       containers:
