@@ -8,4 +8,4 @@ webhook:
   port: 9443
 leaderElection:
   leaderElect: true
-  resourceName: a08857a2.cray.hpe.com
+  resourceName: a08857a2.dataworkflowservices.github.io

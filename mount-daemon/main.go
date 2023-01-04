@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2021-2023 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -42,8 +42,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
-	"github.com/HewlettPackard/dws/mount-daemon/controllers"
+	dwsv1alpha1 "github.com/DataWorkflowServices/dwsforkcheck/api/v1alpha1"
+	"github.com/DataWorkflowServices/dwsforkcheck/mount-daemon/controllers"
 	//+kubebuilder:scaffold:imports
 )
 

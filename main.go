@@ -1,5 +1,5 @@
 /*
-Copyright 2021.
+Copyright 2021-2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
-	"github.com/HewlettPackard/dws/controllers"
+	dwsv1alpha1 "github.com/DataWorkflowServices/dwsforkcheck/api/v1alpha1"
+	"github.com/DataWorkflowServices/dwsforkcheck/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -74,7 +74,7 @@ func main() {
 		Port:                   9443,
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "a08857a2.cray.hpe.com",
+		LeaderElectionID:       "a08857a2.dataworkflowservices.github.io",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")

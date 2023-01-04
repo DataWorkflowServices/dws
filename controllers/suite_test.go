@@ -1,5 +1,5 @@
 /*
-Copyright 2021.
+Copyright 2021-2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	zapcr "sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
+	dwsv1alpha1 "github.com/DataWorkflowServices/dwsforkcheck/api/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 

@@ -5,7 +5,7 @@ metadata:
   name: dwdirectiverule-editor-role
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - dwdirectiverules
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - dwdirectiverules/status
   verbs:

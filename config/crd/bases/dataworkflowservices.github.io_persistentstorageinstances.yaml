@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
-  name: persistentstorageinstances.dws.cray.hpe.com
+  name: persistentstorageinstances.dataworkflowservices.github.io
 spec:
-  group: dws.cray.hpe.com
+  group: dataworkflowservices.github.io
   names:
     kind: PersistentStorageInstance
     listKind: PersistentStorageInstanceList

@@ -1,4 +1,4 @@
-module github.com/HewlettPackard/dws
+module github.com/DataWorkflowServices/dwsforkcheck
 
 go 1.19
 

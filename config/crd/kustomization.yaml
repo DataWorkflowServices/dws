@@ -2,15 +2,15 @@
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
 resources:
-- bases/dws.cray.hpe.com_workflows.yaml
-- bases/dws.cray.hpe.com_dwdirectiverules.yaml
-- bases/dws.cray.hpe.com_directivebreakdowns.yaml
-- bases/dws.cray.hpe.com_computes.yaml
-- bases/dws.cray.hpe.com_servers.yaml
-- bases/dws.cray.hpe.com_storages.yaml
-- bases/dws.cray.hpe.com_clientmounts.yaml
-- bases/dws.cray.hpe.com_persistentstorageinstances.yaml
-- bases/dws.cray.hpe.com_systemconfigurations.yaml
+- bases/dataworkflowservices.github.io_workflows.yaml
+- bases/dataworkflowservices.github.io_dwdirectiverules.yaml
+- bases/dataworkflowservices.github.io_directivebreakdowns.yaml
+- bases/dataworkflowservices.github.io_computes.yaml
+- bases/dataworkflowservices.github.io_servers.yaml
+- bases/dataworkflowservices.github.io_storages.yaml
+- bases/dataworkflowservices.github.io_clientmounts.yaml
+- bases/dataworkflowservices.github.io_persistentstorageinstances.yaml
+- bases/dataworkflowservices.github.io_systemconfigurations.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
