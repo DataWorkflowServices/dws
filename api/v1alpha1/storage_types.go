@@ -32,6 +32,7 @@ const (
 // StorageSpec defines the desired specifications of Storage resource
 type StorageSpec struct {
 	// State describes the desired state of the Storage resource.
+	// +kubebuilder:default:=Enabled
 	State ResourceState `json:"state,omitempty"`
 }
 
