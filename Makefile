@@ -1,4 +1,4 @@
-# Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+# Copyright 2021-2023 Hewlett Packard Enterprise Development LP
 # Other additional copyright holders may be indicated within.
 #
 # The entirety of this work is licensed under the Apache License,
@@ -89,9 +89,6 @@ SHELL = /usr/bin/env bash -o pipefail
 
 all: build
 
-vendor:
-	GOPRIVATE=github.hpe.com go mod vendor
-
 ##@ General
 
 # The help target prints out all targets with their descriptions organized
@@ -152,7 +149,7 @@ docker-push: .version ## Push docker image with the manager.
 KIND_CLUSTER ?= "kind"
 kind-push: VERSION ?= $(shell cat .version)
 kind-push: .version ## Push docker image to kind
-	kind load docker-image --name $(KIND_CLUSTER) --nodes `kubectl get node -l cray.wlm.manager=true --no-headers -o custom-columns=":metadata.name" | paste -d, -s -` $(IMAGE_TAG_BASE):$(VERSION)
+	kind load docker-image --name $(KIND_CLUSTER) $(IMAGE_TAG_BASE):$(VERSION)
 
 ##@ Deployment
 
