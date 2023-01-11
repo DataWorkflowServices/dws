@@ -164,7 +164,7 @@ deploy: .version kustomize ## Deploy controller to the K8s cluster specified in 
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMAGE_TAG_BASE):$(VERSION)
 	$(KUSTOMIZE) build config/${OVERLAY} | kubectl apply -f -
 
-undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
+undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete --ignore-not-found -f -
 
 # Let .version be phony so that a git update to the workarea can be reflected
