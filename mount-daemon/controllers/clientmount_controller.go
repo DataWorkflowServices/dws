@@ -268,6 +268,13 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 		return err
 	}
 
+	if clientMountInfo.SetPermissions {
+		if err := os.Chown(clientMountInfo.MountPath, int(clientMountInfo.UserID), int(clientMountInfo.GroupID)); err != nil {
+			log.Error(err, "Could not set owner permissions", "mount path", clientMountInfo.MountPath)
+			return err
+		}
+	}
+
 	log.Info("Mounted file system", "Mount path", clientMountInfo.MountPath, "device", device)
 
 	return nil
