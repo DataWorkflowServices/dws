@@ -221,7 +221,7 @@ func checkDirectives(workflow *Workflow, ruleParser RuleParser) error {
 		return err
 	}
 
-	// TODO: Figure out what this does and update this comment
+	// Forward the rule and directive index to the rule parsers matched directive handling
 	onValidDirectiveFunc := func(index int, rule dwdparse.DWDirectiveRuleSpec) {
 		ruleParser.MatchedDirective(workflow, rule.WatchStates, index, rule.DriverLabel)
 	}
