@@ -201,7 +201,7 @@ func ValidateArgs(spec DWDirectiveRuleSpec, args map[string]string, uniqueMap ma
 	return nil
 }
 
-// Validate will validate a list of directives against the supplied rules. When a directive is valid
+// Validate a list of directives against the supplied rules. When a directive is valid
 // for a particular rule, the `onValidDirectiveFunc` function is called.
 func Validate(rules []DWDirectiveRuleSpec, directives []string, onValidDirectiveFunc func(index int, rule DWDirectiveRuleSpec)) error {
 
