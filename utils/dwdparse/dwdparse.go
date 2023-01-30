@@ -20,7 +20,6 @@
 package dwdparse
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -59,34 +58,6 @@ type DWDirectiveRuleSpec struct {
 	RuleDefs []DWDirectiveRuleDef `json:"ruleDefs"`
 }
 
-type dwUnsupportedCommandErr struct {
-	command string
-}
-
-// NewUnsupportedCommandErr returns a reference to the unsupported command type
-func NewUnsupportedCommandErr(command string) error {
-	return &dwUnsupportedCommandErr{command}
-}
-
-func (e *dwUnsupportedCommandErr) Error() string {
-	return fmt.Sprintf("unsupported Command: '%s'", e.command)
-}
-
-// BuildRulesMap builds a map of the DWDirectives argument parser rules for the specified command
-func BuildRulesMap(rule DWDirectiveRuleSpec, cmd string) (map[string]DWDirectiveRuleDef, error) {
-	rulesMap := make(map[string]DWDirectiveRuleDef)
-
-	for _, rd := range rule.RuleDefs {
-		rulesMap[rd.Key] = rd
-	}
-
-	if len(rulesMap) == 0 {
-		return nil, NewUnsupportedCommandErr(cmd)
-	}
-
-	return rulesMap, nil
-}
-
 // BuildArgsMap builds a map of the DWDirective's arguments in the form: args["key"] = value
 func BuildArgsMap(dwd string) (map[string]string, error) {
 
@@ -120,98 +91,109 @@ func BuildArgsMap(dwd string) (map[string]string, error) {
 	return argsMap, nil
 }
 
-// ValidateArgs validates a map of arguments against the rules
-func ValidateArgs(rule DWDirectiveRuleSpec, args map[string]string, uniqueMap map[string]bool) error {
+// Compile this regex outside the loop for better performance.
+var boolMatcher = regexp.MustCompile(`(?i)^(true|false)$`) // (?i) -> case-insensitve comparison
 
-	command, ok := args["command"]
-	if !ok {
+// ValidateArgs validates a map of arguments against the rule specification
+func ValidateArgs(spec DWDirectiveRuleSpec, args map[string]string, uniqueMap map[string]bool) error {
+
+	command, found := args["command"]
+	if !found {
 		return fmt.Errorf("no command in arguments")
 	}
 
-	if command != rule.Command {
-		return fmt.Errorf("command '%s' does not match rule '%s'", command, rule.Command)
+	if command != spec.Command {
+		return fmt.Errorf("command '%s' does not match rule '%s'", command, spec.Command)
 	}
-
-	// Determine the rules map for command
-	rulesMap, err := BuildRulesMap(rule, command)
-	if err != nil {
-		return err
-	}
-
-	// Compile this regex outside the loop for better performance.
-	var boolMatcher = regexp.MustCompile(`(?i)^(true|false)$`) // (?i) -> case-insensitve comparison
 
 	// Create a map that maps a directive rule definition to an argument that correctly matches it
 	// key: DWDirectiveRule	value: argument that matches that rule
 	// Required to check that all DWDirectiveRuleDef's have been met
-	argToRuleMap := map[DWDirectiveRuleDef]string{}
+	argToRuleMap := map[*DWDirectiveRuleDef]string{}
+
+	findRuleDefinition := func(key string) (*DWDirectiveRuleDef, error) {
+		for index, rule := range spec.RuleDefs {
+			re, err := regexp.Compile(rule.Key)
+			if err != nil {
+				return nil, fmt.Errorf("invalid rule regular expression '%s'", rule.Key)
+			}
+
+			if re.MatchString(key) {
+				return &spec.RuleDefs[index], nil
+			}
+		}
+
+		return nil, fmt.Errorf("unsupported argument '%s'", key)
+	}
 
 	// Iterate over all arguments and validate each based on the associated rule
 	for k, v := range args {
-		if k != "command" {
-			rule, found := rulesMap[k]
-			if !found {
-				return errors.New("unsupported argument - " + k)
-			}
-			if rule.IsValueRequired && len(v) == 0 {
-				return errors.New("malformed keyword[=value]: " + k + "=" + v)
-			}
-			switch rule.Type {
-			case "integer":
-				// i,err := strconv.ParseInt(v, 10, 64)
-				i, err := strconv.Atoi(v)
-				if err != nil {
-					return errors.New("invalid integer argument: " + k + "=" + v)
-				}
-				if rule.Max != 0 && i > rule.Max {
-					return errors.New("specified integer exceeds maximum " + strconv.Itoa(rule.Max) + ": " + k + "=" + v)
-				}
-				if rule.Min != 0 && i < rule.Min {
-					return errors.New("specified integer smaller than minimum " + strconv.Itoa(rule.Min) + ": " + k + "=" + v)
-				}
-			case "bool":
-				if rule.Pattern != "" {
-					isok := boolMatcher.MatchString(v)
-					if !isok {
-						return errors.New("invalid bool argument: " + k + "=" + v)
-					}
-				}
-			case "string":
-				if rule.Pattern != "" {
-					isok, err := regexp.MatchString(rule.Pattern, v)
-					if !isok {
-						if err != nil {
-							return errors.New("invalid regexp in rule: " + rule.Pattern)
-						}
-						return errors.New("invalid argument: " + k + "=" + v)
-					}
-				}
-			default:
-				return errors.New("unsupported value type: " + rule.Type)
-			}
-
-			if rule.UniqueWithin != "" {
-				_, ok := uniqueMap[rule.UniqueWithin+"/"+v]
-				if ok {
-					return fmt.Errorf("Value '%s' must be unique within '%s'", v, rule.UniqueWithin)
-				}
-
-				uniqueMap[rule.UniqueWithin+"/"+v] = true
-			}
-
-			// NOTE: We know that we don't have repeated arguments here because the arguments
-			//       come to us in a map indexed by the argment name.
-			argToRuleMap[rule] = k
+		if k == "command" {
+			continue
 		}
+
+		rule, err := findRuleDefinition(k)
+		if err != nil {
+			return err
+		}
+
+		if rule.IsValueRequired && len(v) == 0 {
+			return fmt.Errorf("argument '%s' requires value", k)
+		}
+
+		switch rule.Type {
+		case "integer":
+			i, err := strconv.Atoi(v)
+			if err != nil {
+				return fmt.Errorf("argument '%s' invalid integer '%s'", k, v)
+			}
+			if rule.Max != 0 && i > rule.Max {
+				return fmt.Errorf("argument '%s' specified integer value %d is greather than maximum value %d", k, i, rule.Max)
+			}
+			if rule.Min != 0 && i < rule.Min {
+				return fmt.Errorf("argument '%s' specified integer value %d is less than minimum value %d", k, i, rule.Min)
+			}
+		case "bool":
+			if rule.Pattern != "" {
+				if !boolMatcher.MatchString(v) {
+					return fmt.Errorf("argument '%s' invalid boolean '%s'", k, v)
+				}
+			}
+		case "string":
+			if rule.Pattern != "" {
+				re, err := regexp.Compile(rule.Pattern)
+				if err != nil {
+					return fmt.Errorf("invalid regular expression '%s'", rule.Pattern)
+				}
+
+				if !re.MatchString(v) {
+					return fmt.Errorf("argument '%s' invalid string '%s'", k, v)
+				}
+			}
+		default:
+			return fmt.Errorf("unsupported rule type '%s'", rule.Type)
+		}
+
+		if rule.UniqueWithin != "" {
+			_, ok := uniqueMap[rule.UniqueWithin+"/"+v]
+			if ok {
+				return fmt.Errorf("value '%s' must be unique within '%s'", v, rule.UniqueWithin)
+			}
+
+			uniqueMap[rule.UniqueWithin+"/"+v] = true
+		}
+
+		// NOTE: We know that we don't have repeated arguments here because the arguments
+		//       come to us in a map indexed by the argment name.
+		argToRuleMap[rule] = k
 	}
 
 	// Iterate over the rules to ensure all required rules have an argument
-	for k, v := range rulesMap {
-		// Ensure that each required rule has an argument
-		if v.IsRequired {
-			_, ok := argToRuleMap[v]
-			if !ok {
-				return errors.New("missing argument: " + k)
+	for index := range spec.RuleDefs {
+		rule := &spec.RuleDefs[index]
+		if rule.IsRequired {
+			if _, found := argToRuleMap[rule]; !found {
+				return fmt.Errorf("missing required argument '%v'", rule.Key)
 			}
 		}
 	}
@@ -219,9 +201,12 @@ func ValidateArgs(rule DWDirectiveRuleSpec, args map[string]string, uniqueMap ma
 	return nil
 }
 
+// Validate will validate a list of directives against the supplied rules. When a directive is valid
+// for a particular rule, the `onValidDirectiveFunc` function is called.
 func Validate(rules []DWDirectiveRuleSpec, directives []string, onValidDirectiveFunc func(index int, rule DWDirectiveRuleSpec)) error {
 
-	// Create a map to track argument uniqueness with the directives
+	// Create a map to track argument uniqueness within the directives for
+	// rules that contain `UniqueWithin`
 	uniqueMap := make(map[string]bool)
 
 	for index, directive := range directives {

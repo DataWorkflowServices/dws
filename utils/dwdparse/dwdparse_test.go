@@ -253,11 +253,6 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=prettierGoodName"}, pass},
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=prettierGoodName"}, pass},
 
-	{[]string{"#DW jobdw type=raw    capacity=100GB name=uniqueName1 ",
-		"#DW jobdw type=raw    capacity=100GB name=uniqueName2 "}, pass},
-	{[]string{"#DW jobdw type=raw    capacity=100GB name=conflictName",
-		"#DW jobdw type=raw    capacity=100GB name=conflictName"}, fail},
-
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=CoolProfile1 profile=this-TYPE_profile08"}, pass},
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=CoolProfile2 profile=this_TYPE_profile08"}, pass},
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=UncoolProfile1 profile=0this"}, fail},
@@ -284,11 +279,6 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW create_persistent type=raw    capacity=100GB name=prettierGoodName"}, pass},
 	{[]string{"#DW create_persistent type=xfs    capacity=100GB name=prettierGoodName"}, pass},
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=prettierGoodName"}, pass},
-
-	{[]string{"#DW create_persistent type=raw    capacity=100GB name=uniqueName1 ",
-		"#DW create_persistent type=raw    capacity=100GB name=uniqueName2 "}, pass},
-	{[]string{"#DW create_persistent type=raw    capacity=100GB name=conflictName",
-		"#DW create_persistent type=raw    capacity=100GB name=conflictName"}, fail},
 
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=CoolProfile1 profile=this-TYPE_profile08"}, pass},
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=CoolProfile2 profile=this_TYPE_profile08"}, pass},
@@ -366,6 +356,9 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW jobdw type=xfs     capacity=100TB ame=badName                                       "}, fail},
 	{[]string{"#DW jobdw type=xfs     capacity=100TB name=!!21//\\                                     "}, fail},
 	{[]string{"#DW jobdw                                                                               "}, fail},
+
+	// NOTE: Please do not add new test cases here. Instead use the new test framework below that
+	//       contains individualized test cases.
 }
 
 func TestDWParse(t *testing.T) {
@@ -427,16 +420,16 @@ func TestArgumentRegexp(t *testing.T) {
 	rules := []DWDirectiveRuleSpec{{
 		Command: "regexp",
 		RuleDefs: []DWDirectiveRuleDef{{
-			Key:        "^(PREFIX_1_|PREFIX_2_)\\w+", // test a simple prefix regexp
-			IsRequired: true,
-			Type:       "string",
+			Key:  "^(PREFIX_1_|PREFIX_2_)\\w+", // test a simple prefix regexp
+			Type: "string",
 		}},
 	}}
 
 	tests := []testCase{
 		{directives: []string{"#DW regexp PREFIX_1_good=value"}, result: pass},
 		{directives: []string{"#DW regexp PREFIX_2_good=value"}, result: pass},
-		{directives: []string{"#DW regexp BAD=value"}, result: fail},
+		{directives: []string{"#DW regexp PREFIX_2_=value"}, result: fail}, // missing word after prefix strings
+		{directives: []string{"#DW regexp INVALID=value"}, result: fail},
 	}
 
 	test(t, rules, tests)
