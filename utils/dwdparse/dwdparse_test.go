@@ -416,7 +416,7 @@ func TestUniqueWithin(t *testing.T) {
 	test(t, rules, tests)
 }
 
-func TestArgumentRegexp(t *testing.T) {
+func TestKeyRegexp(t *testing.T) {
 	rules := []DWDirectiveRuleSpec{{
 		Command: "regexp",
 		RuleDefs: []DWDirectiveRuleDef{{
