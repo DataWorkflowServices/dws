@@ -21,7 +21,6 @@ package controllers
 
 import (
 	"context"
-	"os"
 	"strings"
 
 	"github.com/go-logr/logr"
@@ -124,12 +123,8 @@ func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *ClientMountReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	builder := ctrl.NewControllerManagedBy(mgr).
-		For(&dwsv1alpha1.ClientMount{})
-
-	if _, found := os.LookupEnv("NNF_TEST_ENVIRONMENT"); found {
-		builder = builder.WithEventFilter(filterByNonRabbitNamespacePrefixForTest())
-	}
-
-	return builder.Complete(r)
+	return ctrl.NewControllerManagedBy(mgr).
+		For(&dwsv1alpha1.ClientMount{}).
+		WithEventFilter(filterByNonRabbitNamespacePrefixForTest()).
+		Complete(r)
 }
