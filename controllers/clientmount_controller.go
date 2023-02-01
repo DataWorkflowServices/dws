@@ -21,7 +21,6 @@ package controllers
 
 import (
 	"context"
-	"os"
 	"strings"
 
 	"github.com/go-logr/logr"
@@ -116,7 +115,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	return ctrl.Result{}, nil
 }
 
-func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {
+func filterByNonRabbitNamespacePrefix() predicate.Predicate {
 	return predicate.NewPredicateFuncs(func(object client.Object) bool {
 		return !strings.HasPrefix(object.GetNamespace(), "rabbit")
 	})
@@ -124,12 +123,8 @@ func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *ClientMountReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	builder := ctrl.NewControllerManagedBy(mgr).
-		For(&dwsv1alpha1.ClientMount{})
-
-	if _, found := os.LookupEnv("NNF_TEST_ENVIRONMENT"); found {
-		builder = builder.WithEventFilter(filterByNonRabbitNamespacePrefixForTest())
-	}
-
-	return builder.Complete(r)
+	return ctrl.NewControllerManagedBy(mgr).
+		For(&dwsv1alpha1.ClientMount{}).
+		WithEventFilter(filterByNonRabbitNamespacePrefix()).
+		Complete(r)
 }
