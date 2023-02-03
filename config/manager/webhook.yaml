@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: webhook
   namespace: system
@@ -9,13 +9,22 @@ spec:
   selector:
     matchLabels:
       control-plane: webhook
+  replicas: 3
   template:
     metadata:
       labels:
         control-plane: webhook
     spec:
-      nodeSelector:
-        cray.nnf.manager: "true"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: control-plane
+                operator: In
+                values:
+                - webhook
+            topologyKey: "kubernetes.io/hostname"
       securityContext:
         runAsNonRoot: true
       containers:

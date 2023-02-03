@@ -83,7 +83,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if mode == "controller" {
+	switch mode {
+	case "controller":
 		if err = (&controllers.WorkflowReconciler{
 			Client: mgr.GetClient(),
 			Log:    ctrl.Log.WithName("controllers").WithName("Workflow"),
@@ -103,13 +104,14 @@ func main() {
 				os.Exit(1)
 			}
 		}
-	}
-
-	if mode == "webhook" {
+	case "webhook":
 		if err = (&dwsv1alpha1.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 			os.Exit(1)
 		}
+	default:
+		setupLog.Info("unsupported mode", "mode", mode)
+		os.Exit(1)
 	}
 
 	//+kubebuilder:scaffold:builder
