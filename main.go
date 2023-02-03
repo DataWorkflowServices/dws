@@ -53,11 +53,13 @@ func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
 	var probeAddr string
+	var mode string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
+	flag.StringVar(&mode, "mode", "controller", "What mode to run in (controller, webhook)")
 	opts := zap.Options{
 		Development: true,
 	}
@@ -81,28 +83,34 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.WorkflowReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("Workflow"),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Workflow")
-		os.Exit(1)
-	}
-
-	if os.Getenv("ENVIRONMENT") == "kind" {
-		if err = (&controllers.ClientMountReconciler{
+	switch mode {
+	case "controller":
+		if err = (&controllers.WorkflowReconciler{
 			Client: mgr.GetClient(),
-			Log:    ctrl.Log.WithName("controllers").WithName("ClientMount"),
+			Log:    ctrl.Log.WithName("controllers").WithName("Workflow"),
 			Scheme: mgr.GetScheme(),
 		}).SetupWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create controller", "controller", "Workflow")
 			os.Exit(1)
 		}
-	}
 
-	if err = (&dwsv1alpha1.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
+		if os.Getenv("ENVIRONMENT") == "kind" {
+			if err = (&controllers.ClientMountReconciler{
+				Client: mgr.GetClient(),
+				Log:    ctrl.Log.WithName("controllers").WithName("ClientMount"),
+				Scheme: mgr.GetScheme(),
+			}).SetupWithManager(mgr); err != nil {
+				setupLog.Error(err, "unable to create controller", "controller", "Workflow")
+				os.Exit(1)
+			}
+		}
+	case "webhook":
+		if err = (&dwsv1alpha1.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
+			os.Exit(1)
+		}
+	default:
+		setupLog.Info("unsupported mode", "mode", mode)
 		os.Exit(1)
 	}
 
