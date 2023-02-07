@@ -115,9 +115,9 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	return ctrl.Result{}, nil
 }
 
-func filterByNonRabbitNamespacePrefix() predicate.Predicate {
+func filterByComputeNamespacePrefix() predicate.Predicate {
 	return predicate.NewPredicateFuncs(func(object client.Object) bool {
-		return !strings.HasPrefix(object.GetNamespace(), "rabbit")
+		return strings.HasPrefix(object.GetNamespace(), "compute")
 	})
 }
 
@@ -125,6 +125,6 @@ func filterByNonRabbitNamespacePrefix() predicate.Predicate {
 func (r *ClientMountReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&dwsv1alpha1.ClientMount{}).
-		WithEventFilter(filterByNonRabbitNamespacePrefix()).
+		WithEventFilter(filterByComputeNamespacePrefix()).
 		Complete(r)
 }
