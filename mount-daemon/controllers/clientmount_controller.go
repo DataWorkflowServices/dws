@@ -107,7 +107,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			clientMount.Status.Mounts[i].Ready = false
 		}
 
-		return ctrl.Result{}, nil
+		return ctrl.Result{Requeue: true}, nil
 	}
 
 	// Add finalizer if it doesn't exist
