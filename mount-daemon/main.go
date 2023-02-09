@@ -109,6 +109,7 @@ type managerConfig struct {
 	config    *rest.Config
 	namespace string
 	mock      bool
+	timeout   uint
 }
 
 type options struct {
@@ -118,6 +119,7 @@ type options struct {
 	tokenFile string
 	certFile  string
 	mock      bool
+	timeout   uint
 }
 
 func getOptions() *options {
@@ -128,6 +130,7 @@ func getOptions() *options {
 		tokenFile: os.Getenv("DWS_CLIENT_MOUNT_SERVICE_TOKEN_FILE"),
 		certFile:  os.Getenv("DWS_CLIENT_MOUNT_SERVICE_CERT_FILE"),
 		mock:      false,
+		timeout:   60,
 	}
 
 	flag.StringVar(&opts.host, "kubernetes-service-host", opts.host, "Kubernetes service host address")
@@ -136,6 +139,7 @@ func getOptions() *options {
 	flag.StringVar(&opts.tokenFile, "service-token-file", opts.tokenFile, "Path to the DWS client mount service token")
 	flag.StringVar(&opts.certFile, "service-cert-file", opts.certFile, "Path to the DWS client mount service certificate")
 	flag.BoolVar(&opts.mock, "mock", opts.mock, "Run in mock mode where no client mount operations take place")
+	flag.UintVar(&opts.timeout, "command-timeout", opts.timeout, "Timeout value in seconds before subcommands are killed")
 
 	zapOptions := zap.Options{
 		Development: true,
@@ -206,7 +210,7 @@ func createManager(opts *options) (*managerConfig, error) {
 		}
 	}
 
-	return &managerConfig{config: config, namespace: opts.name, mock: opts.mock}, nil
+	return &managerConfig{config: config, namespace: opts.name, mock: opts.mock, timeout: opts.timeout}, nil
 }
 
 func startManager(config *managerConfig) {
@@ -223,10 +227,11 @@ func startManager(config *managerConfig) {
 	}
 
 	if err = (&controllers.ClientMountReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("ClientMount"),
-		Mock:   config.mock,
-		Scheme: mgr.GetScheme(),
+		Client:  mgr.GetClient(),
+		Log:     ctrl.Log.WithName("controllers").WithName("ClientMount"),
+		Mock:    config.mock,
+		Timeout: config.timeout,
+		Scheme:  mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ClientMount")
 		os.Exit(1)

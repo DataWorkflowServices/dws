@@ -44,9 +44,10 @@ import (
 // ClientMountReconciler reconciles a ClientMount object
 type ClientMountReconciler struct {
 	client.Client
-	Mock   bool
-	Log    logr.Logger
-	Scheme *runtime.Scheme
+	Mock    bool
+	Timeout uint
+	Log     logr.Logger
+	Scheme  *runtime.Scheme
 }
 
 const (
@@ -302,7 +303,7 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM, activate bool, shared bool) error {
 	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
 	if err != nil {
-		return err
+		return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not list storage").WithFatal()
 	}
 
 	if r.Mock {
@@ -424,7 +425,14 @@ func (r *ClientMountReconciler) run(c string) (string, error) {
 		return "", nil
 	}
 
-	output, err := exec.Command("bash", "-c", c).Output()
+	ctx := context.Background()
+	if r.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(context.Background(), time.Duration(r.Timeout)*time.Second)
+		defer cancel()
+	}
+
+	output, err := exec.CommandContext(ctx, "bash", "-c", c).Output()
 
 	return string(output), err
 }
