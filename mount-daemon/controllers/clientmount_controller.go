@@ -179,6 +179,12 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 			log.Info("Could not unmount file system", "mount path", clientMountInfo.MountPath, "Error output", output)
 			return err
 		}
+
+		// Remove the mount directory. It's not a big deal if this fails, so we just log a failure and don't return it
+		if err := r.rmdir(clientMountInfo.MountPath); err != nil {
+			log.Info("Unable to remove mount directory", "Path", clientMountInfo.MountPath, "Error", err)
+		}
+
 	}
 
 	if clientMountInfo.Device.Type == dwsv1alpha1.ClientMountDeviceTypeLVM {
@@ -186,11 +192,6 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 			log.Error(err, "Could not deactivate LVM volume", "mount path", clientMountInfo.MountPath)
 			return err
 		}
-	}
-
-	// Remove the mount directory. It's not a big deal if this fails, so we just log a failure and don't return it
-	if err := r.rmdir(clientMountInfo.MountPath); err != nil {
-		log.Error(err, "Unable to remove mount directory", "Path", clientMountInfo.MountPath)
 	}
 
 	log.Info("Unmounted file system", "mount path", clientMountInfo.MountPath)
@@ -353,8 +354,16 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			if err != nil {
 				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
 			}
+		}
 
-			if shared {
+		if !activate && shared {
+			// Check whether the volume group has been locked and unlock it if necessary
+			output, err := r.run("lvmlockctl -i")
+			if err != nil {
+				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
+			}
+
+			if strings.Contains(output, fmt.Sprintf("VG %s", lvm.VolumeGroup)) {
 				output, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
 				if err != nil {
 					return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
