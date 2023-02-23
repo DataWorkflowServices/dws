@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package v1alpha1
+package ports
 
 import (
 	"fmt"
@@ -30,9 +30,10 @@ import (
 
 const maxPort = math.MaxUint16
 
-func (config *SystemConfiguration) Validate() error {
+// Validate will validate the provided list of ports.
+func Validate(ports []intstr.IntOrString) error {
 
-	for _, port := range config.Spec.Ports {
+	for _, port := range ports {
 
 		switch port.Type {
 		case intstr.Int:
@@ -87,26 +88,30 @@ func (config *SystemConfiguration) Validate() error {
 	return nil
 }
 
+const (
+	InvalidPort = uint16(0)
+)
+
 // NewPortIterator will return a new iterator for enumerating ports in the system
 // configuration.
-func (config *SystemConfiguration) NewPortIterator() *systemConfigurationPortIterator {
-	return &systemConfigurationPortIterator{
-		ports:    config.Spec.Ports,
+func NewPortIterator(ports []intstr.IntOrString) *portIterator {
+	return &portIterator{
+		ports:    ports,
 		index:    0,
 		subindex: 0,
 	}
 }
 
-type systemConfigurationPortIterator struct {
+type portIterator struct {
 	ports    []intstr.IntOrString
 	index    int // index into ports array
 	subindex int // if port is string type, index into ranged port value "FIRST-LAST"
 }
 
-// Next returns the next port from the iterator, or 0 when done.
-func (itr *systemConfigurationPortIterator) Next() uint16 {
+// Next returns the next port from the iterator, or InvalidPort when done or an error has occurred.
+func (itr *portIterator) Next() uint16 {
 	if itr.index >= len(itr.ports) {
-		return 0
+		return InvalidPort
 	}
 
 	current := itr.ports[itr.index]
@@ -118,17 +123,17 @@ func (itr *systemConfigurationPortIterator) Next() uint16 {
 
 	parsed := strings.SplitN(current.StrVal, "-", 2)
 	if len(parsed) != 2 {
-		return 0
+		return InvalidPort
 	}
 
 	first, err := strconv.ParseUint(parsed[0], 10, 16)
 	if err != nil {
-		return 0
+		return InvalidPort
 	}
 
 	last, err := strconv.ParseUint(parsed[1], 10, 16)
 	if err != nil {
-		return 0
+		return InvalidPort
 	}
 
 	port := first + uint64(itr.subindex)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2023 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -17,27 +17,31 @@
  * limitations under the License.
  */
 
-package v1alpha1
+package ports
 
 import (
+	"testing"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
+func TestAPIs(t *testing.T) {
+	RegisterFailHandler(Fail)
+
+	RunSpecs(t, "Webhook Suite")
+}
+
 var _ = Describe("System Configuration", func() {
 	DescribeTable("Validate Ports",
 		func(port string, isValid bool) {
-			config := SystemConfiguration{
-				Spec: SystemConfigurationSpec{
-					Ports: []intstr.IntOrString{intstr.Parse(port)},
-				},
-			}
-
-			Expect(config.Validate() == nil).To(Equal(isValid))
+			ports := []intstr.IntOrString{intstr.Parse(port)}
+			Expect(Validate(ports) == nil).To(Equal(isValid))
 		},
 		// Integer values
-		Entry("Valid integer", "1", true),
+		Entry("Valid smallest integer", "1", true),
+		Entry("Valid largest integer", "65535", true),
 		Entry("Zero", "0", false),
 		Entry("Negative", "-1", false),
 		Entry("Funky whitespace", "  1  ", false),
@@ -45,7 +49,7 @@ var _ = Describe("System Configuration", func() {
 		Entry("Too large", "65536", false),
 
 		// String values
-		Entry("Valid port range", "1-2", true),
+		Entry("Valid port range", "1-65535", true),
 		Entry("Invalid port range", "1-", false),
 		Entry("Funky whitespace", " 1 -  2", false),
 		Entry("Start too small", "0-1", false),
@@ -56,22 +60,18 @@ var _ = Describe("System Configuration", func() {
 		Entry("Start greater than end", "2-1", false),
 	)
 
-	It("Port Iterator", func() {
-		config := SystemConfiguration{
-			Spec: SystemConfigurationSpec{
-				Ports: []intstr.IntOrString{
-					intstr.FromInt(1),
-					intstr.FromInt(2),
-					intstr.FromString("3-10"),
-					intstr.FromString("11-19"),
-					intstr.FromInt(20),
-				},
-			},
+	It("Port Iterator (Valid)", func() {
+		ports := []intstr.IntOrString{
+			intstr.FromInt(1),
+			intstr.FromInt(2),
+			intstr.FromString("3-10"),
+			intstr.FromString("11-19"),
+			intstr.FromInt(20),
 		}
 
-		Expect(config.Validate()).To(BeNil())
+		Expect(Validate(ports)).To(BeNil())
 
-		itr := config.NewPortIterator()
+		itr := NewPortIterator(ports)
 		expected := uint16(1)
 		for port := itr.Next(); port != 0; port = itr.Next() {
 			Expect(port).To(Equal(expected))
@@ -79,5 +79,19 @@ var _ = Describe("System Configuration", func() {
 		}
 
 		Expect(itr.Next()).To(Equal(uint16(0)))
+	})
+
+	It("Port Iterator (Invalid)", func() {
+		ports := []intstr.IntOrString{intstr.FromString("invalid range")}
+		itr := NewPortIterator(ports)
+		Expect(itr.Next()).To(Equal(InvalidPort), "invalid range")
+
+		ports = []intstr.IntOrString{intstr.FromString("65536-65537")}
+		itr = NewPortIterator(ports)
+		Expect(itr.Next()).To(Equal(InvalidPort), "start port overflows")
+
+		ports = []intstr.IntOrString{intstr.FromString("1-65536")}
+		itr = NewPortIterator(ports)
+		Expect(itr.Next()).To(Equal(InvalidPort), "end port overflows")
 	})
 })
