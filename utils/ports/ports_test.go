@@ -30,10 +30,10 @@ import (
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
 
-	RunSpecs(t, "Webhook Suite")
+	RunSpecs(t, "Ports Utilities Test")
 }
 
-var _ = Describe("System Configuration", func() {
+var _ = Describe("Ports Utilities Test", func() {
 	DescribeTable("Validate Ports",
 		func(port string, isValid bool) {
 			ports := []intstr.IntOrString{intstr.Parse(port)}
