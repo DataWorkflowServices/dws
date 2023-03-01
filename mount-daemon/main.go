@@ -44,6 +44,7 @@ import (
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
 	"github.com/HewlettPackard/dws/mount-daemon/controllers"
+	"github.com/HewlettPackard/dws/mount-daemon/version"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -86,6 +87,8 @@ func (service *Service) Manage() (string, error) {
 	}
 
 	opts := getOptions()
+
+	setupLog.Info("Client Mount Daemon", "Version", version.BuildVersion())
 
 	config, err := createManager(opts)
 	if err != nil {

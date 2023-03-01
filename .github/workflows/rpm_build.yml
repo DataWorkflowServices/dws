@@ -22,6 +22,7 @@ jobs:
           dnf install -y rpm-build rpmdevtools git make
           dnf module -y install go-toolset 
           rpmdev-setuptree
+          echo $GITHUB_SHA | cut -c1-8 > .commit
           tar -czf /github/home/rpmbuild/SOURCES/dws-clientmount-1.0.tar.gz --transform 's,^,dws-clientmount-1.0/,' .
       - name: build rpms
         run: rpmbuild -ba clientmount.spec
