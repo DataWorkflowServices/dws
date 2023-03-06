@@ -45,7 +45,7 @@ import (
 type ClientMountReconciler struct {
 	client.Client
 	Mock    bool
-	Timeout uint
+	Timeout time.Duration
 	Log     logr.Logger
 	Scheme  *runtime.Scheme
 }
@@ -428,7 +428,7 @@ func (r *ClientMountReconciler) run(c string) (string, error) {
 	ctx := context.Background()
 	if r.Timeout > 0 {
 		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(context.Background(), time.Duration(r.Timeout)*time.Second)
+		ctx, cancel = context.WithTimeout(context.Background(), r.Timeout)
 		defer cancel()
 	}
 

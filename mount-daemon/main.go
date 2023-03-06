@@ -28,6 +28,7 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
+	"time"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -109,7 +110,7 @@ type managerConfig struct {
 	config    *rest.Config
 	namespace string
 	mock      bool
-	timeout   uint
+	timeout   time.Duration
 }
 
 type options struct {
@@ -119,7 +120,7 @@ type options struct {
 	tokenFile string
 	certFile  string
 	mock      bool
-	timeout   uint
+	timeout   time.Duration
 }
 
 func getOptions() *options {
@@ -130,7 +131,7 @@ func getOptions() *options {
 		tokenFile: os.Getenv("DWS_CLIENT_MOUNT_SERVICE_TOKEN_FILE"),
 		certFile:  os.Getenv("DWS_CLIENT_MOUNT_SERVICE_CERT_FILE"),
 		mock:      false,
-		timeout:   60,
+		timeout:   time.Minute,
 	}
 
 	flag.StringVar(&opts.host, "kubernetes-service-host", opts.host, "Kubernetes service host address")
@@ -139,7 +140,7 @@ func getOptions() *options {
 	flag.StringVar(&opts.tokenFile, "service-token-file", opts.tokenFile, "Path to the DWS client mount service token")
 	flag.StringVar(&opts.certFile, "service-cert-file", opts.certFile, "Path to the DWS client mount service certificate")
 	flag.BoolVar(&opts.mock, "mock", opts.mock, "Run in mock mode where no client mount operations take place")
-	flag.UintVar(&opts.timeout, "command-timeout", opts.timeout, "Timeout value in seconds before subcommands are killed")
+	flag.DurationVar(&opts.timeout, "command-timeout", opts.timeout, "Timeout value before subcommands are killed")
 
 	zapOptions := zap.Options{
 		Development: true,
