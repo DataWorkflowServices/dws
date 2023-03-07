@@ -7,6 +7,9 @@ resources:
 - service_account.yaml
 - role.yaml
 - role_binding.yaml
+- clientmount_service_account.yaml
+- clientmount_role.yaml
+- clientmount_role_binding.yaml
 - workflow_editor_role.yaml
 - leader_election_role.yaml
 - leader_election_role_binding.yaml
