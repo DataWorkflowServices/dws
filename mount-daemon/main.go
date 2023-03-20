@@ -28,6 +28,7 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
+	"time"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -44,6 +45,7 @@ import (
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
 	"github.com/HewlettPackard/dws/mount-daemon/controllers"
+	"github.com/HewlettPackard/dws/mount-daemon/version"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -87,6 +89,8 @@ func (service *Service) Manage() (string, error) {
 
 	opts := getOptions()
 
+	setupLog.Info("Client Mount Daemon", "Version", version.BuildVersion())
+
 	config, err := createManager(opts)
 	if err != nil {
 		return "Create", err
@@ -109,6 +113,7 @@ type managerConfig struct {
 	config    *rest.Config
 	namespace string
 	mock      bool
+	timeout   time.Duration
 }
 
 type options struct {
@@ -118,6 +123,7 @@ type options struct {
 	tokenFile string
 	certFile  string
 	mock      bool
+	timeout   time.Duration
 }
 
 func getOptions() *options {
@@ -128,6 +134,7 @@ func getOptions() *options {
 		tokenFile: os.Getenv("DWS_CLIENT_MOUNT_SERVICE_TOKEN_FILE"),
 		certFile:  os.Getenv("DWS_CLIENT_MOUNT_SERVICE_CERT_FILE"),
 		mock:      false,
+		timeout:   time.Minute,
 	}
 
 	flag.StringVar(&opts.host, "kubernetes-service-host", opts.host, "Kubernetes service host address")
@@ -136,6 +143,7 @@ func getOptions() *options {
 	flag.StringVar(&opts.tokenFile, "service-token-file", opts.tokenFile, "Path to the DWS client mount service token")
 	flag.StringVar(&opts.certFile, "service-cert-file", opts.certFile, "Path to the DWS client mount service certificate")
 	flag.BoolVar(&opts.mock, "mock", opts.mock, "Run in mock mode where no client mount operations take place")
+	flag.DurationVar(&opts.timeout, "command-timeout", opts.timeout, "Timeout value before subcommands are killed")
 
 	zapOptions := zap.Options{
 		Development: true,
@@ -206,7 +214,7 @@ func createManager(opts *options) (*managerConfig, error) {
 		}
 	}
 
-	return &managerConfig{config: config, namespace: opts.name, mock: opts.mock}, nil
+	return &managerConfig{config: config, namespace: opts.name, mock: opts.mock, timeout: opts.timeout}, nil
 }
 
 func startManager(config *managerConfig) {
@@ -223,10 +231,11 @@ func startManager(config *managerConfig) {
 	}
 
 	if err = (&controllers.ClientMountReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("ClientMount"),
-		Mock:   config.mock,
-		Scheme: mgr.GetScheme(),
+		Client:  mgr.GetClient(),
+		Log:     ctrl.Log.WithName("controllers").WithName("ClientMount"),
+		Mock:    config.mock,
+		Timeout: config.timeout,
+		Scheme:  mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ClientMount")
 		os.Exit(1)
