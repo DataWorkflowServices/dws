@@ -79,6 +79,10 @@ var _ = BeforeSuite(func() {
 
 	//+kubebuilder:scaffold:scheme
 
+	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
+	Expect(err).NotTo(HaveOccurred())
+	Expect(k8sClient).NotTo(BeNil())
+
 	// start webhook server using Manager
 	webhookInstallOptions := &testEnv.WebhookInstallOptions
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
@@ -100,9 +104,6 @@ var _ = BeforeSuite(func() {
 		Scheme: testEnv.Scheme,
 	}).SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
-
-	k8sClient = k8sManager.GetClient()
-	Expect(k8sClient).ToNot(BeNil())
 
 	go func() {
 		defer GinkgoRecover()
