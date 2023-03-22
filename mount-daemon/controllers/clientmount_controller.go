@@ -126,7 +126,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateMounted {
 		err := r.mountAll(ctx, clientMount)
 		if err != nil {
-			resourceError := dwsv1alpha1.NewResourceError("Mount failed", err)
+			resourceError := dwsv1alpha1.NewResourceError("Mount failed").WithError(err)
 			log.Info(resourceError.Error())
 
 			clientMount.Status.Error = resourceError
@@ -135,7 +135,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	} else if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateUnmounted {
 		err := r.unmountAll(ctx, clientMount)
 		if err != nil {
-			resourceError := dwsv1alpha1.NewResourceError("Unmount failed", err)
+			resourceError := dwsv1alpha1.NewResourceError("Unmount failed").WithError(err)
 			log.Info(resourceError.Error())
 
 			clientMount.Status.Error = resourceError
@@ -304,7 +304,7 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM, activate bool, shared bool) error {
 	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
 	if err != nil {
-		return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not list storage").WithFatal()
+		return dwsv1alpha1.NewResourceError(output).WithError(err).WithUserMessage("Client could not list storage").WithFatal()
 	}
 
 	if r.Mock {
@@ -338,7 +338,7 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			if shared {
 				output, err := r.run(fmt.Sprintf("vgchange --lockstart %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
+					return dwsv1alpha1.NewResourceError(output).WithError(err).WithUserMessage("Client could not access storage").WithFatal()
 				}
 
 				sharedOption = "s" // activate with shared option
@@ -347,13 +347,13 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			// Activate the LV if needed
 			output, err := r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
+				return dwsv1alpha1.NewResourceError(output).WithError(err).WithUserMessage("Client could not access storage").WithFatal()
 			}
 
 		} else if !activate && isActive {
 			output, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
+				return dwsv1alpha1.NewResourceError(output).WithError(err).WithUserMessage("Client could not release storage").WithFatal()
 			}
 		}
 
@@ -361,13 +361,13 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			// Check whether the volume group has been locked and unlock it if necessary
 			output, err := r.run("lvmlockctl -i")
 			if err != nil {
-				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
+				return dwsv1alpha1.NewResourceError(output).WithError(err).WithUserMessage("Client could not release storage").WithFatal()
 			}
 
 			if strings.Contains(output, fmt.Sprintf("VG %s", lvm.VolumeGroup)) {
 				output, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
+					return dwsv1alpha1.NewResourceError(output).WithError(err).WithUserMessage("Client could not release storage").WithFatal()
 				}
 			}
 		}
@@ -375,8 +375,7 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 		return nil
 	}
 
-	err = dwsv1alpha1.NewResourceError(fmt.Sprintf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)+": "+output, nil).WithFatal()
-	r.Log.Info(err.Error())
+	err = dwsv1alpha1.NewResourceError("Could not find VG/LV pair %s/%s: %s", lvm.VolumeGroup, lvm.LogicalVolume, output).WithMajor()
 
 	return err
 }
