@@ -375,6 +375,11 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 		return nil
 	}
 
+	// If we're deactivating and didn't find the VG/LV pair, then treat the unmount as a success
+	if !activate {
+		return nil
+	}
+
 	err = dwsv1alpha1.NewResourceError(fmt.Sprintf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)+": "+output, nil).WithFatal()
 	r.Log.Info(err.Error())
 
