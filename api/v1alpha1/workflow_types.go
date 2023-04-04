@@ -23,6 +23,8 @@ import (
 	"github.com/HewlettPackard/dws/utils/updater"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -222,6 +224,43 @@ type Workflow struct {
 
 func (c *Workflow) GetStatus() updater.Status[*WorkflowStatus] {
 	return &c.Status
+}
+
+// AddWorkflowLabels adds labels to a resource to indicate which workflow it belongs to
+func AddWorkflowLabels(child metav1.Object, workflow *Workflow) {
+	labels := child.GetLabels()
+	if labels == nil {
+		labels = make(map[string]string)
+	}
+
+	labels[WorkflowNameLabel] = workflow.Name
+	labels[WorkflowNamespaceLabel] = workflow.Namespace
+
+	child.SetLabels(labels)
+}
+
+// MatchingWorkflow returns the MatchingLabels to match the workflow labels
+func MatchingWorkflow(workflow *Workflow) client.MatchingLabels {
+	return client.MatchingLabels(map[string]string{
+		WorkflowNameLabel:      workflow.Name,
+		WorkflowNamespaceLabel: workflow.Namespace,
+	})
+}
+
+func GetWorkflowNameNamespace(child metav1.Object) (string, string) {
+	labels := child.GetLabels()
+
+	name, ok := labels[WorkflowNameLabel]
+	if !ok {
+		return "", ""
+	}
+
+	namespace, ok := labels[WorkflowNamespaceLabel]
+	if !ok {
+		return "", ""
+	}
+
+	return name, namespace
 }
 
 //+kubebuilder:object:root=true

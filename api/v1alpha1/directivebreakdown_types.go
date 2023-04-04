@@ -44,11 +44,23 @@ const (
 	DirectiveLifetimePersistent = "persistent"
 )
 
-// AllocationSetColocationConstraint specifies how to colocate storage resources.
+// LocationConstraint describes a constraint that limits the location of an allocation (storage allocation, compute allocation, etc.)
+// based on information in a reference resource.
+// a directive based on their location
+type LocationConstraint struct {
+	// Type is the relationship between the node and the resource in the Reference
+	// +kubebuilder:validation:Enum=physical;network
+	Type string `json:"type"`
+
+	// Reference is an object reference to a resource that contains the location information
+	Reference corev1.ObjectReference `json:"reference"`
+}
+
+// ColocationConstraint specifies how to colocate storage allocation sets.
 // A colocation constraint specifies how the location(s) of an allocation set should be
 // selected with relation to other allocation sets. Locations for allocation sets with the
 // same colocation key should be picked according to the colocation type.
-type AllocationSetColocationConstraint struct {
+type ColocationConstraint struct {
 	// Type of colocation constraint
 	// +kubebuilder:validation:Enum=exclusive
 	Type string `json:"type"`
@@ -64,9 +76,19 @@ type AllocationSetConstraints struct {
 	// Labels is a list of labels is used to filter the Storage resources
 	Labels []string `json:"labels,omitempty"`
 
+	// Scale is a hint for the number of allocations to make based on a 1-10 value
+	Scale int `json:"scale,omitempty"`
+
+	// Count is the number of the allocations to make
+	Count int `json:"count,omitempty"`
+
+	// Location is a list of constraints for which Storage resource to
+	// pick in relation to a separate resource (e.g., Computes)
+	Location []LocationConstraint `json:"location,omitempty"`
+
 	// Colocation is a list of constraints for which Storage resources
 	// to pick in relation to Storage resources for other allocation sets.
-	Colocation []AllocationSetColocationConstraint `json:"colocation,omitempty"`
+	Colocation []ColocationConstraint `json:"colocation,omitempty"`
 }
 
 // StorageAllocationSet defines the details of an allocation set
@@ -113,21 +135,10 @@ const (
 	ComputeLocationPhysical = "physical"
 )
 
-// ComputeLocationConstraint describes a constraints on which compute nodes can be used with
-// a directive based on their location
-type ComputeLocationConstraint struct {
-	// Type is the relationship between the compute nodes and the resource in the Reference
-	// +kubebuilder:validation:Enum=physical;network
-	Type string `json:"type"`
-
-	// Reference is an object reference to a resource that contains the location information
-	Reference corev1.ObjectReference `json:"reference"`
-}
-
 // ComputeConstraints describes the constraints to use when picking compute nodes
 type ComputeConstraints struct {
 	// Location is a list of location constraints
-	Location []ComputeLocationConstraint `json:"location,omitempty"`
+	Location []LocationConstraint `json:"location,omitempty"`
 }
 
 // ComputeBreakdown describes the compute requirements of a directive

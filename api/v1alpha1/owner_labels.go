@@ -77,27 +77,6 @@ func RemoveOwnerLabels(child metav1.Object) {
 	child.SetLabels(labels)
 }
 
-// AddWorkflowLabels adds labels to a resource to indicate which workflow it belongs to
-func AddWorkflowLabels(child metav1.Object, workflow *Workflow) {
-	labels := child.GetLabels()
-	if labels == nil {
-		labels = make(map[string]string)
-	}
-
-	labels[WorkflowNameLabel] = workflow.Name
-	labels[WorkflowNamespaceLabel] = workflow.Namespace
-
-	child.SetLabels(labels)
-}
-
-// MatchingWorkflow returns the MatchingLabels to match the workflow labels
-func MatchingWorkflow(workflow *Workflow) client.MatchingLabels {
-	return client.MatchingLabels(map[string]string{
-		WorkflowNameLabel:      workflow.Name,
-		WorkflowNamespaceLabel: workflow.Namespace,
-	})
-}
-
 // AddPersistentStorageLabels adds labels to a resource to indicate which persistent storage instance it belongs to
 func AddPersistentStorageLabels(child metav1.Object, persistentStorage *PersistentStorageInstance) {
 	labels := child.GetLabels()
