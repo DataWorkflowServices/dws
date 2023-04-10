@@ -76,6 +76,11 @@ spec:
                               items:
                                 properties:
                                   priority:
+                                    description: Priority specifies whether the location
+                                      constraint is mandatory or best effort
+                                    enum:
+                                    - mandatory
+                                    - bestEffort
                                     type: string
                                   type:
                                     description: Type is the relationship between

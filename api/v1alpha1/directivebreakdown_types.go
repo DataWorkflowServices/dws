@@ -136,6 +136,8 @@ type ComputeLocationAccess struct {
 	// +kubebuilder:validation:Enum=physical;network
 	Type ComputeLocationType `json:"type"`
 
+	// Priority specifies whether the location constraint is mandatory or best effort
+	// +kubebuilder:validation:Enum=mandatory;bestEffort
 	Priority ComputeLocationPriority `json:"priority"`
 }
 
