@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Hewlett Packard Enterprise Development LP
+ * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -20,42 +20,25 @@
 package v1alpha2
 
 import (
+	"github.com/HewlettPackard/dws/utils/dwdparse"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// DWDirectiveRuleSpec defines the desired state of DWDirectiveRule
-type DWDirectiveRuleSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of DWDirectiveRule. Edit dwdirectiverule_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
-}
-
-// DWDirectiveRuleStatus defines the observed state of DWDirectiveRule
-type DWDirectiveRuleStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-}
-
 //+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
 
-// DWDirectiveRule is the Schema for the dwdirectiverules API
+// DWDirectiveRule is the Schema for the DWDirective API
 type DWDirectiveRule struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   DWDirectiveRuleSpec   `json:"spec,omitempty"`
-	Status DWDirectiveRuleStatus `json:"status,omitempty"`
+	Spec []dwdparse.DWDirectiveRuleSpec `json:"spec,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// DWDirectiveRuleList contains a list of DWDirectiveRule
+// DWDirectiveRuleList contains a list of DWDirective
 type DWDirectiveRuleList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`

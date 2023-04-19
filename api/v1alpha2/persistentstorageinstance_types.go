@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Hewlett Packard Enterprise Development LP
+ * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -20,31 +20,78 @@
 package v1alpha2
 
 import (
+	"github.com/HewlettPackard/dws/utils/updater"
+
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+const (
+	// PersistentStorageNameLabel is defined for resources that relate to the name of a DWS PersistentStorageInstance
+	PersistentStorageNameLabel = "dws.cray.hpe.com/persistentstorage.name"
+
+	// PersistentStorageNamespaceLabel is defined for resources that relate to the namespace of a DWS PersistentStorageInstance
+	PersistentStorageNamespaceLabel = "dws.cray.hpe.com/persistentstorage.namespace"
+)
+
+// PersistentStorageInstanceState specifies the golang type for PSIState
+type PersistentStorageInstanceState string
+
+// State enumerations
+const (
+	// The PSI resource exists in k8s, but the storage and filesystem that it represents has not been created yet
+	PSIStateCreating PersistentStorageInstanceState = "Creating"
+
+	// The storage and filesystem represented by the PSI exists and is ready for use
+	PSIStateActive PersistentStorageInstanceState = "Active"
+
+	// A #DW destroy_persistent directive has been issued in a workflow.
+	// Once all other workflows with persistent_dw reservations on the PSI complete, the PSI will be destroyed.
+	// New #DW persistent_dw requests after the PSI enters the 'destroying' state will fail.
+	PSIStateDestroying PersistentStorageInstanceState = "Destroying"
+)
 
 // PersistentStorageInstanceSpec defines the desired state of PersistentStorageInstance
 type PersistentStorageInstanceSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Name is the name given to this persistent storage instance.
+	Name string `json:"name"`
 
-	// Foo is an example field of PersistentStorageInstance. Edit persistentstorageinstance_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// FsType describes the File System Type for this storage instance.
+	// +kubebuilder:validation:Enum:=raw;xfs;gfs2;lustre
+	FsType string `json:"fsType"`
+
+	// DWDirective is a copy of the #DW for this instance
+	DWDirective string `json:"dwDirective"`
+
+	// User ID of the user that created the persistent storage
+	UserID uint32 `json:"userID"`
+
+	// Desired state of the PersistentStorageInstance
+	// +kubebuilder:validation:Enum:=Active;Destroying
+	State PersistentStorageInstanceState `json:"state"`
+
+	// List of consumers using this persistent storage
+	ConsumerReferences []corev1.ObjectReference `json:"consumerReferences,omitempty"`
 }
 
 // PersistentStorageInstanceStatus defines the observed state of PersistentStorageInstance
 type PersistentStorageInstanceStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Servers refers to the Servers resource that provides the backing storage for this storage instance
+	Servers corev1.ObjectReference `json:"servers,omitempty"`
+
+	// Current state of the PersistentStorageInstance
+	// +kubebuilder:validation:Enum:=Creating;Active;Destroying
+	State PersistentStorageInstanceState `json:"state"`
+
+	// Error information
+	ResourceError `json:",inline"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// PersistentStorageInstance is the Schema for the persistentstorageinstances API
+// PersistentStorageInstance is the Schema for the Persistentstorageinstances API
 type PersistentStorageInstance struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -53,13 +100,28 @@ type PersistentStorageInstance struct {
 	Status PersistentStorageInstanceStatus `json:"status,omitempty"`
 }
 
+func (psi *PersistentStorageInstance) GetStatus() updater.Status[*PersistentStorageInstanceStatus] {
+	return &psi.Status
+}
+
 //+kubebuilder:object:root=true
 
-// PersistentStorageInstanceList contains a list of PersistentStorageInstance
+// PersistentStorageInstanceList contains a list of PersistentStorageInstances
 type PersistentStorageInstanceList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []PersistentStorageInstance `json:"items"`
+}
+
+// GetObjectList returns a list of PersistentStorageInstance references.
+func (p *PersistentStorageInstanceList) GetObjectList() []client.Object {
+	objectList := []client.Object{}
+
+	for i := range p.Items {
+		objectList = append(objectList, &p.Items[i])
+	}
+
+	return objectList
 }
 
 func init() {

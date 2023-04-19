@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Hewlett Packard Enterprise Development LP
+ * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -21,28 +21,63 @@ package v1alpha2
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// SystemConfigurationSpec defines the desired state of SystemConfiguration
-type SystemConfigurationSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of SystemConfiguration. Edit systemconfiguration_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+// SystemConfigurationComputeNode describes a compute node in the system
+type SystemConfigurationComputeNode struct {
+	// Name of the compute node
+	Name string `json:"name"`
 }
 
-// SystemConfigurationStatus defines the observed state of SystemConfiguration
+// SystemConfigurationComputeNodeReference describes a compute node that
+// has access to a server.
+type SystemConfigurationComputeNodeReference struct {
+	// Name of the compute node
+	Name string `json:"name"`
+
+	// Index of the compute node from the server
+	Index int `json:"index"`
+}
+
+// SystemConfigurationStorageNode describes a storage node in the system
+type SystemConfigurationStorageNode struct {
+	// Type is the type of server
+	Type string `json:"type"`
+
+	// Name of the server node
+	Name string `json:"name"`
+
+	// ComputesAccess is the list of compute nodes that can use the server
+	ComputesAccess []SystemConfigurationComputeNodeReference `json:"computesAccess,omitempty"`
+}
+
+// SystemConfigurationSpec describes the node layout of the system. This is filled in by
+// an administrator at software installation time.
+type SystemConfigurationSpec struct {
+	// ComputeNodes is the list of compute nodes on the system
+	ComputeNodes []SystemConfigurationComputeNode `json:"computeNodes,omitempty"`
+
+	// StorageNodes is the list of storage nodes on the system
+	StorageNodes []SystemConfigurationStorageNode `json:"storageNodes,omitempty"`
+
+	// Ports is the list of ports available for communication between nodes in the system.
+	// Valid values are single integers, or a range of values of the form "START-END" where
+	// START is an integer value that represents the start of a port range and END is an
+	// integer value that represents the end of the port range (inclusive).
+	Ports []intstr.IntOrString `json:"ports,omitempty"`
+}
+
+// SystemConfigurationStatus defines the status of SystemConfiguration
 type SystemConfigurationStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Ready indicates when the SystemConfiguration has been reconciled
+	Ready bool `json:"ready"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:printcolumn:name="READY",type="boolean",JSONPath=".status.ready",description="True if SystemConfiguration is reconciled"
+//+kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 
 // SystemConfiguration is the Schema for the systemconfigurations API
 type SystemConfiguration struct {
