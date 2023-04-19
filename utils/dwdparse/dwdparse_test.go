@@ -20,6 +20,7 @@
 package dwdparse
 
 import (
+	. "github.com/onsi/ginkgo/v2"
 	"testing"
 )
 
@@ -450,3 +451,7 @@ func TestKeyMalformedRegexp(t *testing.T) {
 
 	test(t, rules, tests)
 }
+
+// Just touch ginkgo, so it's here to interpret any ginkgo args from
+// "make test", so that doesn't fail on this test file.
+var _ = BeforeSuite(func() {})
