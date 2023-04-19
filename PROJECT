@@ -20,10 +20,6 @@ resources:
   kind: Workflow
   path: github.com/HewlettPackard/dws/api/v1alpha1
   version: v1alpha1
-  webhooks:
-    defaulting: true
-    validation: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -161,4 +157,8 @@ resources:
   kind: Workflow
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
-version: "3"
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+version: '3'

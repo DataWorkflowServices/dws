@@ -107,7 +107,7 @@ func main() {
 			}
 		}
 	case "webhook":
-		if err = (&dwsv1alpha1.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha2.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 			os.Exit(1)
 		}
