@@ -1,0 +1,12 @@
+apiVersion: dws.cray.hpe.com/v1alpha2
+kind: DWDirectiveRule
+metadata:
+  labels:
+    app.kubernetes.io/name: dwdirectiverule
+    app.kubernetes.io/instance: dwdirectiverule-sample
+    app.kubernetes.io/part-of: dws-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: dws-operator
+  name: dwdirectiverule-sample
+spec:
+  # TODO(user): Add fields here
