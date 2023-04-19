@@ -187,6 +187,7 @@ type ClientMountStatus struct {
 }
 
 //+kubebuilder:object:root=true
+//+kubebuilder:storageversion
 //+kubebuilder:subresource:status
 
 // ClientMount is the Schema for the clientmounts API
