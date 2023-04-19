@@ -93,6 +93,9 @@ resources:
   kind: ClientMount
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -101,6 +104,9 @@ resources:
   kind: Computes
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -109,6 +115,9 @@ resources:
   kind: DWDirectiveRule
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -117,6 +126,9 @@ resources:
   kind: DirectiveBreakdown
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -125,6 +137,9 @@ resources:
   kind: PersistentStorageInstance
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -133,6 +148,9 @@ resources:
   kind: Servers
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -141,6 +159,9 @@ resources:
   kind: Storage
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -149,6 +170,9 @@ resources:
   kind: SystemConfiguration
   path: github.com/HewlettPackard/dws/api/v1alpha2
   version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -161,4 +185,4 @@ resources:
     defaulting: true
     validation: true
     webhookVersion: v1
-version: '3'
+version: "3"

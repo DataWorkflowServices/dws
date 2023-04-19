@@ -16,28 +16,28 @@ resources:
 patchesStrategicMerge:
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix.
 # patches here are for enabling the conversion webhook for each CRD
-#- patches/webhook_in_workflows.yaml
-#- patches/webhook_in_dwdirectiverules.yaml
-#- patches/webhook_in_directivebreakdowns.yaml
-#- patches/webhook_in_computes.yaml
-#- patches/webhook_in_servers.yaml
-#- patches/webhook_in_storages.yaml
-#- patches/webhook_in_clientmounts.yaml
-#- patches/webhook_in_persistentstorageinstances.yaml
-#- patches/webhook_in_systemconfigurations.yaml
+- patches/webhook_in_workflows.yaml
+- patches/webhook_in_dwdirectiverules.yaml
+- patches/webhook_in_directivebreakdowns.yaml
+- patches/webhook_in_computes.yaml
+- patches/webhook_in_servers.yaml
+- patches/webhook_in_storages.yaml
+- patches/webhook_in_clientmounts.yaml
+- patches/webhook_in_persistentstorageinstances.yaml
+- patches/webhook_in_systemconfigurations.yaml
 #+kubebuilder:scaffold:crdkustomizewebhookpatch
 
 # [CERTMANAGER] To enable cert-manager, uncomment all the sections with [CERTMANAGER] prefix.
 # patches here are for enabling the CA injection for each CRD
-#- patches/cainjection_in_workflows.yaml
-#- patches/cainjection_in_dwdirectiverules.yaml
-#- patches/cainjection_in_directivebreakdowns.yaml
-#- patches/cainjection_in_computes.yaml
-#- patches/cainjection_in_servers.yaml
-#- patches/cainjection_in_storages.yaml
-#- patches/cainjection_in_clientmounts.yaml
-#- patches/cainjection_in_persistentstorageinstances.yaml
-#- patches/cainjection_in_systemconfigurations.yaml
+- patches/cainjection_in_workflows.yaml
+- patches/cainjection_in_dwdirectiverules.yaml
+- patches/cainjection_in_directivebreakdowns.yaml
+- patches/cainjection_in_computes.yaml
+- patches/cainjection_in_servers.yaml
+- patches/cainjection_in_storages.yaml
+- patches/cainjection_in_clientmounts.yaml
+- patches/cainjection_in_persistentstorageinstances.yaml
+- patches/cainjection_in_systemconfigurations.yaml
 #+kubebuilder:scaffold:crdkustomizecainjectionpatch
 
 # the following config is for teaching kustomize how to do kustomization for CRDs.
