@@ -22,6 +22,8 @@ import (
 	"context"
 	"testing"
 
+	. "github.com/onsi/ginkgo/v2"
+
 	"github.com/pkg/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -129,3 +131,7 @@ func testStatusUpdate(t *testing.T, changed bool, err error) {
 		t.Errorf("Test status not updated")
 	}
 }
+
+// Just touch ginkgo, so it's here to interpret any ginkgo args from
+// "make test", so that doesn't fail on this test file.
+var _ = BeforeSuite(func() {})
