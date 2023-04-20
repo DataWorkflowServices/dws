@@ -7,6 +7,13 @@ metadata:
     app.kubernetes.io/part-of: dws-operator
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: dws-operator
-  name: workflow-sample
+  name: test2
 spec:
   # TODO(user): Add fields here
+  desiredState: Proposal
+  dwDirectives:
+    - "#DW jobdw type=raw capacity=10TB name=myRawStorage2"
+  wlmID: "5f239bd8-30db-450b-8c2c-aaaaaaaaaaaa"
+  jobID: 900002
+  userID: 1002
+  groupID: 1002
