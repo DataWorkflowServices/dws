@@ -32,7 +32,7 @@ import (
 var convertlog = logf.Log.V(1).WithName("convert-v1alpha1")
 
 func (src *ClientMount) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert ClientMount To Hub")
+	convertlog.Info("Convert ClientMount To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.ClientMount)
 
 	if err := Convert_v1alpha1_ClientMount_To_v1alpha2_ClientMount(src, dst, nil); err != nil {
@@ -52,8 +52,8 @@ func (src *ClientMount) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *ClientMount) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert ClientMount From Hub")
 	src := srcRaw.(*dwsv1alpha2.ClientMount)
+	convertlog.Info("Convert ClientMount From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_ClientMount_To_v1alpha1_ClientMount(src, dst, nil); err != nil {
 		return err
@@ -64,7 +64,7 @@ func (dst *ClientMount) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *Computes) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert Computes To Hub")
+	convertlog.Info("Convert Computes To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.Computes)
 
 	if err := Convert_v1alpha1_Computes_To_v1alpha2_Computes(src, dst, nil); err != nil {
@@ -84,8 +84,8 @@ func (src *Computes) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Computes) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert Computes From Hub")
 	src := srcRaw.(*dwsv1alpha2.Computes)
+	convertlog.Info("Convert Computes From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_Computes_To_v1alpha1_Computes(src, dst, nil); err != nil {
 		return err
@@ -96,7 +96,7 @@ func (dst *Computes) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *DWDirectiveRule) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert DWDirectiveRule To Hub")
+	convertlog.Info("Convert DWDirectiveRule To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.DWDirectiveRule)
 
 	if err := Convert_v1alpha1_DWDirectiveRule_To_v1alpha2_DWDirectiveRule(src, dst, nil); err != nil {
@@ -116,8 +116,8 @@ func (src *DWDirectiveRule) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *DWDirectiveRule) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert DWDirectiveRule From Hub")
 	src := srcRaw.(*dwsv1alpha2.DWDirectiveRule)
+	convertlog.Info("Convert DWDirectiveRule From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_DWDirectiveRule_To_v1alpha1_DWDirectiveRule(src, dst, nil); err != nil {
 		return err
@@ -128,7 +128,7 @@ func (dst *DWDirectiveRule) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert DirectiveBreakdown To Hub")
+	convertlog.Info("Convert DirectiveBreakdown To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.DirectiveBreakdown)
 
 	if err := Convert_v1alpha1_DirectiveBreakdown_To_v1alpha2_DirectiveBreakdown(src, dst, nil); err != nil {
@@ -148,8 +148,8 @@ func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *DirectiveBreakdown) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert DirectiveBreakdown From Hub")
 	src := srcRaw.(*dwsv1alpha2.DirectiveBreakdown)
+	convertlog.Info("Convert DirectiveBreakdown From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_DirectiveBreakdown_To_v1alpha1_DirectiveBreakdown(src, dst, nil); err != nil {
 		return err
@@ -160,7 +160,7 @@ func (dst *DirectiveBreakdown) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *PersistentStorageInstance) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert PersistentStorageInstance To Hub")
+	convertlog.Info("Convert PersistentStorageInstance To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.PersistentStorageInstance)
 
 	if err := Convert_v1alpha1_PersistentStorageInstance_To_v1alpha2_PersistentStorageInstance(src, dst, nil); err != nil {
@@ -180,8 +180,8 @@ func (src *PersistentStorageInstance) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *PersistentStorageInstance) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert PersistentStorageInstance From Hub")
 	src := srcRaw.(*dwsv1alpha2.PersistentStorageInstance)
+	convertlog.Info("Convert PersistentStorageInstance From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_PersistentStorageInstance_To_v1alpha1_PersistentStorageInstance(src, dst, nil); err != nil {
 		return err
@@ -192,7 +192,7 @@ func (dst *PersistentStorageInstance) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *Servers) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert Servers To Hub")
+	convertlog.Info("Convert Servers To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.Servers)
 
 	if err := Convert_v1alpha1_Servers_To_v1alpha2_Servers(src, dst, nil); err != nil {
@@ -212,8 +212,8 @@ func (src *Servers) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Servers) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert Servers From Hub")
 	src := srcRaw.(*dwsv1alpha2.Servers)
+	convertlog.Info("Convert Servers From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_Servers_To_v1alpha1_Servers(src, dst, nil); err != nil {
 		return err
@@ -224,7 +224,7 @@ func (dst *Servers) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *Storage) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert Storage To Hub")
+	convertlog.Info("Convert Storage To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.Storage)
 
 	if err := Convert_v1alpha1_Storage_To_v1alpha2_Storage(src, dst, nil); err != nil {
@@ -244,8 +244,8 @@ func (src *Storage) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Storage) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert Storage From Hub")
 	src := srcRaw.(*dwsv1alpha2.Storage)
+	convertlog.Info("Convert Storage From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_Storage_To_v1alpha1_Storage(src, dst, nil); err != nil {
 		return err
@@ -256,7 +256,7 @@ func (dst *Storage) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert SystemConfiguration To Hub")
+	convertlog.Info("Convert SystemConfiguration To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.SystemConfiguration)
 
 	if err := Convert_v1alpha1_SystemConfiguration_To_v1alpha2_SystemConfiguration(src, dst, nil); err != nil {
@@ -276,8 +276,8 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert SystemConfiguration From Hub")
 	src := srcRaw.(*dwsv1alpha2.SystemConfiguration)
+	convertlog.Info("Convert SystemConfiguration From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_SystemConfiguration_To_v1alpha1_SystemConfiguration(src, dst, nil); err != nil {
 		return err
@@ -288,7 +288,7 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
-	convertlog.Info("Convert Workflow To Hub")
+	convertlog.Info("Convert Workflow To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 	dst := dstRaw.(*dwsv1alpha2.Workflow)
 
 	if err := Convert_v1alpha1_Workflow_To_v1alpha2_Workflow(src, dst, nil); err != nil {
@@ -308,8 +308,8 @@ func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Workflow) ConvertFrom(srcRaw conversion.Hub) error {
-	convertlog.Info("Convert Workflow From Hub")
 	src := srcRaw.(*dwsv1alpha2.Workflow)
+	convertlog.Info("Convert Workflow From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
 	if err := Convert_v1alpha2_Workflow_To_v1alpha1_Workflow(src, dst, nil); err != nil {
 		return err
