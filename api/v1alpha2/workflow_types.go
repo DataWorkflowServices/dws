@@ -118,6 +118,9 @@ type WorkflowSpec struct {
 	// conjunction with User ID to run subtasks with UserID:GroupID credentials.
 	GroupID uint32 `json:"groupID"`
 
+	// Sample2 contains misc content for v1alpha2.
+	Sample2 string `json:"sample2,omitempty"`
+
 	// Hurry indicates that the workflow's driver should kill the job in a hurry when this workflow enters its teardown state.
 	// The driver must release all resources and unmount any filesystems that were mounted as part of the workflow, though some drivers would have done this anyway as part of their teardown state.
 	// The driver must also kill any in-progress data transfers, or skip any data transfers that have not yet begun.
@@ -170,6 +173,9 @@ type WorkflowStatus struct {
 	// +kubebuilder:validation:Enum=Completed;DriverWait;Error
 	Status string `json:"status,omitempty"`
 
+	// Sample2 contains misc content for v1alpha2.
+	Sample2 string `json:"sample2,omitempty"`
+
 	// Message provides additional details on the current status of the resource
 	Message string `json:"message,omitempty"`
 
@@ -206,6 +212,7 @@ type WorkflowStatus struct {
 //+kubebuilder:printcolumn:name="STATE",type="string",JSONPath=".status.state",description="Current state"
 //+kubebuilder:printcolumn:name="READY",type="boolean",JSONPath=".status.ready",description="True if current state is achieved"
 //+kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status.status",description="Indicates achievement of current state"
+//+kubebuilder:printcolumn:name="SAMPLE2",type="string",JSONPath=".status.sample2",description="Misc content for v1alpha2"
 //+kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 //+kubebuilder:printcolumn:name="JOBID",type="integer",JSONPath=".spec.jobID",description="Job ID",priority=1
 //+kubebuilder:printcolumn:name="DESIREDSTATE",type="string",JSONPath=".spec.desiredState",description="Desired state",priority=1

@@ -361,6 +361,10 @@ spec:
       jsonPath: .status.status
       name: STATUS
       type: string
+    - description: Misc content for v1alpha2
+      jsonPath: .status.sample2
+      name: SAMPLE2
+      type: string
     - jsonPath: .metadata.creationTimestamp
       name: AGE
       type: date
@@ -441,6 +445,9 @@ spec:
                 type: boolean
               jobID:
                 type: integer
+              sample2:
+                description: Sample2 contains misc content for v1alpha2.
+                type: string
               userID:
                 description: UserID specifies the user ID for the workflow. The User
                   ID is used by the various states in the workflow to ensure the user
@@ -654,6 +661,9 @@ spec:
                 description: Time of the most recent desiredState's achieving Ready
                   status
                 format: date-time
+                type: string
+              sample2:
+                description: Sample2 contains misc content for v1alpha2.
                 type: string
               state:
                 description: The state the resource is currently transitioning to.

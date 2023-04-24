@@ -21,6 +21,7 @@ package v1alpha1
 
 import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	apiconversion "k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -304,6 +305,9 @@ func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
 
+	dst.Spec.Sample2 = restored.Spec.Sample2
+	dst.Status.Sample2 = restored.Status.Sample2
+
 	return nil
 }
 
@@ -398,4 +402,16 @@ func (src *WorkflowList) ConvertTo(dstRaw conversion.Hub) error {
 
 func (dst *WorkflowList) ConvertFrom(srcRaw conversion.Hub) error {
 	return apierrors.NewMethodNotSupported(resource("WorkflowList"), "ConvertFrom")
+}
+
+// The conversion-gen tool creates all the parts, but in this case it omitted
+// these glue routines, forcing us to acknowledge that we are handling the
+// conversions.
+
+func Convert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *dwsv1alpha2.WorkflowSpec, out *WorkflowSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in, out, s)
+}
+
+func Convert_v1alpha2_WorkflowStatus_To_v1alpha1_WorkflowStatus(in *dwsv1alpha2.WorkflowStatus, out *WorkflowStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_WorkflowStatus_To_v1alpha1_WorkflowStatus(in, out, s)
 }
