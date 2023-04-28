@@ -1,4 +1,4 @@
-# Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+# Copyright 2021-2023 Hewlett Packard Enterprise Development LP
 # Other additional copyright holders may be indicated within.
 #
 # The entirety of this work is licensed under the Apache License,
@@ -52,7 +52,7 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
 # cray.hpe.com/dws-operator-bundle:$VERSION and cray.hpe.com/dws-operator-catalog:$VERSION.
-IMAGE_TAG_BASE ?= ghcr.io/hewlettpackard/dws-operator
+IMAGE_TAG_BASE ?= ghcr.io/hewlettpackard/dws
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -72,7 +72,7 @@ IMAGE_TAG_BASE ?= ghcr.io/hewlettpackard/dws-operator
 OVERLAY ?= kind
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION = 1.25.0
+ENVTEST_K8S_VERSION = 1.26.0
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -88,9 +88,6 @@ SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
 all: build
-
-vendor:
-	GOPRIVATE=github.hpe.com go mod vendor
 
 ##@ General
 
@@ -132,8 +129,10 @@ test: manifests generate fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(LOCALBIN))" go test $(TESTDIR) -coverprofile cover.out
 
 ##@ Build
+build-daemon: COMMIT_HASH?=$(shell git rev-parse --short HEAD)
+build-daemon: PACKAGE = github.com/HewlettPackard/dws/mount-daemon/version
 build-daemon: manifests generate fmt vet ## Build standalone clientMount daemon
-	GOOS=linux GOARCH=amd64 go build -o bin/clientmountd mount-daemon/main.go
+	GOOS=linux GOARCH=amd64 go build -ldflags="-X '$(PACKAGE).commitHash=$(COMMIT_HASH)'" -o bin/clientmountd mount-daemon/main.go
 
 build: manifests generate fmt vet ## Build manager binary.
 	go build -o bin/manager main.go
@@ -152,7 +151,7 @@ docker-push: .version ## Push docker image with the manager.
 KIND_CLUSTER ?= "kind"
 kind-push: VERSION ?= $(shell cat .version)
 kind-push: .version ## Push docker image to kind
-	kind load docker-image --name $(KIND_CLUSTER) --nodes `kubectl get node -l cray.wlm.manager=true --no-headers -o custom-columns=":metadata.name" | paste -d, -s -` $(IMAGE_TAG_BASE):$(VERSION)
+	kind load docker-image --name $(KIND_CLUSTER) $(IMAGE_TAG_BASE):$(VERSION)
 
 ##@ Deployment
 
@@ -167,7 +166,7 @@ deploy: .version kustomize ## Deploy controller to the K8s cluster specified in 
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMAGE_TAG_BASE):$(VERSION)
 	$(KUSTOMIZE) build config/${OVERLAY} | kubectl apply -f -
 
-undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
+undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete --ignore-not-found -f -
 
 # Let .version be phony so that a git update to the workarea can be reflected
@@ -191,7 +190,7 @@ ENVTEST ?= $(LOCALBIN)/setup-envtest
 
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v4.5.7
-CONTROLLER_TOOLS_VERSION ?= v0.9.2
+CONTROLLER_TOOLS_VERSION ?= v0.11.1
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize

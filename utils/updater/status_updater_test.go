@@ -22,6 +22,8 @@ import (
 	"context"
 	"testing"
 
+	. "github.com/onsi/ginkgo/v2"
+
 	"github.com/pkg/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -63,8 +65,6 @@ func (*testWriter) Update(ctx context.Context, obj client.Object, opts ...client
 	return nil
 }
 
-func (*testWriter) Status() client.StatusWriter { return &testStatusWriter{} }
-
 func TestUpdate(t *testing.T)            { testUpdate(t, true, nil) }
 func TestUpdateWithError(t *testing.T)   { testUpdate(t, true, errors.Errorf("err")) }
 func TestNoUpdateWithError(t *testing.T) { testUpdate(t, false, errors.Errorf("err")) }
@@ -92,10 +92,10 @@ func testUpdate(t *testing.T, changed bool, err error) {
 }
 
 type testStatusWriter struct {
-	client.StatusWriter
+	client.SubResourceWriter
 }
 
-func (*testStatusWriter) Update(ctx context.Context, obj client.Object, opts ...client.UpdateOption) error {
+func (*testStatusWriter) Update(ctx context.Context, obj client.Object, opts ...client.SubResourceUpdateOption) error {
 	object, ok := obj.(*testObject)
 	if !ok {
 		panic("can't convert to test object")
@@ -119,7 +119,7 @@ func testStatusUpdate(t *testing.T, changed bool, err error) {
 
 	obj.status.changed = changed // toggle the status changed field so the update occurs
 
-	if updateErr := updater.CloseWithStatusUpdate(context.TODO(), &testWriter{}, err); updateErr != err {
+	if updateErr := updater.CloseWithStatusUpdate(context.TODO(), &testStatusWriter{}, err); updateErr != err {
 		t.Errorf("Close expected error %v, not %v", err, updateErr)
 	}
 
@@ -131,3 +131,7 @@ func testStatusUpdate(t *testing.T, changed bool, err error) {
 		t.Errorf("Test status not updated")
 	}
 }
+
+// Just touch ginkgo, so it's here to interpret any ginkgo args from
+// "make test", so that doesn't fail on this test file.
+var _ = BeforeSuite(func() {})

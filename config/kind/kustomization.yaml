@@ -4,4 +4,5 @@ bases:
 patchesStrategicMerge:
 # Arguments for the controller manager that are specific to kind
 - manager_environment_patch.yaml
-
+# Kind specific configuration for the webhook
+- webhook_patch.yaml

@@ -21,15 +21,15 @@ spec:
     metadata:
       labels:
         control-plane: controller-manager
+        app: dws
     spec:
-      nodeSelector:
-        cray.wlm.manager: "true"
       securityContext:
         runAsNonRoot: true
       containers:
       - command:
         - /manager
         args:
+        - --mode=controller
         - --leader-elect
         image: controller:latest
         name: manager
@@ -48,9 +48,6 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
         resources:
-          limits:
-            cpu: 100m
-            memory: 30Mi
           requests:
             cpu: 100m
             memory: 20Mi
