@@ -1,0 +1,31 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: clientmount-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - clientmounts
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - clientmounts/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - clientmounts/status
+  verbs:
+  - get
+  - patch
+  - update
