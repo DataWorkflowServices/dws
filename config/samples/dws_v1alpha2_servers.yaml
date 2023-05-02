@@ -1,0 +1,12 @@
+apiVersion: dws.cray.hpe.com/v1alpha2
+kind: Servers
+metadata:
+  labels:
+    app.kubernetes.io/name: servers
+    app.kubernetes.io/instance: servers-sample
+    app.kubernetes.io/part-of: dws-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: dws-operator
+  name: servers-sample
+spec:
+  # TODO(user): Add fields here

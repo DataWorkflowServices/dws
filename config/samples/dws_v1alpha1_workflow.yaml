@@ -1,7 +1,7 @@
 apiVersion: dws.cray.hpe.com/v1alpha1
 kind: Workflow
 metadata:
-  name: dws-workflow-test
+  name: test1
 spec:
   # Add fields here
   desiredState: Proposal
