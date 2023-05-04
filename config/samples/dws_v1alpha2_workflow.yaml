@@ -12,7 +12,7 @@ spec:
   # TODO(user): Add fields here
   desiredState: Proposal
   dwDirectives:
-    - "#DW jobdw type=raw capacity=10TB name=myRawStorage2"
+    - "#DW jobdw type=raw capacity=10TB name=my-raw-storage2"
   wlmID: "5f239bd8-30db-450b-8c2c-aaaaaaaaaaaa"
   jobID: 900002
   userID: 1002
