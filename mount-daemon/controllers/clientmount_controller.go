@@ -22,9 +22,11 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -380,10 +382,35 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 		return nil
 	}
 
-	err = dwsv1alpha1.NewResourceError(fmt.Sprintf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)+": "+output, nil).WithFatal()
+	if err := r.rescanNVMeDevices(); err != nil {
+		return err
+	}
+
+	err = dwsv1alpha1.NewResourceError(fmt.Sprintf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)+": "+output, nil)
 	r.Log.Info(err.Error())
 
 	return err
+}
+
+func (r *ClientMountReconciler) rescanNVMeDevices() error {
+	devices, err := ioutil.ReadDir("/dev/")
+	if err != nil {
+		return err
+	}
+
+	nvmeDevices := []string{}
+	nvmeRegex, _ := regexp.Compile("nvme[0-9]+$")
+	for _, device := range devices {
+		if match := nvmeRegex.MatchString(device.Name()); match {
+			nvmeDevices = append(nvmeDevices, "/dev/"+device.Name())
+		}
+	}
+
+	if output, err := r.run("nvme ns-rescan " + strings.Join(nvmeDevices, " ")); err != nil {
+		return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Could not rescan NVMe devices").WithFatal()
+	}
+
+	return nil
 }
 
 // checkMount checks whether a file system is mounted at the path specified in "mountPath"
