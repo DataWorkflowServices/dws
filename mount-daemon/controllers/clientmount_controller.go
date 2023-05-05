@@ -39,7 +39,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
+	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
 	"github.com/HewlettPackard/dws/utils/updater"
 )
 
@@ -65,7 +65,7 @@ const (
 // move the current state of the cluster closer to the desired state.
 func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request) (res ctrl.Result, err error) {
 	log := r.Log.WithValues("ClientMount", req.NamespacedName)
-	clientMount := &dwsv1alpha1.ClientMount{}
+	clientMount := &dwsv1alpha2.ClientMount{}
 	if err := r.Get(ctx, req.NamespacedName, clientMount); err != nil {
 		// ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
@@ -75,7 +75,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	// Create a status updater that handles the call to r.Status().Update() if any of the fields
 	// in clientMount.Status{} change
-	statusUpdater := updater.NewStatusUpdater[*dwsv1alpha1.ClientMountStatus](clientMount)
+	statusUpdater := updater.NewStatusUpdater[*dwsv1alpha2.ClientMountStatus](clientMount)
 	defer func() { err = statusUpdater.CloseWithStatusUpdate(ctx, r.Client.Status(), err) }()
 
 	// Handle cleanup if the resource is being deleted
@@ -100,7 +100,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	// Create the status section if it doesn't exist yet
 	if len(clientMount.Status.Mounts) != len(clientMount.Spec.Mounts) {
-		clientMount.Status.Mounts = make([]dwsv1alpha1.ClientMountInfoStatus, len(clientMount.Spec.Mounts))
+		clientMount.Status.Mounts = make([]dwsv1alpha2.ClientMountInfoStatus, len(clientMount.Spec.Mounts))
 	}
 
 	// Initialize the status section if the desired state doesn't match the status state
@@ -125,19 +125,19 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	clientMount.Status.Error = nil
 
-	if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateMounted {
+	if clientMount.Spec.DesiredState == dwsv1alpha2.ClientMountStateMounted {
 		err := r.mountAll(ctx, clientMount)
 		if err != nil {
-			resourceError := dwsv1alpha1.NewResourceError("Mount failed", err)
+			resourceError := dwsv1alpha2.NewResourceError("Mount failed", err)
 			log.Info(resourceError.Error())
 
 			clientMount.Status.Error = resourceError
 			return ctrl.Result{RequeueAfter: time.Second * time.Duration(10)}, nil
 		}
-	} else if clientMount.Spec.DesiredState == dwsv1alpha1.ClientMountStateUnmounted {
+	} else if clientMount.Spec.DesiredState == dwsv1alpha2.ClientMountStateUnmounted {
 		err := r.unmountAll(ctx, clientMount)
 		if err != nil {
-			resourceError := dwsv1alpha1.NewResourceError("Unmount failed", err)
+			resourceError := dwsv1alpha2.NewResourceError("Unmount failed", err)
 			log.Info(resourceError.Error())
 
 			clientMount.Status.Error = resourceError
@@ -149,7 +149,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 }
 
 // unmountAll unmounts all the file systems listed in the spec.Mounts list
-func (r *ClientMountReconciler) unmountAll(ctx context.Context, clientMount *dwsv1alpha1.ClientMount) error {
+func (r *ClientMountReconciler) unmountAll(ctx context.Context, clientMount *dwsv1alpha2.ClientMount) error {
 	log := r.Log.WithValues("ClientMount", types.NamespacedName{Name: clientMount.Name, Namespace: clientMount.Namespace})
 
 	var firstError error = nil
@@ -169,13 +169,13 @@ func (r *ClientMountReconciler) unmountAll(ctx context.Context, clientMount *dws
 }
 
 // unmount unmounts a single mount point described in the ClientMountInfo object
-func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dwsv1alpha1.ClientMountInfo, log logr.Logger) error {
+func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dwsv1alpha2.ClientMountInfo, log logr.Logger) error {
 	state, err := r.checkMount(clientMountInfo.MountPath)
 	if err != nil {
 		return err
 	}
 
-	if state == dwsv1alpha1.ClientMountStateMounted {
+	if state == dwsv1alpha2.ClientMountStateMounted {
 
 		output, err := r.run("umount " + clientMountInfo.MountPath)
 		if err != nil {
@@ -190,7 +190,7 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 
 	}
 
-	if clientMountInfo.Device.Type == dwsv1alpha1.ClientMountDeviceTypeLVM {
+	if clientMountInfo.Device.Type == dwsv1alpha2.ClientMountDeviceTypeLVM {
 		if err := r.configureLVMDevice(clientMountInfo.Device.LVM, false, clientMountInfo.Type == "gfs2"); err != nil {
 			log.Error(err, "Could not deactivate LVM volume", "mount path", clientMountInfo.MountPath)
 			return err
@@ -202,7 +202,7 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 }
 
 // mountAll mounts all the file systems listed in the spec.Mounts list
-func (r *ClientMountReconciler) mountAll(ctx context.Context, clientMount *dwsv1alpha1.ClientMount) error {
+func (r *ClientMountReconciler) mountAll(ctx context.Context, clientMount *dwsv1alpha2.ClientMount) error {
 	log := r.Log.WithValues("ClientMount", types.NamespacedName{Name: clientMount.Name, Namespace: clientMount.Namespace})
 
 	var firstError error = nil
@@ -222,7 +222,7 @@ func (r *ClientMountReconciler) mountAll(ctx context.Context, clientMount *dwsv1
 }
 
 // mount mounts a single mount point described in the ClientMountInfo object
-func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1alpha1.ClientMountInfo, log logr.Logger) error {
+func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1alpha2.ClientMountInfo, log logr.Logger) error {
 
 	// Check whether the file system is already mounted
 	state, err := r.checkMount(clientMountInfo.MountPath)
@@ -230,7 +230,7 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 		return err
 	}
 
-	if state == dwsv1alpha1.ClientMountStateMounted {
+	if state == dwsv1alpha2.ClientMountStateMounted {
 		log.Info("Already mounted")
 		return nil
 	}
@@ -285,13 +285,13 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 }
 
 // getDevice builds the device string for the mount command. This is dependent on the type of file
-func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMountInfo) (string, error) {
+func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha2.ClientMountInfo) (string, error) {
 	switch clientMountInfo.Device.Type {
-	case dwsv1alpha1.ClientMountDeviceTypeLustre:
+	case dwsv1alpha2.ClientMountDeviceTypeLustre:
 		device := clientMountInfo.Device.Lustre.MgsAddresses + ":/" + clientMountInfo.Device.Lustre.FileSystemName
 
 		return device, nil
-	case dwsv1alpha1.ClientMountDeviceTypeLVM:
+	case dwsv1alpha2.ClientMountDeviceTypeLVM:
 		if err := r.configureLVMDevice(clientMountInfo.Device.LVM, true, clientMountInfo.Type == "gfs2"); err != nil {
 			return "", err
 		}
@@ -303,10 +303,10 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha1.ClientMoun
 }
 
 // configureLVMDevice will configure the provided LVM device with the desired activate/deactivate option
-func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountDeviceLVM, activate bool, shared bool) error {
+func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountDeviceLVM, activate bool, shared bool) error {
 	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
 	if err != nil {
-		return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not list storage").WithFatal()
+		return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Client could not list storage").WithFatal()
 	}
 
 	if r.Mock {
@@ -340,7 +340,7 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			if shared {
 				output, err := r.run(fmt.Sprintf("vgchange --lockstart %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
+					return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
 				}
 
 				sharedOption = "s" // activate with shared option
@@ -349,13 +349,13 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			// Activate the LV if needed
 			output, err := r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
+				return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Client could not access storage").WithFatal()
 			}
 
 		} else if !activate && isActive {
 			output, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
+				return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
 			}
 		}
 
@@ -363,13 +363,13 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 			// Check whether the volume group has been locked and unlock it if necessary
 			output, err := r.run("lvmlockctl -i")
 			if err != nil {
-				return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
+				return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
 			}
 
 			if strings.Contains(output, fmt.Sprintf("VG %s", lvm.VolumeGroup)) {
 				output, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
+					return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
 				}
 			}
 		}
@@ -386,7 +386,7 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha1.ClientMountD
 		return err
 	}
 
-	err = dwsv1alpha1.NewResourceError(fmt.Sprintf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)+": "+output, nil)
+	err = dwsv1alpha2.NewResourceError(fmt.Sprintf("Could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume)+": "+output, nil)
 	r.Log.Info(err.Error())
 
 	return err
@@ -407,29 +407,29 @@ func (r *ClientMountReconciler) rescanNVMeDevices() error {
 	}
 
 	if output, err := r.run("nvme ns-rescan " + strings.Join(nvmeDevices, " ")); err != nil {
-		return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Could not rescan NVMe devices").WithFatal()
+		return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Could not rescan NVMe devices").WithFatal()
 	}
 
 	return nil
 }
 
 // checkMount checks whether a file system is mounted at the path specified in "mountPath"
-func (r *ClientMountReconciler) checkMount(mountPath string) (dwsv1alpha1.ClientMountState, error) {
+func (r *ClientMountReconciler) checkMount(mountPath string) (dwsv1alpha2.ClientMountState, error) {
 	output, err := r.run("mount")
 	if err != nil {
-		return dwsv1alpha1.ClientMountStateUnmounted, dwsv1alpha1.NewResourceError(output, err)
+		return dwsv1alpha2.ClientMountStateUnmounted, dwsv1alpha2.NewResourceError(output, err)
 	}
 
 	for _, line := range strings.Split(output, "\n") {
 		fields := strings.Fields(line)
 		if len(fields) >= 3 {
 			if fields[2] == mountPath {
-				return dwsv1alpha1.ClientMountStateMounted, nil
+				return dwsv1alpha2.ClientMountStateMounted, nil
 			}
 		}
 	}
 
-	return dwsv1alpha1.ClientMountStateUnmounted, nil
+	return dwsv1alpha2.ClientMountStateUnmounted, nil
 }
 
 func (r *ClientMountReconciler) createFile(path string) error {
@@ -487,7 +487,7 @@ func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {
 // SetupWithManager sets up the controller with the Manager.
 func (r *ClientMountReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	builder := ctrl.NewControllerManagedBy(mgr).
-		For(&dwsv1alpha1.ClientMount{})
+		For(&dwsv1alpha2.ClientMount{})
 
 	if _, found := os.LookupEnv("NNF_TEST_ENVIRONMENT"); found {
 		builder = builder.WithEventFilter(filterByNonRabbitNamespacePrefixForTest())
