@@ -399,15 +399,14 @@ func (r *ClientMountReconciler) rescanNVMeDevices() error {
 	}
 
 	nvmeDevices := []string{}
+	nvmeRegex, _ := regexp.Compile("nvme[0-9]+$")
 	for _, device := range devices {
-		match, _ := regexp.MatchString("nvme[0-9]+$", device.Name())
-		if match {
+		if match := nvmeRegex.MatchString(device.Name()); match {
 			nvmeDevices = append(nvmeDevices, "/dev/"+device.Name())
 		}
 	}
 
-	output, err := r.run("nvme ns-rescan " + strings.Join(nvmeDevices, " "))
-	if err != nil {
+	if output, err := r.run("nvme ns-rescan " + strings.Join(nvmeDevices, " ")); err != nil {
 		return dwsv1alpha1.NewResourceError(output, err).WithUserMessage("Could not rescan NVMe devices").WithFatal()
 	}
 
