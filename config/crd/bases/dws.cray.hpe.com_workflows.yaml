@@ -606,9 +606,9 @@ spec:
                       - Queued
                       - Running
                       - Completed
+                      - Stalled
                       - Error
                       - DriverWait
-                      - Stalled
                       type: string
                     taskID:
                       type: string

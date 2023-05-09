@@ -19,27 +19,6 @@
 
 package v1alpha1
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/go-logr/logr"
-)
-
-type ResourceErrorSeverity string
-type ResourceErrorType string
-
-const (
-	SeverityMinor ResourceErrorSeverity = "Minor"
-	SeverityMajor ResourceErrorSeverity = "Major"
-	SeverityFatal ResourceErrorSeverity = "Fatal"
-)
-
-const (
-	TypeInternal ResourceErrorType = "Internal"
-	TypeUser     ResourceErrorType = "User"
-)
-
 type ResourceErrorInfo struct {
 	// Optional user facing message if the error is relevant to an end user
 	UserMessage string `json:"userMessage,omitempty"`
@@ -47,11 +26,8 @@ type ResourceErrorInfo struct {
 	// Internal debug message for the error
 	DebugMessage string `json:"debugMessage"`
 
-	// Internal or user error
-	Type ResourceErrorType `json:"internal"`
-
 	// Indication if the error is likely recoverable or not
-	Severity ResourceErrorSeverity `json:"severity"`
+	Recoverable bool `json:"recoverable"`
 }
 
 type ResourceError struct {
@@ -59,95 +35,54 @@ type ResourceError struct {
 	Error *ResourceErrorInfo `json:"error,omitempty"`
 }
 
-func NewResourceError(format string, a ...any) *ResourceErrorInfo {
-	return &ResourceErrorInfo{
-		Type:         TypeInternal,
-		Severity:     SeverityMinor,
-		DebugMessage: fmt.Sprintf(format, a...),
-	}
-}
-
-func (e *ResourceErrorInfo) WithUserMessage(format string, a ...any) *ResourceErrorInfo {
-	// Only set the user message if it's empty. This prevents upper layers
-	// from overriding a user message set by a lower layer
-	if e.UserMessage == "" {
-		e.UserMessage = fmt.Sprintf(format, a...)
+func NewResourceError(message string, err error) *ResourceErrorInfo {
+	resourceError := &ResourceErrorInfo{
+		Recoverable: true,
 	}
 
-	return e
-}
+	if err != nil {
+		// If the error provided is already a ResourceError, use it and concatenate
+		// the debug messages
+		_, ok := err.(*ResourceErrorInfo)
+		if ok {
+			resourceError = err.(*ResourceErrorInfo)
+		}
 
-func (e *ResourceErrorInfo) WithError(err error) *ResourceErrorInfo {
-	debugMessageList := []string{}
-
-	childError, ok := err.(*ResourceErrorInfo)
-	if ok {
-		// Inherit the severity and the user message if the child error is a ResourceError
-		e.Severity = childError.Severity
-		e.UserMessage = childError.UserMessage
-		debugMessageList = append(debugMessageList, childError.DebugMessage)
-	} else {
-		debugMessageList = append(debugMessageList, err.Error())
+		if message == "" {
+			message = err.Error()
+		} else {
+			message = message + ": " + err.Error()
+		}
 	}
 
-	e.DebugMessage = strings.Join(debugMessageList, ": ")
+	resourceError.DebugMessage = message
 
-	return e
+	return resourceError
 }
 
 func (e *ResourceErrorInfo) WithFatal() *ResourceErrorInfo {
-	e.Severity = SeverityFatal
+	e.Recoverable = false
 	return e
 }
 
-func (e *ResourceErrorInfo) WithMajor() *ResourceErrorInfo {
-	e.Severity = SeverityMajor
-	return e
-}
+func (e *ResourceErrorInfo) WithUserMessage(message string) *ResourceErrorInfo {
+	// Only set the user message if it's empty. This prevents upper layers
+	// from overriding a user message set by a lower layer
+	if e.UserMessage == "" {
+		e.UserMessage = message
+	}
 
-func (e *ResourceErrorInfo) WithMinor() *ResourceErrorInfo {
-	e.Severity = SeverityMinor
-	return e
-}
-
-func (e *ResourceErrorInfo) WithInternal() *ResourceErrorInfo {
-	e.Type = TypeInternal
-	return e
-}
-
-func (e *ResourceErrorInfo) WithUser() *ResourceErrorInfo {
-	e.Type = TypeUser
 	return e
 }
 
 func (e *ResourceErrorInfo) Error() string {
-	return fmt.Sprintf("%s error: %s", strings.ToLower(string(e.Type)), e.DebugMessage)
-}
-
-func (e *ResourceError) SetResourceErrorAndLog(err error, log logr.Logger) {
-	e.SetResourceError(err)
-	if err == nil {
-		return
-	}
-
-	childError, ok := err.(*ResourceErrorInfo)
-	if ok {
-		if childError.Severity == SeverityFatal {
-			log.Error(err, "Fatal error")
-			return
-		}
-
-		log.Info("Recoverable Error", "Severity", childError.Severity, "Message", err.Error())
-		return
-	}
-
-	log.Info("Recoverable Error", "Message", err.Error())
+	return e.DebugMessage
 }
 
 func (e *ResourceError) SetResourceError(err error) {
 	if err == nil {
 		e.Error = nil
 	} else {
-		e.Error = NewResourceError("").WithError(err)
+		e.Error = NewResourceError("", err)
 	}
 }

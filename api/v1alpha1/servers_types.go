@@ -79,9 +79,6 @@ type ServersStatus struct {
 	Ready          bool                         `json:"ready"`
 	LastUpdate     *metav1.MicroTime            `json:"lastUpdate,omitempty"`
 	AllocationSets []ServersStatusAllocationSet `json:"allocationSets,omitempty"`
-
-	// Error information
-	ResourceError `json:",inline"`
 }
 
 //+kubebuilder:object:root=true
