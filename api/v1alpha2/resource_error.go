@@ -48,9 +48,11 @@ type ResourceErrorInfo struct {
 	DebugMessage string `json:"debugMessage"`
 
 	// Internal or user error
-	Type ResourceErrorType `json:"internal"`
+	// +kubebuilder:validation:Enum=Internal;User
+	Type ResourceErrorType `json:"type"`
 
 	// Indication if the error is likely recoverable or not
+	// +kubebuilder:validation:Enum=Minor;Major;Fatal
 	Severity ResourceErrorSeverity `json:"severity"`
 }
 

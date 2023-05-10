@@ -1,0 +1,181 @@
+diff --git a/Makefile b/Makefile
+index 2a3a3d0..0251bed 100644
+--- a/Makefile
++++ b/Makefile
+@@ -126,7 +126,7 @@ container-unit-test: .version ## Build docker image with the manager and execute
+ 
+ TESTDIR ?= ./...
+ test: manifests generate fmt vet envtest ## Run tests.
+-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(LOCALBIN))" go test $(TESTDIR) -coverprofile cover.out
++	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(LOCALBIN))" go test -v $(TESTDIR) -coverprofile cover.out
+ 
+ ##@ Build
+ build-daemon: COMMIT_HASH?=$(shell git rev-parse --short HEAD)
+diff --git a/api/v1alpha1/conversion_test.go b/api/v1alpha1/conversion_test.go
+index 6a6634e..844ea3d 100644
+--- a/api/v1alpha1/conversion_test.go
++++ b/api/v1alpha1/conversion_test.go
+@@ -20,19 +20,44 @@
+ package v1alpha1
+ 
+ import (
++	"fmt"
+ 	"testing"
+ 
++	fuzz "github.com/google/gofuzz"
+ 	. "github.com/onsi/ginkgo/v2"
+ 
++	"k8s.io/apimachinery/pkg/api/apitesting/fuzzer"
++	runtimeserializer "k8s.io/apimachinery/pkg/runtime/serializer"
++	"sigs.k8s.io/controller-runtime/pkg/conversion"
++
+ 	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
+ 	utilconversion "github.com/HewlettPackard/dws/github/cluster-api/util/conversion"
+ )
+ 
++func hubPrinter(c conversion.Hub) {
++	in := c.(*dwsv1alpha2.ClientMount)
++	fmt.Printf("HUB PRINTER: %#v\n", in.Status)
++	if in.Status.Error != nil {
++		fmt.Printf("]]] %#v\n", in.Status.Error)
++	}
++}
++func spokePrinter(c conversion.Convertible) {
++	in := c.(*ClientMount)
++	fmt.Printf("SPOKE PRINTER: %#v\n", in.Status)
++	if in.Status.Error != nil {
++		fmt.Printf("]]] %#v\n", in.Status.Error)
++	}
++	anno := in.GetAnnotations()
++	fmt.Println("Anno:", anno["dataworkflowservices.github.io/conversion-data"])
++}
+ func TestFuzzyConversion(t *testing.T) {
+ 
+ 	t.Run("for ClientMount", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
+-		Hub:   &dwsv1alpha2.ClientMount{},
+-		Spoke: &ClientMount{},
++		Hub:          &dwsv1alpha2.ClientMount{},
++		Spoke:        &ClientMount{},
++		FuzzerFuncs:  []fuzzer.FuzzerFuncs{ResourceErrorFuzzFuncs},
++		HubPrinter:   hubPrinter,
++		SpokePrinter: spokePrinter,
+ 	}))
+ 
+ 	t.Run("for Computes", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
+@@ -77,6 +102,33 @@ func TestFuzzyConversion(t *testing.T) {
+ 
+ }
+ 
++func ResourceErrorFuzzFuncs(_ runtimeserializer.CodecFactory) []interface{} {
++	return []interface{}{
++		v1alpha2ResourceErrorFuzzer,
++		v1alpha1ResourceErrorFuzzer,
++	}
++}
++
++func v1alpha2ResourceErrorFuzzer(in *dwsv1alpha2.ResourceError, c fuzz.Continue) {
++	c.FuzzNoCustom(in)
++
++	// Severity and Type are not allowed to be empty, so we'll fuzz this manually.
++	if c.RandBool() {
++		in.Error = dwsv1alpha2.NewResourceError(c.RandString())
++		in.Error.UserMessage = c.RandString()
++		in.Error.Severity = dwsv1alpha2.ResourceErrorSeverity(c.RandString())
++		in.Error.Type = dwsv1alpha2.ResourceErrorType(c.RandString())
++	}
++
++}
++
++func v1alpha1ResourceErrorFuzzer(in *ResourceError, c fuzz.Continue) {
++	c.FuzzNoCustom(in)
++
++	// Just a what-if: What if we had to control the fuzzing...
++	in.Error = NewResourceError(c.RandString(), nil)
++}
++
+ // Just touch ginkgo, so it's here to interpret any ginkgo args from
+ // "make test", so that doesn't fail on this test file.
+ var _ = BeforeSuite(func() {})
+diff --git a/github/cluster-api/util/conversion/conversion.go b/github/cluster-api/util/conversion/conversion.go
+index 4d9970e..c92b76a 100644
+--- a/github/cluster-api/util/conversion/conversion.go
++++ b/github/cluster-api/util/conversion/conversion.go
+@@ -18,6 +18,7 @@ limitations under the License.
+ package conversion
+ 
+ import (
++	"fmt"
+ 	"math/rand"
+ 	"testing"
+ 
+@@ -123,6 +124,9 @@ type FuzzTestFuncInput struct {
+ 	SkipSpokeAnnotationCleanup bool
+ 
+ 	FuzzerFuncs []fuzzer.FuzzerFuncs
++
++	HubPrinter   func(conversion.Hub)
++	SpokePrinter func(conversion.Convertible)
+ }
+ 
+ // FuzzTestFunc returns a new testing function to be used in tests to make sure conversions between
+@@ -133,23 +137,32 @@ func FuzzTestFunc(input FuzzTestFuncInput) func(*testing.T) {
+ 	}
+ 
+ 	return func(t *testing.T) {
++		if input.HubPrinter == nil || input.SpokePrinter == nil {
++			t.SkipNow()
++		}
+ 		t.Helper()
+ 		t.Run("spoke-hub-spoke", func(t *testing.T) {
+ 			g := gomega.NewWithT(t)
+ 			fuzzer := GetFuzzer(input.Scheme, input.FuzzerFuncs...)
+ 
+-			for i := 0; i < 10000; i++ {
++			for i := 0; i < 1; i++ {
+ 				// Create the spoke and fuzz it
+ 				spokeBefore := input.Spoke.DeepCopyObject().(conversion.Convertible)
+ 				fuzzer.Fuzz(spokeBefore)
++				fmt.Println("*..........")
++				input.SpokePrinter(spokeBefore)
+ 
+ 				// First convert spoke to hub
+ 				hubCopy := input.Hub.DeepCopyObject().(conversion.Hub)
+ 				g.Expect(spokeBefore.ConvertTo(hubCopy)).To(gomega.Succeed())
++				input.HubPrinter(hubCopy)
++				fmt.Println("...........")
+ 
+ 				// Convert hub back to spoke and check if the resulting spoke is equal to the spoke before the round trip
+ 				spokeAfter := input.Spoke.DeepCopyObject().(conversion.Convertible)
+ 				g.Expect(spokeAfter.ConvertFrom(hubCopy)).To(gomega.Succeed())
++				input.SpokePrinter(spokeAfter)
++				fmt.Println("..........*")
+ 
+ 				// Remove data annotation eventually added by ConvertFrom for avoiding data loss in hub-spoke-hub round trips
+ 				// NOTE: There are use case when we want to skip this operation, e.g. if the spoke object does not have ObjectMeta (e.g. kubeadm types).
+@@ -169,18 +182,25 @@ func FuzzTestFunc(input FuzzTestFuncInput) func(*testing.T) {
+ 			g := gomega.NewWithT(t)
+ 			fuzzer := GetFuzzer(input.Scheme, input.FuzzerFuncs...)
+ 
+-			for i := 0; i < 10000; i++ {
++			for i := 0; i < 1; i++ {
+ 				// Create the hub and fuzz it
+ 				hubBefore := input.Hub.DeepCopyObject().(conversion.Hub)
+ 				fuzzer.Fuzz(hubBefore)
++				fmt.Println("*..........")
++				input.HubPrinter(hubBefore)
+ 
+ 				// First convert hub to spoke
+ 				dstCopy := input.Spoke.DeepCopyObject().(conversion.Convertible)
+ 				g.Expect(dstCopy.ConvertFrom(hubBefore)).To(gomega.Succeed())
+ 
++				input.SpokePrinter(dstCopy)
++				fmt.Println("...........")
++
+ 				// Convert spoke back to hub and check if the resulting hub is equal to the hub before the round trip
+ 				hubAfter := input.Hub.DeepCopyObject().(conversion.Hub)
+ 				g.Expect(dstCopy.ConvertTo(hubAfter)).To(gomega.Succeed())
++				input.HubPrinter(hubAfter)
++				fmt.Println("..........*")
+ 
+ 				if input.HubAfterMutation != nil {
+ 					input.HubAfterMutation(hubAfter)

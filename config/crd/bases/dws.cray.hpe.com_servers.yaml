@@ -240,12 +240,19 @@ spec:
                   debugMessage:
                     description: Internal debug message for the error
                     type: string
-                  internal:
-                    description: Internal or user error
-                    type: string
                   severity:
                     description: Indication if the error is likely recoverable or
                       not
+                    enum:
+                    - Minor
+                    - Major
+                    - Fatal
+                    type: string
+                  type:
+                    description: Internal or user error
+                    enum:
+                    - Internal
+                    - User
                     type: string
                   userMessage:
                     description: Optional user facing message if the error is relevant
@@ -253,8 +260,8 @@ spec:
                     type: string
                 required:
                 - debugMessage
-                - internal
                 - severity
+                - type
                 type: object
               lastUpdate:
                 format: date-time
