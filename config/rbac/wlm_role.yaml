@@ -1,0 +1,94 @@
+# Permissions for a WLM to interact with DWS.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: wlm-role
+rules:
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - computes
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - directivebreakdowns
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - directivebreakdowns/status
+  verbs:
+  - get
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - servers
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - servers/status
+  verbs:
+  - get
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - storages
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - storages/status
+  verbs:
+  - get
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - systemconfigurations
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - systemconfigurations/status
+  verbs:
+  - get
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - workflows
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - workflows/status
+  verbs:
+  - get
