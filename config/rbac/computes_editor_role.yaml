@@ -16,9 +16,3 @@ rules:
   - patch
   - update
   - watch
-- apiGroups:
-  - dws.cray.hpe.com
-  resources:
-  - computes/status
-  verbs:
-  - get
