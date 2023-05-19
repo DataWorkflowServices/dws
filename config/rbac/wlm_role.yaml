@@ -1,8 +1,8 @@
-# Permissions for a WLM to interact with DWS.
+# Permissions for a WLM (workload manager) to interact with DWS.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: wlm-role
+  name: workload-manager
 rules:
 - apiGroups:
   - dws.cray.hpe.com
