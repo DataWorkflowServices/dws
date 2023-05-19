@@ -51,8 +51,6 @@ rules:
   verbs:
   - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - dws.cray.hpe.com
@@ -86,9 +84,3 @@ rules:
   - patch
   - update
   - watch
-- apiGroups:
-  - dws.cray.hpe.com
-  resources:
-  - workflows/status
-  verbs:
-  - get
