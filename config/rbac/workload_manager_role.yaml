@@ -7,6 +7,20 @@ rules:
 - apiGroups:
   - dws.cray.hpe.com
   resources:
+  - clientmounts
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - clientmounts/status
+  verbs:
+  - get
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
   - computes
   verbs:
   - get
@@ -26,6 +40,20 @@ rules:
   - dws.cray.hpe.com
   resources:
   - directivebreakdowns/status
+  verbs:
+  - get
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - persistentstorageinstances
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dws.cray.hpe.com
+  resources:
+  - persistentstorageinstances/status
   verbs:
   - get
 - apiGroups:
