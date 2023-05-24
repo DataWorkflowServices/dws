@@ -22,7 +22,7 @@ data workflow service
 %setup -q
 
 %build
-make build-daemon
+VERSION=$(cat .version) make build-daemon
 
 %install
 mkdir -p %{buildroot}/usr/bin/
