@@ -251,6 +251,12 @@ func startManager(config *managerConfig) {
 }
 
 func main() {
+
+	if len(os.Args) > 1 && os.Args[1] == "version" {
+		fmt.Println("Version", version.BuildVersion())
+		os.Exit(0)
+	}
+
 	kindFn := func() daemon.Kind {
 		if runtime.GOOS == "darwin" {
 			return daemon.UserAgent

@@ -129,10 +129,11 @@ test: manifests generate fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(LOCALBIN))" go test $(TESTDIR) -coverprofile cover.out
 
 ##@ Build
-build-daemon: COMMIT_HASH?=$(shell git rev-parse --short HEAD)
+build-daemon: VERSION ?= $(shell cat .version)
+build-daemon: .version
 build-daemon: PACKAGE = github.com/HewlettPackard/dws/mount-daemon/version
 build-daemon: manifests generate fmt vet ## Build standalone clientMount daemon
-	GOOS=linux GOARCH=amd64 go build -ldflags="-X '$(PACKAGE).commitHash=$(COMMIT_HASH)'" -o bin/clientmountd mount-daemon/main.go
+	GOOS=linux GOARCH=amd64 go build -ldflags="-X '$(PACKAGE).version=$(VERSION)'" -o bin/clientmountd mount-daemon/main.go
 
 build: manifests generate fmt vet ## Build manager binary.
 	go build -o bin/manager main.go
