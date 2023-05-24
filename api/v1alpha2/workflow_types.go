@@ -95,6 +95,7 @@ const (
 	StatusQueued     = "Queued"
 	StatusRunning    = "Running"
 	StatusCompleted  = "Completed"
+	StatusStalled    = "Stalled"
 	StatusError      = "Error"
 	StatusDriverWait = "DriverWait"
 )

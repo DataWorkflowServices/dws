@@ -20,6 +20,8 @@
 package v1alpha2
 
 import (
+	"github.com/HewlettPackard/dws/utils/updater"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -97,6 +99,10 @@ type Servers struct {
 
 	Spec   ServersSpec   `json:"spec,omitempty"`
 	Status ServersStatus `json:"status,omitempty"`
+}
+
+func (s *Servers) GetStatus() updater.Status[*ServersStatus] {
+	return &s.Status
 }
 
 //+kubebuilder:object:root=true
