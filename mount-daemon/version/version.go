@@ -22,11 +22,9 @@ package version
 // The current clientmountd version string.
 var (
 	// Version contains the current version of the clientmount daemon.
-	version = "v0.0.1"
-
-	// Commit Hash is the shortened git commit of the clientmount daemon. This value is patched
-	// if using the "build-daemon" make target, and "unknown" otherwise.
-	commitHash = "unknown"
+	// This is a version tag.  If there are commits past that tag, then
+	// a count is appended with a short git hash of the latest commit.
+	version = "v0.0.0"
 )
 
-func BuildVersion() string { return version + "-" + commitHash }
+func BuildVersion() string { return version }
