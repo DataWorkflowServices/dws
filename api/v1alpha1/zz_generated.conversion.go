@@ -2155,7 +2155,7 @@ func Convert_v1alpha2_WorkflowList_To_v1alpha1_WorkflowList(in *v1alpha2.Workflo
 func autoConvert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in *WorkflowSpec, out *v1alpha2.WorkflowSpec, s conversion.Scope) error {
 	out.DesiredState = v1alpha2.WorkflowState(in.DesiredState)
 	out.WLMID = in.WLMID
-	out.JobID = in.JobID
+	// WARNING: in.JobID requires manual conversion: inconvertible types (int vs k8s.io/apimachinery/pkg/util/intstr.IntOrString)
 	out.UserID = in.UserID
 	out.GroupID = in.GroupID
 	out.Hurry = in.Hurry
@@ -2166,8 +2166,7 @@ func autoConvert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in *WorkflowSpec
 func autoConvert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *v1alpha2.WorkflowSpec, out *WorkflowSpec, s conversion.Scope) error {
 	out.DesiredState = WorkflowState(in.DesiredState)
 	out.WLMID = in.WLMID
-	// WARNING: in.JobID2 requires manual conversion: does not exist in peer-type
-	out.JobID = in.JobID
+	// WARNING: in.JobID requires manual conversion: inconvertible types (k8s.io/apimachinery/pkg/util/intstr.IntOrString vs int)
 	out.UserID = in.UserID
 	out.GroupID = in.GroupID
 	out.Hurry = in.Hurry

@@ -14,6 +14,6 @@ spec:
   dwDirectives:
     - "#DW jobdw type=raw capacity=10TB name=my-raw-storage2"
   wlmID: "Bubbly WLM"
-  jobID2: "Bubbly Job 25"
+  jobID: "Bubbly Job 25"
   userID: 1002
   groupID: 1002

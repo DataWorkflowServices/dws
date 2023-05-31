@@ -25,6 +25,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apiconversion "k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -308,14 +309,10 @@ func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
 
-	// v1alpha2 replaces JobID (an int) with JobID2 (a string).
 	if hasAnno {
-		dst.Spec.JobID2 = restored.Spec.JobID2
 		dst.Spec.JobID = restored.Spec.JobID
 	} else {
-		dst.Spec.JobID2 = fmt.Sprintf("%d", src.Spec.JobID)
-		dst.Spec.JobID = src.Spec.JobID
-
+		dst.Spec.JobID = intstr.FromInt(src.Spec.JobID)
 	}
 
 	return nil
@@ -328,6 +325,8 @@ func (dst *Workflow) ConvertFrom(srcRaw conversion.Hub) error {
 	if err := Convert_v1alpha2_Workflow_To_v1alpha1_Workflow(src, dst, nil); err != nil {
 		return err
 	}
+
+	dst.Spec.JobID = src.Spec.JobID.IntValue()
 
 	// Preserve Hub data on down-conversion except for metadata.
 	return utilconversion.MarshalData(src, dst)

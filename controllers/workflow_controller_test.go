@@ -29,6 +29,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
@@ -50,7 +51,7 @@ var _ = Describe("Workflow Controller Test", func() {
 			Spec: dwsv1alpha2.WorkflowSpec{
 				DesiredState: dwsv1alpha2.StateProposal,
 				WLMID:        "test",
-				JobID2:       "wlm job 442",
+				JobID:        intstr.FromString("wlm job 442"),
 				UserID:       0,
 				GroupID:      0,
 				DWDirectives: []string{},
