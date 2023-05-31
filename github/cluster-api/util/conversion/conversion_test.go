@@ -50,7 +50,7 @@ func TestMarshalData(t *testing.T) {
 			Spec: dwsv1alpha2.WorkflowSpec{
 				DesiredState: "Proposal",
 				WLMID:        "special-id",
-				JobID:        8128,
+				JobID2:       "my wlm job 8128",
 				UserID:       9129,
 				GroupID:      7127,
 			},

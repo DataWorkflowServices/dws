@@ -395,7 +395,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 				Spec: dwsv1alpha2.WorkflowSpec{
 					DesiredState: dwsv1alpha2.StateProposal,
 					WLMID:        "test",
-					JobID:        0,
+					JobID2:       "my wlm job id",
 					UserID:       0,
 					GroupID:      0,
 					DWDirectives: []string{},
