@@ -13,7 +13,7 @@ spec:
   desiredState: Proposal
   dwDirectives:
     - "#DW jobdw type=raw capacity=10TB name=my-raw-storage2"
-  wlmID: "5f239bd8-30db-450b-8c2c-aaaaaaaaaaaa"
-  jobID: 900002
+  wlmID: "Bubbly WLM"
+  jobID: "Bubbly Job 25"
   userID: 1002
   groupID: 1002
