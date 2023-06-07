@@ -68,11 +68,3 @@ rules:
   - workflows/finalizers
   verbs:
   - update
-- apiGroups:
-  - dws.cray.hpe.com
-  resources:
-  - workflows/status
-  verbs:
-  - get
-  - patch
-  - update

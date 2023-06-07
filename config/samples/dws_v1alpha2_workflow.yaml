@@ -1,0 +1,19 @@
+apiVersion: dws.cray.hpe.com/v1alpha2
+kind: Workflow
+metadata:
+  labels:
+    app.kubernetes.io/name: workflow
+    app.kubernetes.io/instance: workflow-sample
+    app.kubernetes.io/part-of: dws-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: dws-operator
+  name: test2
+spec:
+  # TODO(user): Add fields here
+  desiredState: Proposal
+  dwDirectives:
+    - "#DW jobdw type=raw capacity=10TB name=my-raw-storage2"
+  wlmID: "Bubbly WLM"
+  jobID: "Bubbly Job 25"
+  userID: 1002
+  groupID: 1002

@@ -35,6 +35,7 @@ import (
 	zapcr "sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
+	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -62,22 +63,40 @@ var _ = BeforeSuite(func() {
 	ctx, cancel = context.WithCancel(context.TODO())
 
 	By("bootstrapping test environment")
+
+	// See https://github.com/kubernetes-sigs/controller-runtime/issues/1882
+	// about getting the conversion webhook to register properly.
+	// Begin by relocating the code that builds the scheme, so it happens
+	// before calling envtest.Start().
+	// Then add the scheme to envtest.CRDInstallOptions.
+
+	var err error
+	err = dwsv1alpha1.AddToScheme(scheme.Scheme)
+	Expect(err).NotTo(HaveOccurred())
+
+	err = dwsv1alpha2.AddToScheme(scheme.Scheme)
+	Expect(err).NotTo(HaveOccurred())
+
+	//+kubebuilder:scaffold:scheme
+
 	testEnv = &envtest.Environment{
 		WebhookInstallOptions: envtest.WebhookInstallOptions{
 			Paths: []string{filepath.Join("..", "config", "webhook")},
 		},
-		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},
+		CRDDirectoryPaths: []string{filepath.Join("..", "config", "crd", "bases")},
+
+		CRDInstallOptions: envtest.CRDInstallOptions{
+			// This adds the conversion webhook configuration to
+			// the CRDs.
+			Scheme: scheme.Scheme,
+		},
+
 		ErrorIfCRDPathMissing: true,
 	}
 
-	cfg, err := testEnv.Start()
+	cfg, err = testEnv.Start()
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
-
-	err = dwsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	//+kubebuilder:scaffold:scheme
 
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
@@ -93,10 +112,37 @@ var _ = BeforeSuite(func() {
 	})
 	Expect(err).NotTo(HaveOccurred())
 
-	// start reconcilers
+	// start webhooks
 
-	err = (&dwsv1alpha1.Workflow{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha2.ClientMount{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
+	/*
+		err = (&dwsv1alpha2.Computes{}).SetupWebhookWithManager(k8sManager)
+		Expect(err).ToNot(HaveOccurred())
+	*/
+
+	err = (&dwsv1alpha2.DWDirectiveRule{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	err = (&dwsv1alpha2.DirectiveBreakdown{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	err = (&dwsv1alpha2.PersistentStorageInstance{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	err = (&dwsv1alpha2.Servers{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	err = (&dwsv1alpha2.Storage{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	err = (&dwsv1alpha2.SystemConfiguration{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	err = (&dwsv1alpha2.Workflow{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	// start reconcilers
 
 	err = (&WorkflowReconciler{
 		Client: k8sManager.GetClient(),
