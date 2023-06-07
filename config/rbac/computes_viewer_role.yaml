@@ -12,9 +12,3 @@ rules:
   - get
   - list
   - watch
-- apiGroups:
-  - dws.cray.hpe.com
-  resources:
-  - computes/status
-  verbs:
-  - get

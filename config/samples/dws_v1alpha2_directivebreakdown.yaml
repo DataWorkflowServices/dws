@@ -1,0 +1,12 @@
+apiVersion: dws.cray.hpe.com/v1alpha2
+kind: DirectiveBreakdown
+metadata:
+  labels:
+    app.kubernetes.io/name: directivebreakdown
+    app.kubernetes.io/instance: directivebreakdown-sample
+    app.kubernetes.io/part-of: dws-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: dws-operator
+  name: directivebreakdown-sample
+spec:
+  # TODO(user): Add fields here
