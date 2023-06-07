@@ -365,7 +365,6 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountD
 			if err != nil {
 				return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Client could not release storage").WithFatal()
 			}
-		}
 
 			if strings.Contains(output, fmt.Sprintf("VG %s", lvm.VolumeGroup)) {
 				output, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
