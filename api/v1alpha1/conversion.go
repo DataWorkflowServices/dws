@@ -23,6 +23,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apiconversion "k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -369,12 +370,19 @@ func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
 
 	// Manually restore data.
 	restored := &dwsv1alpha2.Workflow{}
-	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
+	hasAnno, err := utilconversion.UnmarshalData(src, restored)
+	if err != nil {
 		return err
 	}
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
+
+	if hasAnno {
+		dst.Spec.JobID = restored.Spec.JobID
+	} else {
+		dst.Spec.JobID = intstr.FromInt(src.Spec.JobID)
+	}
 
 	return nil
 }
@@ -386,6 +394,8 @@ func (dst *Workflow) ConvertFrom(srcRaw conversion.Hub) error {
 	if err := Convert_v1alpha2_Workflow_To_v1alpha1_Workflow(src, dst, nil); err != nil {
 		return err
 	}
+
+	dst.Spec.JobID = src.Spec.JobID.IntValue()
 
 	// Preserve Hub data on down-conversion except for metadata.
 	return utilconversion.MarshalData(src, dst)
@@ -485,4 +495,12 @@ func Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in *dwsv1a
 
 func Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(in *dwsv1alpha2.ServersStatus, out *ServersStatus, s apiconversion.Scope) error {
 	return autoConvert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(in, out, s)
+}
+
+func Convert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in *WorkflowSpec, out *dwsv1alpha2.WorkflowSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in, out, s)
+}
+
+func Convert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *dwsv1alpha2.WorkflowSpec, out *WorkflowSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in, out, s)
 }

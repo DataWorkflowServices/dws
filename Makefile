@@ -129,10 +129,10 @@ test: manifests generate fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(LOCALBIN))" go test $(TESTDIR) -coverprofile cover.out
 
 ##@ Build
-build-daemon: COMMIT_HASH?=$(shell git rev-parse --short HEAD)
+build-daemon: RPM_VERSION ?= $(shell ./git-version-gen)
 build-daemon: PACKAGE = github.com/HewlettPackard/dws/mount-daemon/version
 build-daemon: manifests generate fmt vet ## Build standalone clientMount daemon
-	GOOS=linux GOARCH=amd64 go build -ldflags="-X '$(PACKAGE).commitHash=$(COMMIT_HASH)'" -o bin/clientmountd mount-daemon/main.go
+	GOOS=linux GOARCH=amd64 go build -ldflags="-X '$(PACKAGE).version=$(RPM_VERSION)'" -o bin/clientmountd mount-daemon/main.go
 
 build: manifests generate fmt vet ## Build manager binary.
 	go build -o bin/manager main.go
@@ -183,6 +183,12 @@ LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 
+.PHONY: clean-bin
+clean-bin:
+	if [[ -d $(LOCALBIN) ]]; then \
+	  chmod -R u+w $(LOCALBIN) && rm -rf $(LOCALBIN); \
+	fi
+
 ## Tool Binaries
 GO_INSTALL := ./github/cluster-api/scripts/go_install.sh
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
@@ -200,7 +206,7 @@ CONVERSION_VERIFIER_PKG := sigs.k8s.io/cluster-api/hack/tools/conversion-verifie
 
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v4.5.7
-CONTROLLER_TOOLS_VERSION ?= v0.11.1
+CONTROLLER_TOOLS_VERSION ?= v0.12.0
 CONVERSION_GEN_VER := v0.26.3
 
 # Can be "latest", but cannot be a tag, such as "v1.3.3".  However, it will
@@ -210,14 +216,17 @@ CONVERSION_VERIFIER_VER := 2c07717 # v1.4.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
-kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
-$(KUSTOMIZE): $(LOCALBIN)
-	test -s $(LOCALBIN)/kustomize || { curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN); }
+kustomize: $(LOCALBIN) ## Download kustomize locally if necessary.
+	if [[ ! -s $(LOCALBIN)/kustomize || $$($(LOCALBIN)/kustomize version | awk '{print $$1}' | awk -F/ '{print $$2}') != $(KUSTOMIZE_VERSION) ]]; then \
+	  rm -f $(LOCALBIN)/kustomize && \
+	  { curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN); }; \
+	fi
 
 .PHONY: controller-gen
-controller-gen: $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
-$(CONTROLLER_GEN): $(LOCALBIN)
-	test -s $(LOCALBIN)/controller-gen || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
+controller-gen: $(LOCALBIN) ## Download controller-gen locally if necessary.
+	if [[ ! -s $(LOCALBIN)/controller-gen || $$($(LOCALBIN)/controller-gen --version | awk '{print $$2}') != $(CONTROLLER_TOOLS_VERSION) ]]; then \
+	  rm -f $(LOCALBIN)/controller-gen && GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION); \
+	fi
 
 .PHONY: $(CONVERSION_GEN_BIN)
 $(CONVERSION_GEN_BIN): $(CONVERSION_GEN) ## Build a local copy of conversion-gen.

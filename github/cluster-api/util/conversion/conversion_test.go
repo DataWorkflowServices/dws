@@ -24,6 +24,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/intstr"
 
 	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
 )
@@ -50,7 +51,7 @@ func TestMarshalData(t *testing.T) {
 			Spec: dwsv1alpha2.WorkflowSpec{
 				DesiredState: "Proposal",
 				WLMID:        "special-id",
-				JobID:        8128,
+				JobID:        intstr.FromString("my wlm job 8128"),
 				UserID:       9129,
 				GroupID:      7127,
 			},

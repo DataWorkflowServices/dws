@@ -28,6 +28,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
@@ -395,7 +396,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 				Spec: dwsv1alpha2.WorkflowSpec{
 					DesiredState: dwsv1alpha2.StateProposal,
 					WLMID:        "test",
-					JobID:        0,
+					JobID:        intstr.FromString("a job id 42"),
 					UserID:       0,
 					GroupID:      0,
 					DWDirectives: []string{},
