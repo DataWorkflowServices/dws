@@ -51,7 +51,8 @@ type ResourceErrorInfo struct {
 	// +kubebuilder:validation:Enum=Internal;User
 	Type ResourceErrorType `json:"type"`
 
-	// Indication if the error is likely recoverable or not
+	// Indication of how sever the error is. Minor will likely succeed, Major may
+	// succeed, and Fatal will never succeed.
 	// +kubebuilder:validation:Enum=Minor;Major;Fatal
 	Severity ResourceErrorSeverity `json:"severity"`
 }
@@ -87,7 +88,13 @@ func (e *ResourceErrorInfo) WithError(err error) *ResourceErrorInfo {
 		// Inherit the severity and the user message if the child error is a ResourceError
 		e.Severity = childError.Severity
 		e.UserMessage = childError.UserMessage
-		debugMessageList = append(debugMessageList, childError.DebugMessage)
+		e.Type = childError.Type
+
+		if childError.DebugMessage == "" {
+			debugMessageList = append(debugMessageList, childError.UserMessage)
+		} else {
+			debugMessageList = append(debugMessageList, childError.DebugMessage)
+		}
 	} else {
 		debugMessageList = append(debugMessageList, err.Error())
 	}
@@ -123,7 +130,13 @@ func (e *ResourceErrorInfo) WithUser() *ResourceErrorInfo {
 }
 
 func (e *ResourceErrorInfo) Error() string {
-	return fmt.Sprintf("%s error: %s", strings.ToLower(string(e.Type)), e.DebugMessage)
+	message := ""
+	if e.DebugMessage == "" {
+		message = e.UserMessage
+	} else {
+		message = e.DebugMessage
+	}
+	return fmt.Sprintf("%s error: %s", strings.ToLower(string(e.Type)), message)
 }
 
 func (e *ResourceError) SetResourceErrorAndLog(err error, log logr.Logger) {
