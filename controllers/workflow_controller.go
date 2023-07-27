@@ -195,27 +195,31 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 	}
 
 	if len(drivers) > 0 {
-		// Sort the driver entries by their status
+		// Sort the driver entries by the priority of their status
 		sort.Slice(drivers, func(i, j int) bool {
 			return statusPriority(drivers[i].Status) > statusPriority(drivers[j].Status)
 		})
 
-		// Pull info from the driver entries with the highest priority
+		// Pull info from the driver entries with the highest priority. This means
+		// we'll only report status info in the workflow status section based on the
+		// most important driver status. Error > TransientCondition > Running > Completed. This
+		// keeps us from overwriting the workflow.Status.Message with a message from
+		// a less interesting driver entry.
 		priority := statusPriority(drivers[0].Status)
 		for _, driver := range drivers {
-			if statusPriority(driver.Status) < priority {
-				break
-			}
-
 			if driver.Completed == false {
 				workflow.Status.Ready = false
+			}
+
+			if statusPriority(driver.Status) < priority {
+				break
 			}
 
 			if driver.Message != "" {
 				workflow.Status.Message = fmt.Sprintf("DW Directive %d: %s", driver.DWDIndex, driver.Message)
 			}
 
-			if driver.Status == dwsv1alpha2.StatusStalled || driver.Status == dwsv1alpha2.StatusError || driver.Status == dwsv1alpha2.StatusCompleted {
+			if driver.Status == dwsv1alpha2.StatusTransientCondition || driver.Status == dwsv1alpha2.StatusError || driver.Status == dwsv1alpha2.StatusCompleted {
 				workflow.Status.Status = driver.Status
 			} else {
 				workflow.Status.Status = dwsv1alpha2.StatusDriverWait
@@ -266,23 +270,24 @@ func (r *WorkflowReconciler) createComputes(ctx context.Context, wf *dwsv1alpha2
 	return computes, nil
 }
 
-// Next reports the next state after state s
+// statusPriority returns the priority of a driver's status. Errors have
+// the lowest priority and completed entries have the lowest priority.
 func statusPriority(status string) int {
 	switch status {
 	case dwsv1alpha2.StatusCompleted:
 		return 1
 	case dwsv1alpha2.StatusDriverWait:
-		return 2
+		fallthrough
 	case dwsv1alpha2.StatusPending:
 		fallthrough
 	case dwsv1alpha2.StatusQueued:
 		fallthrough
 	case dwsv1alpha2.StatusRunning:
+		return 2
+	case dwsv1alpha2.StatusTransientCondition:
 		return 3
-	case dwsv1alpha2.StatusStalled:
-		return 4
 	case dwsv1alpha2.StatusError:
-		return 5
+		return 4
 	}
 
 	panic(status)

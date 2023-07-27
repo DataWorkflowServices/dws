@@ -172,15 +172,14 @@ func (r *ClientMountReconciler) unmountAll(ctx context.Context, clientMount *dws
 func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dwsv1alpha2.ClientMountInfo, log logr.Logger) error {
 	state, err := r.checkMount(clientMountInfo.MountPath)
 	if err != nil {
-		return err
+		return dwsv1alpha2.NewResourceError("could not determine mount status").WithError(err)
 	}
 
 	if state == dwsv1alpha2.ClientMountStateMounted {
 
-		output, err := r.run("umount " + clientMountInfo.MountPath)
+		_, err := r.run("umount " + clientMountInfo.MountPath)
 		if err != nil {
-			log.Info("Could not unmount file system", "mount path", clientMountInfo.MountPath, "Error output", output)
-			return err
+			return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("could not unmount file system")
 		}
 
 		// Remove the mount directory. It's not a big deal if this fails, so we just log a failure and don't return it
@@ -192,8 +191,7 @@ func (r *ClientMountReconciler) unmount(ctx context.Context, clientMountInfo dws
 
 	if clientMountInfo.Device.Type == dwsv1alpha2.ClientMountDeviceTypeLVM {
 		if err := r.configureLVMDevice(clientMountInfo.Device.LVM, false, clientMountInfo.Type == "gfs2"); err != nil {
-			log.Error(err, "Could not deactivate LVM volume", "mount path", clientMountInfo.MountPath)
-			return err
+			return dwsv1alpha2.NewResourceError("could not deactivate LVM volume").WithError(err)
 		}
 	}
 
@@ -227,7 +225,7 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 	// Check whether the file system is already mounted
 	state, err := r.checkMount(clientMountInfo.MountPath)
 	if err != nil {
-		return err
+		return dwsv1alpha2.NewResourceError("could not determine mount status").WithError(err)
 	}
 
 	if state == dwsv1alpha2.ClientMountStateMounted {
@@ -237,26 +235,24 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 
 	device, err := r.getDevice(clientMountInfo)
 	if err != nil {
-		return err
+		return dwsv1alpha2.NewResourceError("could not get device to mount").WithError(err)
 	}
 
 	// Create the mount file or directory
 	switch clientMountInfo.TargetType {
 	case "directory":
 		if err := r.mkdir(clientMountInfo.MountPath); err != nil {
-			log.Error(err, "Could not create mount directory", "mount path", clientMountInfo.MountPath, "device", device)
-			return err
+			return dwsv1alpha2.NewResourceError("could not make mount directory: '%s' device: '%s'", clientMountInfo.MountPath, device).WithError(err).WithMajor()
 		}
 	case "file":
 		// Create the parent directory and then the file
 		if err := r.mkdir(filepath.Dir(clientMountInfo.MountPath)); err != nil {
-			log.Error(err, "Could not create mount parent directory", "mount path", clientMountInfo.MountPath, "device", device)
-			return err
+
+			return dwsv1alpha2.NewResourceError("could not make parent mount directory: '%s' device: '%s'", clientMountInfo.MountPath, device).WithError(err).WithMajor()
 		}
 
 		if err := r.createFile(clientMountInfo.MountPath); err != nil {
-			log.Error(err, "Could not create mount file", "mount path", clientMountInfo.MountPath, "device", device)
-			return err
+			return dwsv1alpha2.NewResourceError("could not create mount file: '%s' device: '%s'", clientMountInfo.MountPath, device).WithError(err).WithMajor()
 		}
 	}
 
@@ -266,16 +262,14 @@ func (r *ClientMountReconciler) mount(ctx context.Context, clientMountInfo dwsv1
 		mountCmd = mountCmd + " -o " + clientMountInfo.Options
 	}
 
-	output, err := r.run(mountCmd)
+	_, err = r.run(mountCmd)
 	if err != nil {
-		log.Info("Could not mount file system", "mount path", clientMountInfo.MountPath, "device", device, "Error output", output)
-		return err
+		return dwsv1alpha2.NewResourceError("could not mount file system: '%s' device: '%s'", clientMountInfo.MountPath, device).WithMajor()
 	}
 
 	if clientMountInfo.SetPermissions {
 		if err := os.Chown(clientMountInfo.MountPath, int(clientMountInfo.UserID), int(clientMountInfo.GroupID)); err != nil {
-			log.Error(err, "Could not set owner permissions", "mount path", clientMountInfo.MountPath)
-			return err
+			return dwsv1alpha2.NewResourceError("Could not set owner permissions: '%s' device: '%s'", clientMountInfo.MountPath, device).WithMajor()
 		}
 	}
 
@@ -293,20 +287,21 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha2.ClientMoun
 		return device, nil
 	case dwsv1alpha2.ClientMountDeviceTypeLVM:
 		if err := r.configureLVMDevice(clientMountInfo.Device.LVM, true, clientMountInfo.Type == "gfs2"); err != nil {
-			return "", err
+			return "", dwsv1alpha2.NewResourceError("could not configure LVM device").WithError(err)
+
 		}
 
 		return filepath.Join("/dev", clientMountInfo.Device.LVM.VolumeGroup, clientMountInfo.Device.LVM.LogicalVolume), nil
 	}
 
-	return "", fmt.Errorf("Invalid device type")
+	return "", dwsv1alpha2.NewResourceError("invalid device type: '%s'", clientMountInfo.Device.Type).WithFatal()
 }
 
 // configureLVMDevice will configure the provided LVM device with the desired activate/deactivate option
 func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountDeviceLVM, activate bool, shared bool) error {
 	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
 	if err != nil {
-		return dwsv1alpha2.NewResourceError(output).WithError(err).WithUserMessage("Client could not list storage").WithFatal()
+		return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not list storage").WithFatal()
 	}
 
 	if r.Mock {
@@ -338,24 +333,24 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountD
 			sharedOption := ""
 			// Start lock if needed
 			if shared {
-				output, err := r.run(fmt.Sprintf("vgchange --lockstart %s", lvm.VolumeGroup))
+				_, err := r.run(fmt.Sprintf("vgchange --lockstart %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha2.NewResourceError(output).WithError(err).WithUserMessage("Client could not access storage").WithFatal()
+					return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not access storage").WithMajor()
 				}
 
 				sharedOption = "s" // activate with shared option
 			}
 
 			// Activate the LV if needed
-			output, err := r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
+			_, err := r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha2.NewResourceError(output).WithError(err).WithUserMessage("Client could not access storage").WithFatal()
+				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not access storage").WithMajor()
 			}
 
 		} else if !activate && isActive {
-			output, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup))
+			_, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha2.NewResourceError(output).WithError(err).WithUserMessage("Client could not release storage").WithFatal()
+				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not release storage").WithMajor()
 			}
 		}
 
@@ -363,13 +358,13 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountD
 			// Check whether the volume group has been locked and unlock it if necessary
 			output, err := r.run("lvmlockctl -i")
 			if err != nil {
-				return dwsv1alpha2.NewResourceError(output).WithError(err).WithUserMessage("Client could not release storage").WithFatal()
+				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not release storage").WithMajor()
 			}
 
 			if strings.Contains(output, fmt.Sprintf("VG %s", lvm.VolumeGroup)) {
-				output, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
+				_, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha2.NewResourceError(output).WithError(err).WithUserMessage("Client could not release storage").WithFatal()
+					return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not release storage").WithMajor()
 				}
 			}
 		}
@@ -383,19 +378,16 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountD
 	}
 
 	if err := r.rescanNVMeDevices(); err != nil {
-		return err
+		return dwsv1alpha2.NewResourceError("could not rescan NVMe devices").WithError(err).WithMajor()
 	}
 
-	err = dwsv1alpha2.NewResourceError("Could not find VG/LV pair %s/%s: %s", lvm.VolumeGroup, lvm.LogicalVolume, output).WithMajor()
-	r.Log.Info(err.Error())
-
-	return err
+	return dwsv1alpha2.NewResourceError("could not find VG/LV pair %s/%s", lvm.VolumeGroup, lvm.LogicalVolume).WithMajor()
 }
 
 func (r *ClientMountReconciler) rescanNVMeDevices() error {
 	devices, err := ioutil.ReadDir("/dev/")
 	if err != nil {
-		return err
+		return dwsv1alpha2.NewResourceError("could not read /dev").WithError(err)
 	}
 
 	nvmeDevices := []string{}
@@ -406,8 +398,8 @@ func (r *ClientMountReconciler) rescanNVMeDevices() error {
 		}
 	}
 
-	if output, err := r.run("nvme ns-rescan " + strings.Join(nvmeDevices, " ")); err != nil {
-		return dwsv1alpha2.NewResourceError(output, err).WithUserMessage("Could not rescan NVMe devices").WithFatal()
+	if _, err := r.run("nvme ns-rescan " + strings.Join(nvmeDevices, " ")); err != nil {
+		return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Could not rescan NVMe devices").WithFatal()
 	}
 
 	return nil
@@ -417,7 +409,7 @@ func (r *ClientMountReconciler) rescanNVMeDevices() error {
 func (r *ClientMountReconciler) checkMount(mountPath string) (dwsv1alpha2.ClientMountState, error) {
 	output, err := r.run("mount")
 	if err != nil {
-		return dwsv1alpha2.ClientMountStateUnmounted, dwsv1alpha2.NewResourceError(output, err)
+		return dwsv1alpha2.ClientMountStateUnmounted, dwsv1alpha2.NewResourceError("").WithError(err)
 	}
 
 	for _, line := range strings.Split(output, "\n") {
@@ -475,7 +467,7 @@ func (r *ClientMountReconciler) run(c string) (string, error) {
 
 	output, err := exec.CommandContext(ctx, "bash", "-c", c).Output()
 
-	return string(output), err
+	return string(output), dwsv1alpha2.NewResourceError("Command: '%s' Output: '%s'", c, string(output)).WithError(err)
 }
 
 func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {

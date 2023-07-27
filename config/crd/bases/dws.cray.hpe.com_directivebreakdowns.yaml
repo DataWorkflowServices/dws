@@ -319,12 +319,12 @@ spec:
       jsonPath: .status.ready
       name: READY
       type: boolean
-    - jsonPath: .metadata.creationTimestamp
-      name: AGE
-      type: date
     - jsonPath: .status.error.severity
       name: ERROR
       type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
     name: v1alpha2
     schema:
       openAPIV3Schema:
@@ -452,7 +452,7 @@ spec:
                     description: Internal debug message for the error
                     type: string
                   severity:
-                    description: Indication of how sever the error is. Minor will
+                    description: Indication of how severe the error is. Minor will
                       likely succeed, Major may succeed, and Fatal will never succeed.
                     enum:
                     - Minor

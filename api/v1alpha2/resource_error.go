@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2022-2023 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -30,14 +30,29 @@ type ResourceErrorSeverity string
 type ResourceErrorType string
 
 const (
+	// Minor errors are very likely to eventually succeed (e.g., errors caused by a stale cache)
+	// The WLM doesn't see these errors directly. The workflow stays in the DriverWait state, and
+	// the error string is put in workflow.Status.Message.
 	SeverityMinor ResourceErrorSeverity = "Minor"
+
+	// Major errors are may or may not succeed. These are transient errors that could persistent
+	// due to an underlying problem (e.g., errors from OS calls)
 	SeverityMajor ResourceErrorSeverity = "Major"
+
+	// Fatal errors will never succeed. This is for situations where we can guarantee that retrying
+	// will not fix the error (e.g., a DW directive that is not valid)
 	SeverityFatal ResourceErrorSeverity = "Fatal"
 )
 
 const (
+	// Internal errors are due to an error in the DWS/driver code
 	TypeInternal ResourceErrorType = "Internal"
-	TypeUser     ResourceErrorType = "User"
+
+	// WLM errors are due to an error with the input from the WLM
+	TypeWLM ResourceErrorType = "WLM"
+
+	// User errors are due to an error with the input from a user
+	TypeUser ResourceErrorType = "User"
 )
 
 type ResourceErrorInfo struct {
@@ -51,7 +66,7 @@ type ResourceErrorInfo struct {
 	// +kubebuilder:validation:Enum=Internal;User
 	Type ResourceErrorType `json:"type"`
 
-	// Indication of how sever the error is. Minor will likely succeed, Major may
+	// Indication of how severe the error is. Minor will likely succeed, Major may
 	// succeed, and Fatal will never succeed.
 	// +kubebuilder:validation:Enum=Minor;Major;Fatal
 	Severity ResourceErrorSeverity `json:"severity"`
@@ -70,6 +85,8 @@ func NewResourceError(format string, a ...any) *ResourceErrorInfo {
 	}
 }
 
+// A resource error can have an optional user message that is displayed in the workflow.Status.Message
+// field. The user message of the lowest level error is all that's displayed.
 func (e *ResourceErrorInfo) WithUserMessage(format string, a ...any) *ResourceErrorInfo {
 	// Only set the user message if it's empty. This prevents upper layers
 	// from overriding a user message set by a lower layer
@@ -83,6 +100,11 @@ func (e *ResourceErrorInfo) WithUserMessage(format string, a ...any) *ResourceEr
 func (e *ResourceErrorInfo) WithError(err error) *ResourceErrorInfo {
 	debugMessageList := []string{}
 
+	// Concatenate the parent and child debug messages
+	if e.DebugMessage != "" {
+		debugMessageList = append(debugMessageList, e.DebugMessage)
+	}
+
 	childError, ok := err.(*ResourceErrorInfo)
 	if ok {
 		// Inherit the severity and the user message if the child error is a ResourceError
@@ -90,6 +112,7 @@ func (e *ResourceErrorInfo) WithError(err error) *ResourceErrorInfo {
 		e.UserMessage = childError.UserMessage
 		e.Type = childError.Type
 
+		// If the child resource error doesn't have a debug message, use the user message instead
 		if childError.DebugMessage == "" {
 			debugMessageList = append(debugMessageList, childError.UserMessage)
 		} else {
@@ -110,17 +133,26 @@ func (e *ResourceErrorInfo) WithFatal() *ResourceErrorInfo {
 }
 
 func (e *ResourceErrorInfo) WithMajor() *ResourceErrorInfo {
-	e.Severity = SeverityMajor
+	if e.Severity != SeverityFatal {
+		e.Severity = SeverityMajor
+	}
 	return e
 }
 
 func (e *ResourceErrorInfo) WithMinor() *ResourceErrorInfo {
-	e.Severity = SeverityMinor
+	if e.Severity != SeverityFatal && e.Severity != SeverityMajor {
+		e.Severity = SeverityMinor
+	}
 	return e
 }
 
 func (e *ResourceErrorInfo) WithInternal() *ResourceErrorInfo {
 	e.Type = TypeInternal
+	return e
+}
+
+func (e *ResourceErrorInfo) WithWLM() *ResourceErrorInfo {
+	e.Type = TypeWLM
 	return e
 }
 
