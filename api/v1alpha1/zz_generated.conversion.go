@@ -363,16 +363,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ResourceErrorInfo)(nil), (*v1alpha2.ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(a.(*ResourceErrorInfo), b.(*v1alpha2.ResourceErrorInfo), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*v1alpha2.ResourceErrorInfo)(nil), (*ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(a.(*v1alpha2.ResourceErrorInfo), b.(*ResourceErrorInfo), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*Servers)(nil), (*v1alpha2.Servers)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_Servers_To_v1alpha2_Servers(a.(*Servers), b.(*v1alpha2.Servers), scope)
 	}); err != nil {
@@ -425,11 +415,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*ServersStatus)(nil), (*v1alpha2.ServersStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_ServersStatus_To_v1alpha2_ServersStatus(a.(*ServersStatus), b.(*v1alpha2.ServersStatus), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*v1alpha2.ServersStatus)(nil), (*ServersStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(a.(*v1alpha2.ServersStatus), b.(*ServersStatus), scope)
 	}); err != nil {
 		return err
 	}
@@ -643,8 +628,23 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddConversionFunc((*ResourceErrorInfo)(nil), (*v1alpha2.ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(a.(*ResourceErrorInfo), b.(*v1alpha2.ResourceErrorInfo), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddConversionFunc((*WorkflowSpec)(nil), (*v1alpha2.WorkflowSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(a.(*WorkflowSpec), b.(*v1alpha2.WorkflowSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*v1alpha2.ResourceErrorInfo)(nil), (*ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(a.(*v1alpha2.ResourceErrorInfo), b.(*ResourceErrorInfo), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*v1alpha2.ServersStatus)(nil), (*ServersStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(a.(*v1alpha2.ServersStatus), b.(*ServersStatus), scope)
 	}); err != nil {
 		return err
 	}
