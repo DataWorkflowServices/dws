@@ -338,13 +338,17 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 
 	// Manually restore data.
 	restored := &dwsv1alpha2.SystemConfiguration{}
-	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
+	hasAnno, err := utilconversion.UnmarshalData(src, restored)
+	if err != nil {
 		return err
 	}
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
 
+	if hasAnno {
+		dst.Spec.PortsCooldownInSeconds = restored.Spec.PortsCooldownInSeconds
+	}
 	return nil
 }
 
@@ -503,4 +507,8 @@ func Convert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in *WorkflowSpec, ou
 
 func Convert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *dwsv1alpha2.WorkflowSpec, out *WorkflowSpec, s apiconversion.Scope) error {
 	return autoConvert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in, out, s)
+}
+
+func Convert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in *dwsv1alpha2.SystemConfigurationSpec, out *SystemConfigurationSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in, out, s)
 }

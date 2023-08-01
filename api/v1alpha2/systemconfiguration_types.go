@@ -73,7 +73,7 @@ type SystemConfigurationSpec struct {
 	// to 60 seconds (to match the typical value for the kernel's TIME_WAIT). A value of 0 means the
 	// ports can be reused immediately.
 	// +kubebuilder:default:=60
-	PortsCooldownInSeconds int `json:"portsCooldownInSeconds,omitempty"`
+	PortsCooldownInSeconds int `json:"portsCooldownInSeconds"`
 }
 
 // SystemConfigurationStatus defines the status of SystemConfiguration

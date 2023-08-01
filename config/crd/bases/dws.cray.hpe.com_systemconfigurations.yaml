@@ -219,6 +219,8 @@ spec:
                   - type
                   type: object
                 type: array
+            required:
+            - portsCooldownInSeconds
             type: object
           status:
             description: SystemConfigurationStatus defines the status of SystemConfiguration
