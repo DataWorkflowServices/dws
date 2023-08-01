@@ -128,7 +128,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	if clientMount.Spec.DesiredState == dwsv1alpha2.ClientMountStateMounted {
 		err := r.mountAll(ctx, clientMount)
 		if err != nil {
-			resourceError := dwsv1alpha2.NewResourceError("Mount failed").WithError(err)
+			resourceError := dwsv1alpha2.NewResourceError("mount failed").WithError(err)
 			log.Info(resourceError.Error())
 
 			clientMount.Status.Error = resourceError
@@ -137,7 +137,7 @@ func (r *ClientMountReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	} else if clientMount.Spec.DesiredState == dwsv1alpha2.ClientMountStateUnmounted {
 		err := r.unmountAll(ctx, clientMount)
 		if err != nil {
-			resourceError := dwsv1alpha2.NewResourceError("Unmount failed").WithError(err)
+			resourceError := dwsv1alpha2.NewResourceError("unmount failed").WithError(err)
 			log.Info(resourceError.Error())
 
 			clientMount.Status.Error = resourceError
@@ -301,7 +301,7 @@ func (r *ClientMountReconciler) getDevice(clientMountInfo dwsv1alpha2.ClientMoun
 func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountDeviceLVM, activate bool, shared bool) error {
 	output, err := r.run(fmt.Sprintf("lvs --noheadings --separator ' '"))
 	if err != nil {
-		return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not list storage").WithFatal()
+		return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("client could not list storage").WithFatal()
 	}
 
 	if r.Mock {
@@ -335,7 +335,7 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountD
 			if shared {
 				_, err := r.run(fmt.Sprintf("vgchange --lockstart %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not access storage").WithMajor()
+					return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("client could not access storage").WithMajor()
 				}
 
 				sharedOption = "s" // activate with shared option
@@ -344,13 +344,13 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountD
 			// Activate the LV if needed
 			_, err := r.run(fmt.Sprintf("vgchange --activate %sy %s", sharedOption, lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not access storage").WithMajor()
+				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("client could not access storage").WithMajor()
 			}
 
 		} else if !activate && isActive {
 			_, err := r.run(fmt.Sprintf("vgchange --activate n %s", lvm.VolumeGroup))
 			if err != nil {
-				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not release storage").WithMajor()
+				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("client could not release storage").WithMajor()
 			}
 		}
 
@@ -358,13 +358,13 @@ func (r *ClientMountReconciler) configureLVMDevice(lvm *dwsv1alpha2.ClientMountD
 			// Check whether the volume group has been locked and unlock it if necessary
 			output, err := r.run("lvmlockctl -i")
 			if err != nil {
-				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not release storage").WithMajor()
+				return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("client could not release storage").WithMajor()
 			}
 
 			if strings.Contains(output, fmt.Sprintf("VG %s", lvm.VolumeGroup)) {
 				_, err := r.run(fmt.Sprintf("vgchange --lockstop %s", lvm.VolumeGroup))
 				if err != nil {
-					return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Client could not release storage").WithMajor()
+					return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("client could not release storage").WithMajor()
 				}
 			}
 		}
@@ -399,7 +399,7 @@ func (r *ClientMountReconciler) rescanNVMeDevices() error {
 	}
 
 	if _, err := r.run("nvme ns-rescan " + strings.Join(nvmeDevices, " ")); err != nil {
-		return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("Could not rescan NVMe devices").WithFatal()
+		return dwsv1alpha2.NewResourceError("").WithError(err).WithUserMessage("could not rescan NVMe devices").WithFatal()
 	}
 
 	return nil
@@ -467,7 +467,7 @@ func (r *ClientMountReconciler) run(c string) (string, error) {
 
 	output, err := exec.CommandContext(ctx, "bash", "-c", c).Output()
 
-	return string(output), dwsv1alpha2.NewResourceError("Command: '%s' Output: '%s'", c, string(output)).WithError(err)
+	return string(output), dwsv1alpha2.NewResourceError("command: '%s' output: '%s'", c, string(output)).WithError(err)
 }
 
 func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {
