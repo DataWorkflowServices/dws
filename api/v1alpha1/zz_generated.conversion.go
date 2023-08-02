@@ -363,16 +363,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ResourceErrorInfo)(nil), (*v1alpha2.ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(a.(*ResourceErrorInfo), b.(*v1alpha2.ResourceErrorInfo), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*v1alpha2.ResourceErrorInfo)(nil), (*ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(a.(*v1alpha2.ResourceErrorInfo), b.(*ResourceErrorInfo), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*Servers)(nil), (*v1alpha2.Servers)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_Servers_To_v1alpha2_Servers(a.(*Servers), b.(*v1alpha2.Servers), scope)
 	}); err != nil {
@@ -425,11 +415,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddGeneratedConversionFunc((*ServersStatus)(nil), (*v1alpha2.ServersStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_ServersStatus_To_v1alpha2_ServersStatus(a.(*ServersStatus), b.(*v1alpha2.ServersStatus), scope)
-	}); err != nil {
-		return err
-	}
-	if err := s.AddGeneratedConversionFunc((*v1alpha2.ServersStatus)(nil), (*ServersStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(a.(*v1alpha2.ServersStatus), b.(*ServersStatus), scope)
 	}); err != nil {
 		return err
 	}
@@ -643,8 +628,23 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddConversionFunc((*ResourceErrorInfo)(nil), (*v1alpha2.ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(a.(*ResourceErrorInfo), b.(*v1alpha2.ResourceErrorInfo), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddConversionFunc((*WorkflowSpec)(nil), (*v1alpha2.WorkflowSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(a.(*WorkflowSpec), b.(*v1alpha2.WorkflowSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*v1alpha2.ResourceErrorInfo)(nil), (*ResourceErrorInfo)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(a.(*v1alpha2.ResourceErrorInfo), b.(*ResourceErrorInfo), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*v1alpha2.ServersStatus)(nil), (*ServersStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(a.(*v1alpha2.ServersStatus), b.(*ServersStatus), scope)
 	}); err != nil {
 		return err
 	}
@@ -896,7 +896,17 @@ func Convert_v1alpha2_ClientMountInfoStatus_To_v1alpha1_ClientMountInfoStatus(in
 
 func autoConvert_v1alpha1_ClientMountList_To_v1alpha2_ClientMountList(in *ClientMountList, out *v1alpha2.ClientMountList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]v1alpha2.ClientMount)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]v1alpha2.ClientMount, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha1_ClientMount_To_v1alpha2_ClientMount(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -907,7 +917,17 @@ func Convert_v1alpha1_ClientMountList_To_v1alpha2_ClientMountList(in *ClientMoun
 
 func autoConvert_v1alpha2_ClientMountList_To_v1alpha1_ClientMountList(in *v1alpha2.ClientMountList, out *ClientMountList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]ClientMount)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]ClientMount, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha2_ClientMount_To_v1alpha1_ClientMount(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -1220,7 +1240,17 @@ func Convert_v1alpha2_DirectiveBreakdown_To_v1alpha1_DirectiveBreakdown(in *v1al
 
 func autoConvert_v1alpha1_DirectiveBreakdownList_To_v1alpha2_DirectiveBreakdownList(in *DirectiveBreakdownList, out *v1alpha2.DirectiveBreakdownList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]v1alpha2.DirectiveBreakdown)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]v1alpha2.DirectiveBreakdown, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha1_DirectiveBreakdown_To_v1alpha2_DirectiveBreakdown(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -1231,7 +1261,17 @@ func Convert_v1alpha1_DirectiveBreakdownList_To_v1alpha2_DirectiveBreakdownList(
 
 func autoConvert_v1alpha2_DirectiveBreakdownList_To_v1alpha1_DirectiveBreakdownList(in *v1alpha2.DirectiveBreakdownList, out *DirectiveBreakdownList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]DirectiveBreakdown)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]DirectiveBreakdown, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha2_DirectiveBreakdown_To_v1alpha1_DirectiveBreakdown(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -1348,7 +1388,17 @@ func Convert_v1alpha2_PersistentStorageInstance_To_v1alpha1_PersistentStorageIns
 
 func autoConvert_v1alpha1_PersistentStorageInstanceList_To_v1alpha2_PersistentStorageInstanceList(in *PersistentStorageInstanceList, out *v1alpha2.PersistentStorageInstanceList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]v1alpha2.PersistentStorageInstance)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]v1alpha2.PersistentStorageInstance, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha1_PersistentStorageInstance_To_v1alpha2_PersistentStorageInstance(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -1359,7 +1409,17 @@ func Convert_v1alpha1_PersistentStorageInstanceList_To_v1alpha2_PersistentStorag
 
 func autoConvert_v1alpha2_PersistentStorageInstanceList_To_v1alpha1_PersistentStorageInstanceList(in *v1alpha2.PersistentStorageInstanceList, out *PersistentStorageInstanceList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]PersistentStorageInstance)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]PersistentStorageInstance, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha2_PersistentStorageInstance_To_v1alpha1_PersistentStorageInstance(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -1427,7 +1487,15 @@ func Convert_v1alpha2_PersistentStorageInstanceStatus_To_v1alpha1_PersistentStor
 }
 
 func autoConvert_v1alpha1_ResourceError_To_v1alpha2_ResourceError(in *ResourceError, out *v1alpha2.ResourceError, s conversion.Scope) error {
-	out.Error = (*v1alpha2.ResourceErrorInfo)(unsafe.Pointer(in.Error))
+	if in.Error != nil {
+		in, out := &in.Error, &out.Error
+		*out = new(v1alpha2.ResourceErrorInfo)
+		if err := Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Error = nil
+	}
 	return nil
 }
 
@@ -1437,7 +1505,15 @@ func Convert_v1alpha1_ResourceError_To_v1alpha2_ResourceError(in *ResourceError,
 }
 
 func autoConvert_v1alpha2_ResourceError_To_v1alpha1_ResourceError(in *v1alpha2.ResourceError, out *ResourceError, s conversion.Scope) error {
-	out.Error = (*ResourceErrorInfo)(unsafe.Pointer(in.Error))
+	if in.Error != nil {
+		in, out := &in.Error, &out.Error
+		*out = new(ResourceErrorInfo)
+		if err := Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.Error = nil
+	}
 	return nil
 }
 
@@ -1449,25 +1525,16 @@ func Convert_v1alpha2_ResourceError_To_v1alpha1_ResourceError(in *v1alpha2.Resou
 func autoConvert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in *ResourceErrorInfo, out *v1alpha2.ResourceErrorInfo, s conversion.Scope) error {
 	out.UserMessage = in.UserMessage
 	out.DebugMessage = in.DebugMessage
-	out.Recoverable = in.Recoverable
+	// WARNING: in.Recoverable requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo is an autogenerated conversion function.
-func Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in *ResourceErrorInfo, out *v1alpha2.ResourceErrorInfo, s conversion.Scope) error {
-	return autoConvert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in, out, s)
 }
 
 func autoConvert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in *v1alpha2.ResourceErrorInfo, out *ResourceErrorInfo, s conversion.Scope) error {
 	out.UserMessage = in.UserMessage
 	out.DebugMessage = in.DebugMessage
-	out.Recoverable = in.Recoverable
+	// WARNING: in.Type requires manual conversion: does not exist in peer-type
+	// WARNING: in.Severity requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo is an autogenerated conversion function.
-func Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in *v1alpha2.ResourceErrorInfo, out *ResourceErrorInfo, s conversion.Scope) error {
-	return autoConvert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in, out, s)
 }
 
 func autoConvert_v1alpha1_Servers_To_v1alpha2_Servers(in *Servers, out *v1alpha2.Servers, s conversion.Scope) error {
@@ -1504,7 +1571,17 @@ func Convert_v1alpha2_Servers_To_v1alpha1_Servers(in *v1alpha2.Servers, out *Ser
 
 func autoConvert_v1alpha1_ServersList_To_v1alpha2_ServersList(in *ServersList, out *v1alpha2.ServersList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]v1alpha2.Servers)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]v1alpha2.Servers, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha1_Servers_To_v1alpha2_Servers(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -1515,7 +1592,17 @@ func Convert_v1alpha1_ServersList_To_v1alpha2_ServersList(in *ServersList, out *
 
 func autoConvert_v1alpha2_ServersList_To_v1alpha1_ServersList(in *v1alpha2.ServersList, out *ServersList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]Servers)(unsafe.Pointer(&in.Items))
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]Servers, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha2_Servers_To_v1alpha1_Servers(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
 	return nil
 }
 
@@ -1606,12 +1693,8 @@ func autoConvert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(in *v1alpha2.S
 	out.Ready = in.Ready
 	out.LastUpdate = (*metav1.MicroTime)(unsafe.Pointer(in.LastUpdate))
 	out.AllocationSets = *(*[]ServersStatusAllocationSet)(unsafe.Pointer(&in.AllocationSets))
+	// WARNING: in.ResourceError requires manual conversion: does not exist in peer-type
 	return nil
-}
-
-// Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus is an autogenerated conversion function.
-func Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(in *v1alpha2.ServersStatus, out *ServersStatus, s conversion.Scope) error {
-	return autoConvert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(in, out, s)
 }
 
 func autoConvert_v1alpha1_ServersStatusAllocationSet_To_v1alpha2_ServersStatusAllocationSet(in *ServersStatusAllocationSet, out *v1alpha2.ServersStatusAllocationSet, s conversion.Scope) error {
