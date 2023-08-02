@@ -467,7 +467,11 @@ func (r *ClientMountReconciler) run(c string) (string, error) {
 
 	output, err := exec.CommandContext(ctx, "bash", "-c", c).Output()
 
-	return string(output), dwsv1alpha2.NewResourceError("command: '%s' output: '%s'", c, string(output)).WithError(err)
+	if err != nil {
+		return string(output), dwsv1alpha2.NewResourceError("command: '%s' output: '%s'", c, string(output)).WithError(err)
+	}
+
+	return string(output), nil
 }
 
 func filterByNonRabbitNamespacePrefixForTest() predicate.Predicate {
