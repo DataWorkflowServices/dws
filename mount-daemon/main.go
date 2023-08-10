@@ -50,7 +50,7 @@ import (
 )
 
 const (
-	name        = "clientmount"
+	name        = "clientmountd"
 	description = "Data Workflow Service (DWS) Client Mount Service"
 )
 

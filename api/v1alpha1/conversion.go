@@ -43,12 +43,22 @@ func (src *ClientMount) ConvertTo(dstRaw conversion.Hub) error {
 
 	// Manually restore data.
 	restored := &dwsv1alpha2.ClientMount{}
-	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
+	hasAnno, err := utilconversion.UnmarshalData(src, restored)
+	if err != nil {
 		return err
 	}
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
+
+	// v1alpha2 removed Error.Recoverable and uses Error.Severity and Error.Type, instead.
+	if hasAnno && restored.Status.Error != nil {
+		dst.Status.Error.Type = restored.Status.Error.Type
+		dst.Status.Error.Severity = restored.Status.Error.Severity
+	}
+	if src.Status.Error != nil && !src.Status.Error.Recoverable {
+		dst.Status.Error.Severity = dwsv1alpha2.SeverityFatal
+	}
 
 	return nil
 }
@@ -61,8 +71,19 @@ func (dst *ClientMount) ConvertFrom(srcRaw conversion.Hub) error {
 		return err
 	}
 
+	// v1alpha2 removed Error.Recoverable, and it must be translated from
+	// other fields.
+	if src.Status.Error != nil {
+		if src.Status.Error.Severity == dwsv1alpha2.SeverityFatal {
+			dst.Status.Error.Recoverable = false
+		} else {
+			dst.Status.Error.Recoverable = true
+		}
+	}
+
 	// Preserve Hub data on down-conversion except for metadata.
 	return utilconversion.MarshalData(src, dst)
+
 }
 
 func (src *Computes) ConvertTo(dstRaw conversion.Hub) error {
@@ -139,12 +160,22 @@ func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
 
 	// Manually restore data.
 	restored := &dwsv1alpha2.DirectiveBreakdown{}
-	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
+	hasAnno, err := utilconversion.UnmarshalData(src, restored)
+	if err != nil {
 		return err
 	}
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
+
+	// v1alpha2 removed Error.Recoverable and uses Error.Severity and Error.Type, instead.
+	if hasAnno && restored.Status.Error != nil {
+		dst.Status.Error.Type = restored.Status.Error.Type
+		dst.Status.Error.Severity = restored.Status.Error.Severity
+	}
+	if src.Status.Error != nil && !src.Status.Error.Recoverable {
+		dst.Status.Error.Severity = dwsv1alpha2.SeverityFatal
+	}
 
 	return nil
 }
@@ -155,6 +186,16 @@ func (dst *DirectiveBreakdown) ConvertFrom(srcRaw conversion.Hub) error {
 
 	if err := Convert_v1alpha2_DirectiveBreakdown_To_v1alpha1_DirectiveBreakdown(src, dst, nil); err != nil {
 		return err
+	}
+
+	// v1alpha2 removed Error.Recoverable, and it must be translated from
+	// other fields.
+	if src.Status.Error != nil {
+		if src.Status.Error.Severity == dwsv1alpha2.SeverityFatal {
+			dst.Status.Error.Recoverable = false
+		} else {
+			dst.Status.Error.Recoverable = true
+		}
 	}
 
 	// Preserve Hub data on down-conversion except for metadata.
@@ -171,12 +212,22 @@ func (src *PersistentStorageInstance) ConvertTo(dstRaw conversion.Hub) error {
 
 	// Manually restore data.
 	restored := &dwsv1alpha2.PersistentStorageInstance{}
-	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
+	hasAnno, err := utilconversion.UnmarshalData(src, restored)
+	if err != nil {
 		return err
 	}
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
+
+	// v1alpha2 removed Error.Recoverable and uses Error.Severity and Error.Type, instead.
+	if hasAnno && restored.Status.Error != nil {
+		dst.Status.Error.Type = restored.Status.Error.Type
+		dst.Status.Error.Severity = restored.Status.Error.Severity
+	}
+	if src.Status.Error != nil && !src.Status.Error.Recoverable {
+		dst.Status.Error.Severity = dwsv1alpha2.SeverityFatal
+	}
 
 	return nil
 }
@@ -187,6 +238,16 @@ func (dst *PersistentStorageInstance) ConvertFrom(srcRaw conversion.Hub) error {
 
 	if err := Convert_v1alpha2_PersistentStorageInstance_To_v1alpha1_PersistentStorageInstance(src, dst, nil); err != nil {
 		return err
+	}
+
+	// v1alpha2 removed Error.Recoverable, and it must be translated from
+	// other fields.
+	if src.Status.Error != nil {
+		if src.Status.Error.Severity == dwsv1alpha2.SeverityFatal {
+			dst.Status.Error.Recoverable = false
+		} else {
+			dst.Status.Error.Recoverable = true
+		}
 	}
 
 	// Preserve Hub data on down-conversion except for metadata.
@@ -209,6 +270,16 @@ func (src *Servers) ConvertTo(dstRaw conversion.Hub) error {
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
+
+	// v1alpha2 introduced Status.ResourceError.
+	if restored.Status.Error != nil {
+		// Allocate a resource here, because v1alpha1 didn't have this.
+		dst.Status.Error = dwsv1alpha2.NewResourceError("")
+		dst.Status.Error.DebugMessage = restored.Status.Error.DebugMessage
+		dst.Status.Error.UserMessage = restored.Status.Error.UserMessage
+		dst.Status.Error.Type = restored.Status.Error.Type
+		dst.Status.Error.Severity = restored.Status.Error.Severity
+	}
 
 	return nil
 }
@@ -267,13 +338,17 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 
 	// Manually restore data.
 	restored := &dwsv1alpha2.SystemConfiguration{}
-	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
+	hasAnno, err := utilconversion.UnmarshalData(src, restored)
+	if err != nil {
 		return err
 	}
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
 
+	if hasAnno {
+		dst.Spec.PortsCooldownInSeconds = restored.Spec.PortsCooldownInSeconds
+	}
 	return nil
 }
 
@@ -414,10 +489,26 @@ func (dst *WorkflowList) ConvertFrom(srcRaw conversion.Hub) error {
 // The conversion-gen tool dropped these from zz_generated.conversion.go to
 // force us to acknowledge that we are addressing the conversion requirements.
 
+func Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in *ResourceErrorInfo, out *dwsv1alpha2.ResourceErrorInfo, s apiconversion.Scope) error {
+	return autoConvert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in, out, s)
+}
+
+func Convert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in *dwsv1alpha2.ResourceErrorInfo, out *ResourceErrorInfo, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in, out, s)
+}
+
+func Convert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(in *dwsv1alpha2.ServersStatus, out *ServersStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_ServersStatus_To_v1alpha1_ServersStatus(in, out, s)
+}
+
 func Convert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in *WorkflowSpec, out *dwsv1alpha2.WorkflowSpec, s apiconversion.Scope) error {
 	return autoConvert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in, out, s)
 }
 
 func Convert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *dwsv1alpha2.WorkflowSpec, out *WorkflowSpec, s apiconversion.Scope) error {
 	return autoConvert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in, out, s)
+}
+
+func Convert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in *dwsv1alpha2.SystemConfigurationSpec, out *SystemConfigurationSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in, out, s)
 }
