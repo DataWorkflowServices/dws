@@ -24,8 +24,8 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 
-	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
-	utilconversion "github.com/HewlettPackard/dws/github/cluster-api/util/conversion"
+	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
 )
 
 func TestFuzzyConversion(t *testing.T) {

@@ -4,7 +4,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: {{ include "dws-operator.fullname" . }}
+  name: {{ include "dws.fullname" . }}
   namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups:
@@ -28,7 +28,7 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - dwdirectiverules
   verbs:
@@ -36,7 +36,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - workflows
   verbs:
@@ -46,13 +46,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - workflows/finalizers
   verbs:
   - update
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - workflows/status
   verbs:

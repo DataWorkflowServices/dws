@@ -2,96 +2,96 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: cray.hpe.com
+domain: github.io
 layout:
 - go.kubebuilder.io/v3
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
-projectName: dws-operator
-repo: github.com/HewlettPackard/dws
+projectName: dws
+repo: github.com/DataWorkflowServices/dws
 resources:
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Workflow
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: DirectiveBreakdown
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Servers
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Computes
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Storage
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: ClientMount
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: PersistentStorageInstance
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: SystemConfiguration
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: DWDirectiveRule
-  path: github.com/HewlettPackard/dws/api/v1alpha1
+  path: github.com/DataWorkflowServices/dws/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: ClientMount
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -99,10 +99,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Computes
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -110,10 +110,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: DWDirectiveRule
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -121,10 +121,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: DirectiveBreakdown
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -132,10 +132,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: PersistentStorageInstance
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -143,10 +143,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Servers
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -154,10 +154,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Storage
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -165,10 +165,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: SystemConfiguration
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     conversion: true
@@ -176,10 +176,10 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
-  domain: cray.hpe.com
-  group: dws
+  domain: github.io
+  group: dataworkflowservices
   kind: Workflow
-  path: github.com/HewlettPackard/dws/api/v1alpha2
+  path: github.com/DataWorkflowServices/dws/api/v1alpha2
   version: v1alpha2
   webhooks:
     defaulting: true

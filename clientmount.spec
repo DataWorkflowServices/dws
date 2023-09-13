@@ -8,7 +8,7 @@ Summary: Client mount daemon for data workflow service
 
 Group: 1
 License: Apache-2.0
-URL: https://github.com/HewlettPackard/dws
+URL: https://github.com/DataWorkflowServices/dws
 Source0: %{name}-%{version}.tar.gz
 
 BuildRequires:	golang

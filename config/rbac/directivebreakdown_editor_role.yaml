@@ -5,7 +5,7 @@ metadata:
   name: directivebreakdown-editor-role
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - directivebreakdowns
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - directivebreakdowns/status
   verbs:
