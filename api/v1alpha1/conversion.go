@@ -27,8 +27,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
-	utilconversion "github.com/HewlettPackard/dws/github/cluster-api/util/conversion"
+	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
 )
 
 var convertlog = logf.Log.V(2).WithName("convert-v1alpha1")

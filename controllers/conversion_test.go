@@ -31,10 +31,10 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	dwsv1alpha1 "github.com/HewlettPackard/dws/api/v1alpha1"
-	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
-	utilconversion "github.com/HewlettPackard/dws/github/cluster-api/util/conversion"
-	"github.com/HewlettPackard/dws/utils/dwdparse"
+	dwsv1alpha1 "github.com/DataWorkflowServices/dws/api/v1alpha1"
+	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
+	"github.com/DataWorkflowServices/dws/utils/dwdparse"
 )
 
 var _ = Describe("Conversion Webhook Test", func() {

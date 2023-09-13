@@ -51,8 +51,8 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 # This variable is used to construct full image tags for bundle and catalog images.
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
-# cray.hpe.com/dws-operator-bundle:$VERSION and cray.hpe.com/dws-operator-catalog:$VERSION.
-IMAGE_TAG_BASE ?= ghcr.io/hewlettpackard/dws
+# dataworkflowservices.github.io/dws-bundle:$VERSION and dataworkflowservices.github.io/dws-catalog:$VERSION.
+IMAGE_TAG_BASE ?= ghcr.io/dataworkflowservices/dws
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -130,7 +130,7 @@ test: manifests generate fmt vet envtest ## Run tests.
 
 ##@ Build
 build-daemon: RPM_VERSION ?= $(shell ./git-version-gen)
-build-daemon: PACKAGE = github.com/HewlettPackard/dws/mount-daemon/version
+build-daemon: PACKAGE = github.com/DataWorkflowServices/dws/mount-daemon/version
 build-daemon: manifests generate fmt vet ## Build standalone clientMount daemon
 	GOOS=linux GOARCH=amd64 go build -ldflags="-X '$(PACKAGE).version=$(RPM_VERSION)'" -o bin/clientmountd mount-daemon/main.go
 

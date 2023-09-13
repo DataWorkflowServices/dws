@@ -5,7 +5,7 @@ metadata:
   name: workflow-editor-role
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - workflows
   verbs:
