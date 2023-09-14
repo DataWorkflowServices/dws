@@ -14,7 +14,7 @@ patches:
       group: apps
       version: v1
       kind: Deployment
-      name: dws-operator-controller-manager
+      name: dws-controller-manager
   - patch: |-
       - op: replace
         path: /apiVersion
@@ -23,7 +23,7 @@ patches:
       group: cert-manager.io
       version: v1
       kind: Certificate
-      name: dws-operator-serving-cert
+      name: dws-serving-cert
   - patch: |-
       - op: replace
         path: /apiVersion
@@ -32,6 +32,6 @@ patches:
       group: cert-manager.io
       version: v1
       kind: Issuer
-      name: dws-operator-selfsigned-issuer
+      name: dws-selfsigned-issuer
 
 

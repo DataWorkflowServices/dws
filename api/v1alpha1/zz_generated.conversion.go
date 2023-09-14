@@ -27,8 +27,8 @@ package v1alpha1
 import (
 	unsafe "unsafe"
 
-	v1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
-	dwdparse "github.com/HewlettPackard/dws/utils/dwdparse"
+	v1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	dwdparse "github.com/DataWorkflowServices/dws/utils/dwdparse"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "dws-operator.fullname" . }}
+  name: {{ include "dws.fullname" . }}
   namespace: {{ .Release.Namespace }}
 data:
   controller_manager_config.yaml: |
@@ -15,4 +15,4 @@ data:
       port: 9443
     leaderElection:
       leaderElect: true
-      resourceName: a08857a2.cray.hpe.com
+      resourceName: a08857a2.dataworkflowservices.github.io

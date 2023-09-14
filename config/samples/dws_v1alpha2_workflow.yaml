@@ -1,12 +1,12 @@
-apiVersion: dws.cray.hpe.com/v1alpha2
+apiVersion: dataworkflowservices.github.io/v1alpha2
 kind: Workflow
 metadata:
   labels:
     app.kubernetes.io/name: workflow
     app.kubernetes.io/instance: workflow-sample
-    app.kubernetes.io/part-of: dws-operator
+    app.kubernetes.io/part-of: dws
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: dws-operator
+    app.kubernetes.io/created-by: dws
   name: test2
 spec:
   # TODO(user): Add fields here

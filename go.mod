@@ -1,4 +1,4 @@
-module github.com/HewlettPackard/dws
+module github.com/DataWorkflowServices/dws
 
 go 1.19
 
