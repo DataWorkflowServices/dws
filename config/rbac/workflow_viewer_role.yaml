@@ -5,7 +5,7 @@ metadata:
   name: workflow-viewer-role
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - workflows
   verbs:

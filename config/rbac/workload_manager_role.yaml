@@ -5,7 +5,7 @@ metadata:
   name: workload-manager
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - clientmounts
   verbs:
@@ -13,13 +13,13 @@ rules:
   - list
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - clientmounts/status
   verbs:
   - get
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - computes
   verbs:
@@ -29,7 +29,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - directivebreakdowns
   verbs:
@@ -37,13 +37,13 @@ rules:
   - list
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - directivebreakdowns/status
   verbs:
   - get
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - persistentstorageinstances
   verbs:
@@ -51,13 +51,13 @@ rules:
   - list
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - persistentstorageinstances/status
   verbs:
   - get
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - servers
   verbs:
@@ -67,13 +67,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - servers/status
   verbs:
   - get
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - storages
   verbs:
@@ -81,13 +81,13 @@ rules:
   - list
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - storages/status
   verbs:
   - get
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - systemconfigurations
   verbs:
@@ -95,13 +95,13 @@ rules:
   - list
   - watch
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - systemconfigurations/status
   verbs:
   - get
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - workflows
   verbs:

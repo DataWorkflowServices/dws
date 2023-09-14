@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-  name: clientmounts.dws.cray.hpe.com
+  name: clientmounts.dataworkflowservices.github.io
 spec:
-  group: dws.cray.hpe.com
+  group: dataworkflowservices.github.io
   names:
     kind: ClientMount
     listKind: ClientMountList

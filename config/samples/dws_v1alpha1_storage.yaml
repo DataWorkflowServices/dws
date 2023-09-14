@@ -1,9 +1,9 @@
-apiVersion: dws.cray.hpe.com/v1alpha1
+apiVersion: dataworkflowservices.github.io/v1alpha1
 kind: Storage
 metadata:
   name: rabbit-01
   labels:
-    dws.cray.hpe.com/storage: Rabbit
+    dataworkflowservices.github.io/storage: Rabbit
 spec:
   state: Enabled
 status:

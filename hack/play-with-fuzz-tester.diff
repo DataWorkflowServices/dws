@@ -29,8 +29,8 @@ index 6a6634e..844ea3d 100644
 +	runtimeserializer "k8s.io/apimachinery/pkg/runtime/serializer"
 +	"sigs.k8s.io/controller-runtime/pkg/conversion"
 +
- 	dwsv1alpha2 "github.com/HewlettPackard/dws/api/v1alpha2"
- 	utilconversion "github.com/HewlettPackard/dws/github/cluster-api/util/conversion"
+	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+ 	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
  )
  
 +func hubPrinter(c conversion.Hub) {

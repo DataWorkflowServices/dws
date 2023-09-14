@@ -5,7 +5,7 @@ metadata:
   name: computes-editor-role
 rules:
 - apiGroups:
-  - dws.cray.hpe.com
+  - dataworkflowservices.github.io
   resources:
   - computes
   verbs:

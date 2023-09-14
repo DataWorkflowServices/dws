@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dws-operator.fullname" . }}
+  name: {{ include "dws.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dws-operator
+      app: dws
   template:
     metadata:
       labels:
-        app: dws-operator
+        app: dws
     spec:
-      serviceAccountName: {{ include "dws-operator.fullname" . }}
+      serviceAccountName: {{ include "dws.fullname" . }}
       containers:
       - name: dws-validation-webhook
-        image: {{ .Values.imagesHost }}/{{ .Values.imagesRepo }}/cray-dws-operator:{{ .Values.imagesTag }}
+        image: {{ .Values.imagesHost }}/{{ .Values.imagesRepo }}/cray-dws:{{ .Values.imagesTag }}
         command:
           - /manager
         args:
@@ -47,7 +47,7 @@ spec:
           name: webhook-server
           protocol: TCP
         volumeMounts:
-        - name: dws-operator-tls-certs
+        - name: dws-tls-certs
           mountPath: /tmp/k8s-webhook-server/serving-certs
           readOnly: true
         - name: manager-config
@@ -55,12 +55,12 @@ spec:
           subPath: controller_manager_config.yaml
 
       volumes:
-      - name: dws-operator-tls-certs
+      - name: dws-tls-certs
         secret:
-          secretName: {{ include "dws-operator.fullname" . }}-server-tls
+          secretName: {{ include "dws.fullname" . }}-server-tls
       - name: manager-config
         configMap:
-          name: {{ include "dws-operator.fullname" . }}
+          name: {{ include "dws.fullname" . }}
 
       nodeSelector:
         cray.dpm.dg.data-workflow-services: "true"
