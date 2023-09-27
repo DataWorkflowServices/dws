@@ -2,19 +2,11 @@
 bases:
 - ../dp0
 
-# Adjustments for CSM 0.9.3:
-#  - The kube-rbac-proxy will be in the local container registry.
+# Adjustments for CSM:
+#  - The dws and kube-rbac-proxy images will be in the local container registry.
 #  - The cert-manager is ancient, at v0.14.1.
+
 patches:
-  - patch: |-
-      - op: replace
-        path: /spec/template/spec/containers/1/image
-        value: registry.local/kube-rbac-proxy:v0.13.0
-    target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: dws-controller-manager
   - patch: |-
       - op: replace
         path: /apiVersion
@@ -34,4 +26,11 @@ patches:
       kind: Issuer
       name: dws-selfsigned-issuer
 
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: ghcr.io/dataworkflowservices/dws
+  newName: registry.local/dws
+- name: gcr.io/kubebuilder/kube-rbac-proxy
+  newName: registry.local/kube-rbac-proxy
 
