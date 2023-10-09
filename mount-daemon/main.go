@@ -22,11 +22,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"os/signal"
 	"runtime"
+	"strings"
 	"syscall"
 	"time"
 
@@ -41,6 +41,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	certutil "k8s.io/client-go/util/cert"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
@@ -100,7 +101,7 @@ func (service *Service) Manage() (string, error) {
 	// channel or risk missing the signal if we're not setup to receive the signal
 	// when it is sent.
 	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
 	go startManager(config)
 
@@ -163,12 +164,13 @@ func createManager(opts *options) (*managerConfig, error) {
 	var err error
 
 	if len(opts.name) == 0 {
-		setupLog.Info("Using system hostname")
-
-		opts.name, err = os.Hostname()
+		longName, err := os.Hostname()
 		if err != nil {
 			return nil, err
 		}
+		parts := strings.Split(longName, ".")
+		opts.name = parts[0]
+		setupLog.Info("Using system hostname", "name", opts.name)
 	}
 
 	if len(opts.host) == 0 && len(opts.port) == 0 {
@@ -190,7 +192,7 @@ func createManager(opts *options) (*managerConfig, error) {
 			return nil, fmt.Errorf("DWS client mount service token not defined")
 		}
 
-		token, err := ioutil.ReadFile(opts.tokenFile)
+		token, err := os.ReadFile(opts.tokenFile)
 		if err != nil {
 			return nil, fmt.Errorf("DWS client mount service token failed to read")
 		}
@@ -220,10 +222,13 @@ func createManager(opts *options) (*managerConfig, error) {
 func startManager(config *managerConfig) {
 	setupLog.Info("GOMAXPROCS", "value", runtime.GOMAXPROCS(0))
 
+	namespaceCache := make(map[string]cache.Config)
+	namespaceCache[config.namespace] = cache.Config{}
+
 	mgr, err := ctrl.NewManager(config.config, ctrl.Options{
 		Scheme:         scheme,
 		LeaderElection: false,
-		Namespace:      config.namespace,
+		Cache:          cache.Options{DefaultNamespaces: namespaceCache},
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")

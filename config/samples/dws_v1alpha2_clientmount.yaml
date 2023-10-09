@@ -8,5 +8,6 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: dws
   name: clientmount-sample
+  namespace: dean-mbp
 spec:
   # TODO(user): Add fields here
