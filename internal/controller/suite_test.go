@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package controller
 
 import (
 	"context"
@@ -37,6 +37,7 @@ import (
 
 	dwsv1alpha1 "github.com/DataWorkflowServices/dws/api/v1alpha1"
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	"github.com/DataWorkflowServices/dws/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -82,9 +83,9 @@ var _ = BeforeSuite(func() {
 
 	testEnv = &envtest.Environment{
 		WebhookInstallOptions: envtest.WebhookInstallOptions{
-			Paths: []string{filepath.Join("..", "config", "webhook")},
+			Paths: []string{filepath.Join("..", "..", "config", "webhook")},
 		},
-		CRDDirectoryPaths: []string{filepath.Join("..", "config", "crd", "bases")},
+		CRDDirectoryPaths: []string{filepath.Join("..", "..", "config", "crd", "bases")},
 
 		CRDInstallOptions: envtest.CRDInstallOptions{
 			// This adds the conversion webhook configuration to
@@ -147,7 +148,7 @@ var _ = BeforeSuite(func() {
 
 	// start reconcilers
 
-	err = (&WorkflowReconciler{
+	err = (&controllers.WorkflowReconciler{
 		Client: k8sManager.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Workflow"),
 		Scheme: testEnv.Scheme,
