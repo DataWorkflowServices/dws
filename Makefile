@@ -164,10 +164,10 @@ uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified 
 deploy: VERSION ?= $(shell cat .version)
 deploy: .version kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE_IMAGE_TAG) config/begin $(OVERLAY) $(IMAGE_TAG_BASE) $(VERSION)
-	$(KUSTOMIZE) build config/begin | kubectl apply -f -
+	./deploy.sh deploy $(KUSTOMIZE) config/begin
 
 undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
-	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete --ignore-not-found -f -
+	./deploy.sh undeploy $(KUSTOMIZE) config/$(OVERLAY)
 
 # Let .version be phony so that a git update to the workarea can be reflected
 # in it each time it's needed.
