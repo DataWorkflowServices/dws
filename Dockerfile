@@ -28,7 +28,6 @@ COPY cmd/ cmd/
 COPY api/ api/
 COPY internal/ internal/
 COPY controllers/ controllers/
-COPY mount-daemon/ mount-daemon/
 COPY utils/ utils/
 COPY vendor/ vendor/
 COPY github/cluster-api/util/conversion/ github/cluster-api/util/conversion/
