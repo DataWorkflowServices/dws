@@ -23,9 +23,11 @@ import (
 	"flag"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
+	"runtime/pprof"
 	"strings"
 	"syscall"
 	"time"
@@ -70,7 +72,7 @@ func init() {
 	//+kubebuilder:scaffold:scheme
 }
 
-func (service *Service) Manage() (string, error) {
+func (service *Service) Manage() (msg string, err error) {
 
 	if len(os.Args) > 1 {
 		command := os.Args[1]
@@ -97,6 +99,43 @@ func (service *Service) Manage() (string, error) {
 		return "Create", err
 	}
 
+	// Print out tunable parameters
+	setupLog.Info("Tunables",
+		"GOMAXPROCS", os.Getenv("GOMAXPROCS"),
+		"GOGC", os.Getenv("GOGC"),
+		"GOMEMLIMIT", os.Getenv("GOMEMLIMIT"))
+
+	// Enable HTTP tracing. See https://pkg.go.dev/net/http/pprof for more details.
+	if opts.Tracing {
+		go func() {
+			url := "localhost:6060"
+			setupLog.Info("HTTP Tracing enabled", "url", url)
+			setupLog.Info("HTTP Tracing done", "output", http.ListenAndServe(url, nil))
+		}()
+	}
+
+	// Enable CPU profiling with pprof. Daemon must be stopped for contents to be written to the
+	// file.  See https://pkg.go.dev/runtime/pprof for more details.
+	if opts.CpuProfile {
+		filename := fmt.Sprintf("/tmp/clientmountd-cpu-%s.prof", time.Now().UTC().Format(time.RFC3339))
+		f, err := os.Create(filename)
+		if err != nil {
+			return fmt.Sprintf("could not create CPU profile"), err
+		}
+		defer func() {
+			if cerr := f.Close(); cerr != nil {
+				err = cerr
+				msg = "could not close CPU profile"
+			}
+		}()
+
+		if err := pprof.StartCPUProfile(f); err != nil {
+			return fmt.Sprintf("could not start CPU profile"), err
+		}
+		setupLog.Info("CPU profiling enabled. Stop daemon to dump contents to file.", "filename", filename)
+		defer pprof.StopCPUProfile()
+	}
+
 	// Set up channel on which to send signal notifications; must use a buffered
 	// channel or risk missing the signal if we're not setup to receive the signal
 	// when it is sent.
@@ -118,24 +157,28 @@ type managerConfig struct {
 }
 
 type options struct {
-	host      string
-	port      string
-	name      string
-	tokenFile string
-	certFile  string
-	mock      bool
-	timeout   time.Duration
+	host       string
+	port       string
+	name       string
+	tokenFile  string
+	certFile   string
+	mock       bool
+	timeout    time.Duration
+	CpuProfile bool
+	Tracing    bool
 }
 
 func getOptions() *options {
 	opts := options{
-		host:      os.Getenv("KUBERNETES_SERVICE_HOST"),
-		port:      os.Getenv("KUBERNETES_SERVICE_PORT"),
-		name:      os.Getenv("NODE_NAME"),
-		tokenFile: os.Getenv("DWS_CLIENT_MOUNT_SERVICE_TOKEN_FILE"),
-		certFile:  os.Getenv("DWS_CLIENT_MOUNT_SERVICE_CERT_FILE"),
-		mock:      false,
-		timeout:   time.Minute,
+		host:       os.Getenv("KUBERNETES_SERVICE_HOST"),
+		port:       os.Getenv("KUBERNETES_SERVICE_PORT"),
+		name:       os.Getenv("NODE_NAME"),
+		tokenFile:  os.Getenv("DWS_CLIENT_MOUNT_SERVICE_TOKEN_FILE"),
+		certFile:   os.Getenv("DWS_CLIENT_MOUNT_SERVICE_CERT_FILE"),
+		mock:       false,
+		timeout:    time.Minute,
+		CpuProfile: false,
+		Tracing:    false,
 	}
 
 	flag.StringVar(&opts.host, "kubernetes-service-host", opts.host, "Kubernetes service host address")
@@ -145,6 +188,10 @@ func getOptions() *options {
 	flag.StringVar(&opts.certFile, "service-cert-file", opts.certFile, "Path to the DWS client mount service certificate")
 	flag.BoolVar(&opts.mock, "mock", opts.mock, "Run in mock mode where no client mount operations take place")
 	flag.DurationVar(&opts.timeout, "command-timeout", opts.timeout, "Timeout value before subcommands are killed")
+	flag.BoolVar(&opts.CpuProfile, "cpu-profile", opts.CpuProfile,
+		"Enable and dump CPU profiling data to `/tmp/clientmountd-cpu-<timestamp>.prof`. Daemon must be stopped to dump profile.")
+	flag.BoolVar(&opts.Tracing, "tracing", opts.Tracing,
+		"Enable tracing via HTTP server")
 
 	zapOptions := zap.Options{
 		Development: true,
