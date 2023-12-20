@@ -221,6 +221,9 @@ func createManager(opts *options) (*managerConfig, error) {
 
 func startManager(config *managerConfig) {
 	setupLog.Info("GOMAXPROCS", "value", runtime.GOMAXPROCS(0))
+	setupLog.Info("GOGC", "value", os.Getenv("GOGC"))
+	setupLog.Info("GOMEMLIMIT", "value", os.Getenv("GOMEMLIMIT"))
+	setupLog.Info("HTTP2_PING_TIMEOUT_SECONDS", "value", os.Getenv("HTTP2_PING_TIMEOUT_SECONDS"))
 
 	namespaceCache := make(map[string]cache.Config)
 	namespaceCache[config.namespace] = cache.Config{}
