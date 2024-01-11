@@ -1,4 +1,4 @@
-# Copyright 2021-2023 Hewlett Packard Enterprise Development LP
+# Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 # Other additional copyright holders may be indicated within.
 #
 # The entirety of this work is licensed under the Apache License,
@@ -72,7 +72,7 @@ IMAGE_TAG_BASE ?= ghcr.io/dataworkflowservices/dws
 OVERLAY ?= kind
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION = 1.26.0
+ENVTEST_K8S_VERSION = 1.28.0
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -129,16 +129,11 @@ test: manifests generate fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(LOCALBIN))" go test $(TESTDIR) -coverprofile cover.out
 
 ##@ Build
-build-daemon: RPM_VERSION ?= $(shell ./git-version-gen)
-build-daemon: PACKAGE = github.com/DataWorkflowServices/dws/mount-daemon/version
-build-daemon: manifests generate fmt vet ## Build standalone clientMount daemon
-	GOOS=linux GOARCH=amd64 go build -ldflags="-X '$(PACKAGE).version=$(RPM_VERSION)'" -o bin/clientmountd mount-daemon/main.go
-
 build: manifests generate fmt vet ## Build manager binary.
-	go build -o bin/manager main.go
+	go build -o bin/manager cmd/main.go
 
 run: manifests generate fmt vet ## Run a controller from your host.
-	go run ./main.go
+	go run cmd/main.go
 
 docker-build: VERSION ?= $(shell cat .version)
 docker-build: .version manifests generate fmt vet ## Build docker image with the manager.
@@ -161,13 +156,15 @@ install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~
 uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE) build config/crd | kubectl delete -f -
 
-deploy: VERSION ?= $(shell cat .version)
-deploy: .version kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
-	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMAGE_TAG_BASE):$(VERSION)
-	$(KUSTOMIZE) build config/${OVERLAY} | kubectl apply -f -
+edit-image: VERSION ?= $(shell cat .version)
+edit-image: .version
+	$(KUSTOMIZE_IMAGE_TAG) config/begin $(OVERLAY) $(IMAGE_TAG_BASE) $(VERSION)
+
+deploy: kustomize edit-image ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+	./deploy.sh deploy $(KUSTOMIZE) config/begin
 
 undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
-	$(KUSTOMIZE) build config/${OVERLAY} | kubectl delete --ignore-not-found -f -
+	./deploy.sh undeploy $(KUSTOMIZE) config/$(OVERLAY)
 
 # Let .version be phony so that a git update to the workarea can be reflected
 # in it each time it's needed.
@@ -190,6 +187,7 @@ clean-bin:
 	fi
 
 ## Tool Binaries
+KUSTOMIZE_IMAGE_TAG ?= ./hack/make-kustomization.sh
 GO_INSTALL := ./github/cluster-api/scripts/go_install.sh
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
@@ -205,19 +203,19 @@ CONVERSION_VERIFIER := $(LOCALBIN)/$(CONVERSION_VERIFIER_BIN)
 CONVERSION_VERIFIER_PKG := sigs.k8s.io/cluster-api/hack/tools/conversion-verifier
 
 ## Tool Versions
-KUSTOMIZE_VERSION ?= v4.5.7
-CONTROLLER_TOOLS_VERSION ?= v0.12.0
-CONVERSION_GEN_VER := v0.26.3
+KUSTOMIZE_VERSION ?= v5.1.1
+CONTROLLER_TOOLS_VERSION ?= v0.13.0
+CONVERSION_GEN_VER := v0.28.2
 
 # Can be "latest", but cannot be a tag, such as "v1.3.3".  However, it will
 # work with the short-form git commit rev that has been tagged.
 #CONVERSION_VERIFIER_VER := 09030092b # v1.3.3
-CONVERSION_VERIFIER_VER := 2c07717 # v1.4.0
+CONVERSION_VERIFIER_VER := 3290c5a # v1.5.2
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
 kustomize: $(LOCALBIN) ## Download kustomize locally if necessary.
-	if [[ ! -s $(LOCALBIN)/kustomize || $$($(LOCALBIN)/kustomize version | awk '{print $$1}' | awk -F/ '{print $$2}') != $(KUSTOMIZE_VERSION) ]]; then \
+	if [[ ! -s $(LOCALBIN)/kustomize || ! $$($(LOCALBIN)/kustomize version) =~ $(KUSTOMIZE_VERSION) ]]; then \
 	  rm -f $(LOCALBIN)/kustomize && \
 	  { curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN); }; \
 	fi

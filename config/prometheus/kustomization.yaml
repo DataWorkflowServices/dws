@@ -1,2 +1,5 @@
+# Adds namespace to all resources.
+namespace: dws-system
+
 resources:
 - monitor.yaml

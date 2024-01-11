@@ -106,7 +106,7 @@ func TestUnmarshalData(t *testing.T) {
 
 		ok, err := UnmarshalData(src, dst)
 		g.Expect(ok).To(BeFalse())
-		g.Expect(err).To(BeNil())
+		g.Expect(err).ToNot(HaveOccurred())
 	})
 
 	t.Run("should return true when a valid annotation with data exists", func(t *testing.T) {
@@ -124,7 +124,7 @@ func TestUnmarshalData(t *testing.T) {
 		}
 
 		ok, err := UnmarshalData(src, dst)
-		g.Expect(err).To(BeNil())
+		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(ok).To(BeTrue())
 
 		g.Expect(dst.GetLabels()).To(HaveLen(1))
@@ -149,7 +149,7 @@ func TestUnmarshalData(t *testing.T) {
 		}
 
 		ok, err := UnmarshalData(src, dst)
-		g.Expect(err).To(BeNil())
+		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(ok).To(BeTrue())
 
 		g.Expect(src.GetAnnotations()).ToNot(HaveKey(DataAnnotation))
