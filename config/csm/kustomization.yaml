@@ -1,5 +1,5 @@
 # Use DP0 (real hardware) for the base.
-bases:
+resources:
 - ../dp0
 
 # Adjustments for CSM:

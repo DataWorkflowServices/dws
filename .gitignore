@@ -28,6 +28,6 @@ commands.log
 kind-*.yaml
 
 nnf-sos
-mount-daemon/clientmount
 .version
+config/begin/*
 
