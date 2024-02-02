@@ -368,7 +368,7 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 	// list and in the spec.StorageNodes list.
 	computes := make([]SystemConfigurationComputeNode, 0)
 	for _, name := range src.Computes() {
-		computes = append(computes, SystemConfigurationComputeNode{Name: name})
+		computes = append(computes, SystemConfigurationComputeNode{Name: *name})
 	}
 	dst.Spec.ComputeNodes = computes
 
