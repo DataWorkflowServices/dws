@@ -83,31 +83,55 @@ func TestFuzzyConversion(t *testing.T) {
 
 func SystemConfigurationFuzzFunc(_ runtimeserializer.CodecFactory) []interface{} {
 	return []interface{}{
-		SystemConfigurationComputesFuzzer,
+		SystemConfigurationComputesv1Fuzzer,
+		SystemConfigurationComputesv2Fuzzer,
 	}
 }
 
 // Use the same compute names in both spec.ComputeNodes and spec.StorageNodes.
-func SystemConfigurationComputesFuzzer(in *SystemConfigurationSpec, c fuzz.Continue) {
+// Add a breadcrumb to the fuzzed names to aid in debugging.
+func SystemConfigurationComputesv1Fuzzer(in *SystemConfigurationSpec, c fuzz.Continue) {
 	// Tell the fuzzer to begin by fuzzing everything in the object.
 	c.FuzzNoCustom(in)
 
+	newComputes := make([]SystemConfigurationComputeNode, 0)
+
 	// Now pull any fuzzed compute names out of the spec.StorageNodes list and
 	// use them to build a new spec.ComputeNodes list.
-	if in.StorageNodes != nil {
-		computes := make([]SystemConfigurationComputeNode, 0)
-		for sidx := range in.StorageNodes {
-			for cidx := range in.StorageNodes[sidx].ComputesAccess {
-				name := c.RandString()
-				in.StorageNodes[sidx].ComputesAccess[cidx].Name = name
-				computes = append(computes, SystemConfigurationComputeNode{Name: name})
-			}
+	for sidx := range in.StorageNodes {
+		for cidx := range in.StorageNodes[sidx].ComputesAccess {
+			name := c.RandString() + "-lilo"
+			in.StorageNodes[sidx].ComputesAccess[cidx].Name = name
+			newComputes = append(newComputes, SystemConfigurationComputeNode{Name: name})
 		}
-		in.ComputeNodes = computes
-	} else {
-		in.ComputeNodes = nil
 	}
 
+	// Preserve any fuzzed names that may already be in the
+	// spec.ComputesNodes list; these are the "external computes".
+	for _, node := range in.ComputeNodes {
+		newComputes = append(newComputes, SystemConfigurationComputeNode{Name: node.Name + "-stitch"})
+	}
+
+	if len(newComputes) > 0 {
+		in.ComputeNodes = newComputes
+	}
+}
+
+// Add a breadcrumb to the fuzzed names to aid in debugging.
+func SystemConfigurationComputesv2Fuzzer(in *dwsv1alpha2.SystemConfigurationSpec, c fuzz.Continue) {
+	// Tell the fuzzer to begin by fuzzing everything in the object.
+	c.FuzzNoCustom(in)
+
+	for sidx := range in.StorageNodes {
+		for cidx := range in.StorageNodes[sidx].ComputesAccess {
+			name := c.RandString() + "-jumba"
+			in.StorageNodes[sidx].ComputesAccess[cidx].Name = name
+		}
+	}
+	for eidx := range in.ExternalComputeNodes {
+		name := c.RandString() + "-pleakley"
+		in.ExternalComputeNodes[eidx].Name = name
+	}
 }
 
 // Just touch ginkgo, so it's here to interpret any ginkgo args from

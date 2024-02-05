@@ -349,9 +349,25 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 	if hasAnno {
 		dst.Spec.PortsCooldownInSeconds = restored.Spec.PortsCooldownInSeconds
 
-		// dst.Spec.ComputeNodes --The destination does not have this; instead,
-		// it finds the computes that are already in the dst.Spec.StorageNodes
-		// list.
+		// dst.Spec.ComputeNodes: The destination does not have this.
+		// Instead, it finds the computes that are already in the
+		// dst.Spec.StorageNodes list.
+
+		dst.Spec.ExternalComputeNodes = restored.Spec.ExternalComputeNodes
+	} else {
+		// The v1alpha1 resource's spec.ComputeNodes list is a
+		// combination of all compute nodes from the spec.StorageNodes
+		// list as well as any external computes.
+		// The v1alpha1.FindExternalComputes() method walks through
+		// the spec.Computes list to determine which ones are external.
+		externComputes := src.FindExternalComputes()
+		dstExternComputes := make([]dwsv1alpha2.SystemConfigurationExternalComputeNode, len(externComputes))
+		idx := 0
+		for _, name := range externComputes {
+			dstExternComputes[idx].Name = name
+			idx++
+		}
+		dst.Spec.ExternalComputeNodes = dstExternComputes
 	}
 	return nil
 }
@@ -364,8 +380,11 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 		return err
 	}
 
-	// The v1alpha1 resource has the compute nodes in both the spec.ComputeNodes
-	// list and in the spec.StorageNodes list.
+	// The v1alpha1 resource's spec.ComputeNodes list is a combination
+	// of all compute nodes from the spec.StorageNodes list as well as any
+	// external computes.
+	// The v1alpha2 src.Computes() method returns all of that resource's
+	// compute nodes, of any type.
 	computes := make([]SystemConfigurationComputeNode, 0)
 	for _, name := range src.Computes() {
 		computes = append(computes, SystemConfigurationComputeNode{Name: *name})

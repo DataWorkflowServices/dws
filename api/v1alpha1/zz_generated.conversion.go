@@ -2053,6 +2053,7 @@ func autoConvert_v1alpha1_SystemConfigurationSpec_To_v1alpha2_SystemConfiguratio
 }
 
 func autoConvert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in *v1alpha2.SystemConfigurationSpec, out *SystemConfigurationSpec, s conversion.Scope) error {
+	// WARNING: in.ExternalComputeNodes requires manual conversion: does not exist in peer-type
 	out.StorageNodes = *(*[]SystemConfigurationStorageNode)(unsafe.Pointer(&in.StorageNodes))
 	out.Ports = *(*[]intstr.IntOrString)(unsafe.Pointer(&in.Ports))
 	// WARNING: in.PortsCooldownInSeconds requires manual conversion: does not exist in peer-type

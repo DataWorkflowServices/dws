@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2021-2024 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -99,4 +99,29 @@ type SystemConfigurationList struct {
 
 func init() {
 	SchemeBuilder.Register(&SystemConfiguration{}, &SystemConfigurationList{})
+}
+
+// FindExternalComputes will search the ComputeNodes list and return any that
+// are not also found in the StorageNodes list.  These are the external
+// computes.
+func (in *SystemConfiguration) FindExternalComputes() []string {
+	// Make a map of all the computes in the StorageNodes list, so they're
+	// easy to find.
+	storageComputes := make(map[string]struct{})
+	for i2 := range in.Spec.StorageNodes {
+		for i3 := range in.Spec.StorageNodes[i2].ComputesAccess {
+			name := in.Spec.StorageNodes[i2].ComputesAccess[i3].Name
+			storageComputes[name] = struct{}{}
+		}
+	}
+
+	// Cross-reference the spec.ComputeNodes list against the
+	// computes from the StorageNodes list.
+	var externComputes []string
+	for _, compute := range in.Spec.ComputeNodes {
+		if _, present := storageComputes[compute.Name]; !present {
+			externComputes = append(externComputes, compute.Name)
+		}
+	}
+	return externComputes
 }
