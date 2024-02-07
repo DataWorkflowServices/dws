@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Hewlett Packard Enterprise Development LP
+ * Copyright 2023-2024 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -22,7 +22,10 @@ package v1alpha1
 import (
 	"testing"
 
+	fuzz "github.com/google/gofuzz"
 	. "github.com/onsi/ginkgo/v2"
+	"k8s.io/apimachinery/pkg/api/apitesting/fuzzer"
+	runtimeserializer "k8s.io/apimachinery/pkg/runtime/serializer"
 
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
 	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
@@ -66,8 +69,9 @@ func TestFuzzyConversion(t *testing.T) {
 	}))
 
 	t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.SystemConfiguration{},
-		Spoke: &SystemConfiguration{},
+		Hub:         &dwsv1alpha2.SystemConfiguration{},
+		Spoke:       &SystemConfiguration{},
+		FuzzerFuncs: []fuzzer.FuzzerFuncs{SystemConfigurationFuzzFunc},
 	}))
 
 	t.Run("for Workflow", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
@@ -75,6 +79,59 @@ func TestFuzzyConversion(t *testing.T) {
 		Spoke: &Workflow{},
 	}))
 
+}
+
+func SystemConfigurationFuzzFunc(_ runtimeserializer.CodecFactory) []interface{} {
+	return []interface{}{
+		SystemConfigurationComputesv1Fuzzer,
+		SystemConfigurationComputesv2Fuzzer,
+	}
+}
+
+// Use the same compute names in both spec.ComputeNodes and spec.StorageNodes.
+// Add a breadcrumb to the fuzzed names to aid in debugging.
+func SystemConfigurationComputesv1Fuzzer(in *SystemConfigurationSpec, c fuzz.Continue) {
+	// Tell the fuzzer to begin by fuzzing everything in the object.
+	c.FuzzNoCustom(in)
+
+	newComputes := make([]SystemConfigurationComputeNode, 0)
+
+	// Now pull any fuzzed compute names out of the spec.StorageNodes list and
+	// use them to build a new spec.ComputeNodes list.
+	for sidx := range in.StorageNodes {
+		for cidx := range in.StorageNodes[sidx].ComputesAccess {
+			name := c.RandString() + "-lilo"
+			in.StorageNodes[sidx].ComputesAccess[cidx].Name = name
+			newComputes = append(newComputes, SystemConfigurationComputeNode{Name: name})
+		}
+	}
+
+	// Preserve any fuzzed names that may already be in the
+	// spec.ComputesNodes list; these are the "external computes".
+	for _, node := range in.ComputeNodes {
+		newComputes = append(newComputes, SystemConfigurationComputeNode{Name: node.Name + "-stitch"})
+	}
+
+	if len(newComputes) > 0 {
+		in.ComputeNodes = newComputes
+	}
+}
+
+// Add a breadcrumb to the fuzzed names to aid in debugging.
+func SystemConfigurationComputesv2Fuzzer(in *dwsv1alpha2.SystemConfigurationSpec, c fuzz.Continue) {
+	// Tell the fuzzer to begin by fuzzing everything in the object.
+	c.FuzzNoCustom(in)
+
+	for sidx := range in.StorageNodes {
+		for cidx := range in.StorageNodes[sidx].ComputesAccess {
+			name := c.RandString() + "-jumba"
+			in.StorageNodes[sidx].ComputesAccess[cidx].Name = name
+		}
+	}
+	for eidx := range in.ExternalComputeNodes {
+		name := c.RandString() + "-pleakley"
+		in.ExternalComputeNodes[eidx].Name = name
+	}
 }
 
 // Just touch ginkgo, so it's here to interpret any ginkgo args from
