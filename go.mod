@@ -11,7 +11,6 @@ require (
 	github.com/onsi/gomega v1.27.10
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.16.0
-	github.com/takama/daemon v1.0.0
 	go.uber.org/zap v1.25.0
 	golang.org/x/sync v0.2.0
 	k8s.io/api v0.28.1
