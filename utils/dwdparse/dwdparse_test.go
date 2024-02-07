@@ -20,8 +20,9 @@
 package dwdparse
 
 import (
-	. "github.com/onsi/ginkgo/v2"
 	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
 )
 
 var dWDRules = []DWDirectiveRuleSpec{
@@ -391,7 +392,7 @@ func test(t *testing.T, rules []DWDirectiveRuleSpec, tests []testCase) {
 	}
 }
 
-func _TestUniqueWithin(t *testing.T) {
+func TestUniqueWithin(t *testing.T) {
 	rules := []DWDirectiveRuleSpec{{
 		Command: "unique",
 		RuleDefs: []DWDirectiveRuleDef{{
@@ -417,7 +418,7 @@ func _TestUniqueWithin(t *testing.T) {
 	test(t, rules, tests)
 }
 
-func _TestKeyRegexp(t *testing.T) {
+func TestKeyRegexp(t *testing.T) {
 	rules := []DWDirectiveRuleSpec{{
 		Command: "regexp",
 		RuleDefs: []DWDirectiveRuleDef{{
@@ -431,6 +432,29 @@ func _TestKeyRegexp(t *testing.T) {
 		{directives: []string{"#DW regexp PREFIX_2_good=value"}, result: pass},
 		{directives: []string{"#DW regexp PREFIX_2_=value"}, result: fail}, // missing word after prefix strings
 		{directives: []string{"#DW regexp INVALID=value"}, result: fail},
+	}
+
+	test(t, rules, tests)
+}
+
+func TestKeyIsRequired(t *testing.T) {
+	rules := []DWDirectiveRuleSpec{{
+		Command: "is_required",
+		RuleDefs: []DWDirectiveRuleDef{{
+			Key:        `^param_required`,
+			Type:       "string",
+			IsRequired: true,
+		}, {
+			Key:  `^param_optional`,
+			Type: "string",
+		}},
+	}}
+
+	tests := []testCase{
+		{directives: []string{"#DW is_required param_required=test.in param_optional=test.out"}, result: pass},
+		{directives: []string{"#DW is_required param_required=test.in"}, result: pass},
+		{directives: []string{"#DW is_required param_req=test.in"}, result: fail},
+		{directives: []string{"#DW is_required"}, result: fail},
 	}
 
 	test(t, rules, tests)
