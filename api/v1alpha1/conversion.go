@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Hewlett Packard Enterprise Development LP
+ * Copyright 2023-2024 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -348,6 +348,26 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 
 	if hasAnno {
 		dst.Spec.PortsCooldownInSeconds = restored.Spec.PortsCooldownInSeconds
+
+		// dst.Spec.ComputeNodes: The destination does not have this.
+		// Instead, it finds the computes that are already in the
+		// dst.Spec.StorageNodes list.
+
+		dst.Spec.ExternalComputeNodes = restored.Spec.ExternalComputeNodes
+	} else {
+		// The v1alpha1 resource's spec.ComputeNodes list is a
+		// combination of all compute nodes from the spec.StorageNodes
+		// list as well as any external computes.
+		// The v1alpha1.FindExternalComputes() method walks through
+		// the spec.Computes list to determine which ones are external.
+		externComputes := src.FindExternalComputes()
+		dstExternComputes := make([]dwsv1alpha2.SystemConfigurationExternalComputeNode, len(externComputes))
+		idx := 0
+		for _, name := range externComputes {
+			dstExternComputes[idx].Name = name
+			idx++
+		}
+		dst.Spec.ExternalComputeNodes = dstExternComputes
 	}
 	return nil
 }
@@ -359,6 +379,17 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 	if err := Convert_v1alpha2_SystemConfiguration_To_v1alpha1_SystemConfiguration(src, dst, nil); err != nil {
 		return err
 	}
+
+	// The v1alpha1 resource's spec.ComputeNodes list is a combination
+	// of all compute nodes from the spec.StorageNodes list as well as any
+	// external computes.
+	// The v1alpha2 src.Computes() method returns all of that resource's
+	// compute nodes, of any type.
+	computes := make([]SystemConfigurationComputeNode, 0)
+	for _, name := range src.Computes() {
+		computes = append(computes, SystemConfigurationComputeNode{Name: *name})
+	}
+	dst.Spec.ComputeNodes = computes
 
 	// Preserve Hub data on down-conversion except for metadata.
 	return utilconversion.MarshalData(src, dst)
@@ -507,6 +538,10 @@ func Convert_v1alpha1_WorkflowSpec_To_v1alpha2_WorkflowSpec(in *WorkflowSpec, ou
 
 func Convert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *dwsv1alpha2.WorkflowSpec, out *WorkflowSpec, s apiconversion.Scope) error {
 	return autoConvert_v1alpha2_WorkflowSpec_To_v1alpha1_WorkflowSpec(in, out, s)
+}
+
+func Convert_v1alpha1_SystemConfigurationSpec_To_v1alpha2_SystemConfigurationSpec(in *SystemConfigurationSpec, out *dwsv1alpha2.SystemConfigurationSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha1_SystemConfigurationSpec_To_v1alpha2_SystemConfigurationSpec(in, out, s)
 }
 
 func Convert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in *dwsv1alpha2.SystemConfigurationSpec, out *SystemConfigurationSpec, s apiconversion.Scope) error {
