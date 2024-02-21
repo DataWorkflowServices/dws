@@ -383,10 +383,14 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 	// The v1alpha1 resource's spec.ComputeNodes list is a combination
 	// of all compute nodes from the spec.StorageNodes list as well as any
 	// external computes.
-	// The v1alpha2 src.Computes() method returns all of that resource's
-	// compute nodes, of any type.
+	// The v1alpha2 src.Computes() method returns only the compute nodes
+	// from the spec.StorageNodes list. To retrieve the external computes we must
+	// also use the ComputesExternal() method.
 	computes := make([]SystemConfigurationComputeNode, 0)
 	for _, name := range src.Computes() {
+		computes = append(computes, SystemConfigurationComputeNode{Name: *name})
+	}
+	for _, name := range src.ComputesExternal() {
 		computes = append(computes, SystemConfigurationComputeNode{Name: *name})
 	}
 	dst.Spec.ComputeNodes = computes
