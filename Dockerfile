@@ -18,6 +18,8 @@
 # Build the manager binary
 FROM golang:1.19 as builder
 
+ARG TARGETARCH
+
 WORKDIR /workspace
 # Copy the Go Modules manifests
 COPY go.mod go.mod
@@ -33,7 +35,7 @@ COPY vendor/ vendor/
 COPY github/cluster-api/util/conversion/ github/cluster-api/util/conversion/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -a -o manager cmd/main.go
 
 FROM builder as testing
 WORKDIR /workspace
