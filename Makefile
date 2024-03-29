@@ -182,7 +182,9 @@ uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified 
 
 edit-image: VERSION ?= $(shell cat .version)
 edit-image: .version
-	$(KUSTOMIZE_IMAGE_TAG) config/begin $(OVERLAY) $(IMAGE_TAG_BASE) $(VERSION)
+	IMAGE_BASE=$(IMAGE_TAG_BASE); \
+	if [ "$(OVERLAY)" = "csm" ]; then IMAGE_BASE=$$(awk '/^  newName:/ && /\/dws$$/ {print $$2}' config/csm/kustomization.yaml); fi; \
+	$(KUSTOMIZE_IMAGE_TAG) config/begin $(OVERLAY) $${IMAGE_BASE} $(VERSION)
 
 deploy: kustomize edit-image ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	./deploy.sh deploy $(KUSTOMIZE) config/begin
