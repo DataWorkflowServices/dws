@@ -219,6 +219,10 @@ spec:
       jsonPath: .status.status
       name: Status
       type: string
+    - description: State of live updates
+      jsonPath: .spec.mode
+      name: Mode
+      type: string
     - jsonPath: .metadata.creationTimestamp
       name: Age
       type: date
@@ -248,6 +252,16 @@ spec:
             description: StorageSpec defines the desired specifications of Storage
               resource
             properties:
+              mode:
+                default: Live
+                description: |-
+                  Mode indicates whether the resource is live and is being updated
+                  by the reconcilers or whether it is in testing mode and is being
+                  updated manually.
+                enum:
+                - Live
+                - Testing
+                type: string
               state:
                 default: Enabled
                 description: State describes the desired state of the Storage resource.
