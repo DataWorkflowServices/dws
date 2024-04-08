@@ -313,6 +313,8 @@ func (src *Storage) ConvertTo(dstRaw conversion.Hub) error {
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
 
+	dst.Spec.Mode = restored.Spec.Mode
+
 	return nil
 }
 
@@ -550,4 +552,8 @@ func Convert_v1alpha1_SystemConfigurationSpec_To_v1alpha2_SystemConfigurationSpe
 
 func Convert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in *dwsv1alpha2.SystemConfigurationSpec, out *SystemConfigurationSpec, s apiconversion.Scope) error {
 	return autoConvert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in, out, s)
+}
+
+func Convert_v1alpha2_StorageSpec_To_v1alpha1_StorageSpec(in *dwsv1alpha2.StorageSpec, out *StorageSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_StorageSpec_To_v1alpha1_StorageSpec(in, out, s)
 }
