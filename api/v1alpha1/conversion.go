@@ -398,7 +398,7 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 	dst.Spec.ComputeNodes = computes
 
 	// Preserve Hub data on down-conversion except for metadata.
-	return utilconversion.MarshalData(src, dst)
+	return nil // utilconversion.MarshalData(src, dst)
 }
 
 func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
