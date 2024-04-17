@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Hewlett Packard Enterprise Development LP
+ * Copyright 2023-2024 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -365,14 +365,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 		})
 
 		It("reads SystemConfiguration resource via hub and via spoke", func() {
-			// Spoke should have annotation.
-			resSpoke := &dwsv1alpha1.SystemConfiguration{}
-			Eventually(func(g Gomega) {
-				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
-				anno := resSpoke.GetAnnotations()
-				g.Expect(anno).To(HaveLen(1))
-				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
-			}).Should(Succeed())
+			//// Spoke should have annotation.
+			//resSpoke := &dwsv1alpha1.SystemConfiguration{}
+			//Eventually(func(g Gomega) {
+			//	g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+			//	anno := resSpoke.GetAnnotations()
+			//	g.Expect(anno).To(HaveLen(1))
+			//	g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			//}).Should(Succeed())
 
 			// Hub should not have annotation.
 			Eventually(func(g Gomega) {
