@@ -278,16 +278,8 @@ spec:
     subresources:
       status: {}
   - additionalPrinterColumns:
-    - description: mounted/unmounted
-      jsonPath: .status.desiredState
-      name: DESIREDSTATE
-      type: string
-    - description: mounted/unmounted
-      jsonPath: .status.state
-      name: STATE
-      type: string
     - description: True if current state is achieved
-      jsonPath: .status.ready
+      jsonPath: .status.allReady
       name: READY
       type: boolean
     - jsonPath: .status.error.severity
@@ -513,6 +505,9 @@ spec:
           status:
             description: ClientMountStatus defines the observed state of ClientMount
             properties:
+              allReady:
+                description: Rollup of each mounts ready status
+                type: boolean
               error:
                 description: Error information
                 properties:
@@ -564,6 +559,7 @@ spec:
                   type: object
                 type: array
             required:
+            - allReady
             - mounts
             type: object
         type: object
