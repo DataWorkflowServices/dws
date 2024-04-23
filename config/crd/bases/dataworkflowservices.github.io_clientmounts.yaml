@@ -278,7 +278,11 @@ spec:
     subresources:
       status: {}
   - additionalPrinterColumns:
-    - description: True if current state is achieved
+    - description: The desired state
+      jsonPath: .spec.desiredState
+      name: DESIREDSTATE
+      type: string
+    - description: True if desired state is achieved
       jsonPath: .status.allReady
       name: READY
       type: boolean
