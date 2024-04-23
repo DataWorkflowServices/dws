@@ -60,6 +60,19 @@ func (src *ClientMount) ConvertTo(dstRaw conversion.Hub) error {
 		dst.Status.Error.Severity = dwsv1alpha2.SeverityFatal
 	}
 
+	// v1alpha2 added a rollup of all the mounts' ready flags
+	if hasAnno {
+		dst.Status.AllReady = restored.Status.AllReady
+	} else {
+		dst.Status.AllReady = true
+		for _, mount := range src.Status.Mounts {
+			if !mount.Ready {
+				dst.Status.AllReady = false
+				break
+			}
+		}
+	}
+
 	return nil
 }
 
