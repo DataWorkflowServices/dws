@@ -382,6 +382,7 @@ func TestRequiresKeyword(t *testing.T) {
 			result: fail,
 		},
 		{
+			// Catch a repeated word in a list of valid words.
 			directives: []string{
 				"#DW check_requires requires=copy-offload,other-thing,copy-offload",
 			},
