@@ -539,6 +539,10 @@ func (dst *WorkflowList) ConvertFrom(srcRaw conversion.Hub) error {
 // The conversion-gen tool dropped these from zz_generated.conversion.go to
 // force us to acknowledge that we are addressing the conversion requirements.
 
+func Convert_v1alpha2_ClientMountStatus_To_v1alpha1_ClientMountStatus(in *dwsv1alpha2.ClientMountStatus, out *ClientMountStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_ClientMountStatus_To_v1alpha1_ClientMountStatus(in, out, s)
+}
+
 func Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in *ResourceErrorInfo, out *dwsv1alpha2.ResourceErrorInfo, s apiconversion.Scope) error {
 	return autoConvert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in, out, s)
 }
