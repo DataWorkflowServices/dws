@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2022 Hewlett Packard Enterprise Development LP
+ * Copyright 2021-2024 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -20,8 +20,9 @@
 package dwdparse
 
 import (
-	. "github.com/onsi/ginkgo/v2"
 	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
 )
 
 var dWDRules = []DWDirectiveRuleSpec{
@@ -57,19 +58,6 @@ var dWDRules = []DWDirectiveRuleSpec{
 				IsRequired:      false,
 				IsValueRequired: true,
 			},
-			{
-				Key:             "combined_mgtmdt",
-				Type:            "bool",
-				IsRequired:      false,
-				IsValueRequired: false,
-			},
-			{
-				Key:             "external_mgs",
-				Type:            "string",
-				Pattern:         "^[A-Za-z0-9\\-_\\.@,:]+$",
-				IsRequired:      false,
-				IsValueRequired: true,
-			},
 		},
 	},
 	{
@@ -101,19 +89,6 @@ var dWDRules = []DWDirectiveRuleSpec{
 				Key:             "profile",
 				Type:            "string",
 				Pattern:         "^[A-Za-z][A-Za-z0-9_-]+$",
-				IsRequired:      false,
-				IsValueRequired: true,
-			},
-			{
-				Key:             "combined_mgtmdt",
-				Type:            "bool",
-				IsRequired:      false,
-				IsValueRequired: false,
-			},
-			{
-				Key:             "external_mgs",
-				Type:            "string",
-				Pattern:         "^[A-Za-z0-9\\-_\\.@,:]+$",
 				IsRequired:      false,
 				IsValueRequired: true,
 			},
@@ -261,15 +236,6 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=UncoolProfile3 profile=_this"}, fail},
 	{[]string{"#DW jobdw type=lustre capacity=100GB name=UncoolProfile4 profile=-this"}, fail},
 
-	{[]string{"#DW jobdw type=lustre capacity=100GB combined_mgtmdt name=prettierGoodName"}, pass},
-	{[]string{"#DW jobdw type=lustre capacity=100GB combined_mgtmdt=true name=prettierGoodName"}, pass},
-
-	{[]string{"#DW jobdw type=lustre external_mgs=rabbit-01@tcp capacity=100GB name=Extern1"}, pass},
-	{[]string{"#DW jobdw type=lustre external_mgs=rabbit-01@tcp,rabbit-02@tcp:rabbit-03@tcp capacity=100GB name=Extern1"}, pass},
-	{[]string{"#DW jobdw type=lustre external_mgs=rabbit-01@tcp combined_mgtmdt capacity=100GB name=Extern1"}, pass},
-	{[]string{"#DW jobdw type=lustre external_mgs=rabbit-01@tcp0 capacity=100GB name=Extern1"}, pass},
-	{[]string{"#DW jobdw type=lustre external_mgs=10.0.0.1@o2ib capacity=100GB name=Extern2"}, pass},
-
 	{[]string{"#DW create_persistent type=raw    capacity=100GB name=prettyGoodName  "}, pass},
 	{[]string{"#DW create_persistent type=xfs    capacity=100GB name=prettyGoodName  "}, pass},
 	{[]string{"#DW create_persistent type=gfs2   capacity=100GB name=prettyGoodName  "}, pass},
@@ -287,14 +253,6 @@ var dwDirectiveTests = []struct {
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=UncoolProfile2 profile=this!"}, fail},
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=UncoolProfile3 profile=_this"}, fail},
 	{[]string{"#DW create_persistent type=lustre capacity=100GB name=UncoolProfile4 profile=-this"}, fail},
-
-	{[]string{"#DW create_persistent type=lustre capacity=100GB combined_mgtmdt name=prettierGoodName"}, pass},
-	{[]string{"#DW create_persistent type=lustre capacity=100GB combined_mgtmdt=true name=prettierGoodName"}, pass},
-
-	{[]string{"#DW create_persistent type=lustre external_mgs=rabbit-01@tcp capacity=100GB name=Extern1"}, pass},
-	{[]string{"#DW create_persistent type=lustre external_mgs=rabbit-01@tcp combined_mgtmdt capacity=100GB name=Extern1"}, pass},
-	{[]string{"#DW create_persistent type=lustre external_mgs=rabbit-01@tcp0 capacity=100GB name=Extern1"}, pass},
-	{[]string{"#DW create_persistent type=lustre external_mgs=10.0.0.1@o2ib capacity=100GB name=Extern2"}, pass},
 
 	{[]string{"#DW stage_in  type=file      destination=$DW_JOB_STRIPED source=/pfs/dld-input "}, pass},
 	{[]string{"#DW stage_in  type=directory destination=$DW_JOB_STRIPED source=/pfs/dld-input "}, pass},
@@ -362,7 +320,7 @@ var dwDirectiveTests = []struct {
 	//       contains individualized test cases.
 }
 
-func _TestDWParse(t *testing.T) {
+func TestDWParse(t *testing.T) {
 	for index, tt := range dwDirectiveTests {
 
 		err := Validate(dWDRules, tt.directiveList, func(int, DWDirectiveRuleSpec) {})
@@ -375,7 +333,6 @@ func _TestDWParse(t *testing.T) {
 
 // testCase defines an individual test case
 type testCase struct {
-	rules      []DWDirectiveRuleSpec
 	directives []string
 	result     bool
 }
@@ -391,7 +348,52 @@ func test(t *testing.T, rules []DWDirectiveRuleSpec, tests []testCase) {
 	}
 }
 
-func _TestUniqueWithin(t *testing.T) {
+func TestRequiresKeyword(t *testing.T) {
+
+	rules := []DWDirectiveRuleSpec{
+		{
+			Command: "check_requires",
+			RuleDefs: []DWDirectiveRuleDef{
+				{
+					Key:  "requires",
+					Type: "list-of-string",
+					Patterns: []string{
+						"^copy-offload$",
+						"^other-thing$",
+					},
+					IsRequired:      false,
+					IsValueRequired: true,
+				},
+			},
+		},
+	}
+
+	tests := []testCase{
+		{
+			directives: []string{
+				"#DW check_requires requires=copy-offload,other-thing",
+			},
+			result: pass,
+		},
+		{
+			directives: []string{
+				"#DW check_requires requires=none-such,copy-offload",
+			},
+			result: fail,
+		},
+		{
+			// Catch a repeated word in a list of valid words.
+			directives: []string{
+				"#DW check_requires requires=copy-offload,other-thing,copy-offload",
+			},
+			result: fail,
+		},
+	}
+
+	test(t, rules, tests)
+}
+
+func TestUniqueWithin(t *testing.T) {
 	rules := []DWDirectiveRuleSpec{{
 		Command: "unique",
 		RuleDefs: []DWDirectiveRuleDef{{
@@ -417,7 +419,7 @@ func _TestUniqueWithin(t *testing.T) {
 	test(t, rules, tests)
 }
 
-func _TestKeyRegexp(t *testing.T) {
+func TestKeyRegexp(t *testing.T) {
 	rules := []DWDirectiveRuleSpec{{
 		Command: "regexp",
 		RuleDefs: []DWDirectiveRuleDef{{
