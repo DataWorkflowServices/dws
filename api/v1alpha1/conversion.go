@@ -190,6 +190,10 @@ func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
 		dst.Status.Error.Severity = dwsv1alpha2.SeverityFatal
 	}
 
+	if hasAnno {
+		dst.Status.RequiredDaemons = restored.Status.RequiredDaemons
+	}
+
 	return nil
 }
 
@@ -541,6 +545,10 @@ func (dst *WorkflowList) ConvertFrom(srcRaw conversion.Hub) error {
 
 func Convert_v1alpha2_ClientMountStatus_To_v1alpha1_ClientMountStatus(in *dwsv1alpha2.ClientMountStatus, out *ClientMountStatus, s apiconversion.Scope) error {
 	return autoConvert_v1alpha2_ClientMountStatus_To_v1alpha1_ClientMountStatus(in, out, s)
+}
+
+func Convert_v1alpha2_DirectiveBreakdownStatus_To_v1alpha1_DirectiveBreakdownStatus(in *dwsv1alpha2.DirectiveBreakdownStatus, out *DirectiveBreakdownStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_DirectiveBreakdownStatus_To_v1alpha1_DirectiveBreakdownStatus(in, out, s)
 }
 
 func Convert_v1alpha1_ResourceErrorInfo_To_v1alpha2_ResourceErrorInfo(in *ResourceErrorInfo, out *dwsv1alpha2.ResourceErrorInfo, s apiconversion.Scope) error {
