@@ -1,8 +1,8 @@
 resources:
 - ../default
 
-patchesStrategicMerge:
+patches:
 # Arguments for the controller manager that are specific to kind
-- manager_environment_patch.yaml
+- path: manager_environment_patch.yaml
 # Kind specific configuration for the webhook
-- webhook_patch.yaml
+- path: webhook_patch.yaml
