@@ -88,7 +88,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads ClientMount resource via hub and via spoke", func() {
+		It("reads ClientMount resource via hub and via spoke v1alpha1", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha1.ClientMount{}
 			Eventually(func(g Gomega) {
@@ -105,6 +105,8 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.ClientMount"
 	})
 
 	Context("DWDirectiveRule", func() {
@@ -133,7 +135,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads DWDirectiveRule resource via hub and via spoke", func() {
+		It("reads DWDirectiveRule resource via hub and via spoke v1alpha1", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha1.DWDirectiveRule{}
 			Eventually(func(g Gomega) {
@@ -150,6 +152,8 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.DWDirectiveRule"
 	})
 
 	Context("DirectiveBreakdown", func() {
@@ -178,7 +182,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads DirectiveBreakdown resource via hub and via spoke", func() {
+		It("reads DirectiveBreakdown resource via hub and via spoke v1alpha1", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha1.DirectiveBreakdown{}
 			Eventually(func(g Gomega) {
@@ -195,6 +199,8 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.DirectiveBreakdown"
 	})
 
 	Context("PersistentStorageInstance", func() {
@@ -229,7 +235,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads PersistentStorageInstance resource via hub and via spoke", func() {
+		It("reads PersistentStorageInstance resource via hub and via spoke v1alpha1", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha1.PersistentStorageInstance{}
 			Eventually(func(g Gomega) {
@@ -246,6 +252,8 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.PersistentStorageInstance"
 	})
 
 	Context("Servers", func() {
@@ -274,7 +282,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads Servers resource via hub and via spoke", func() {
+		It("reads Servers resource via hub and via spoke v1alpha1", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha1.Servers{}
 			Eventually(func(g Gomega) {
@@ -291,6 +299,8 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.Servers"
 	})
 
 	Context("Storage", func() {
@@ -319,7 +329,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads Storage resource via hub and via spoke", func() {
+		It("reads Storage resource via hub and via spoke v1alpha1", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha1.Storage{}
 			Eventually(func(g Gomega) {
@@ -336,6 +346,8 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.Storage"
 	})
 
 	Context("SystemConfiguration", func() {
@@ -364,7 +376,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads SystemConfiguration resource via hub and via spoke", func() {
+		It("reads SystemConfiguration resource via hub and via spoke v1alpha1", func() {
 			//// Spoke should have annotation.
 			//resSpoke := &dwsv1alpha1.SystemConfiguration{}
 			//Eventually(func(g Gomega) {
@@ -381,6 +393,8 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.SystemConfiguration"
 	})
 
 	Context("Workflow", func() {
@@ -418,7 +432,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads Workflow resource via hub and via spoke", func() {
+		It("reads Workflow resource via hub and via spoke v1alpha1", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha1.Workflow{}
 			Eventually(func(g Gomega) {
@@ -436,7 +450,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		It("reads Computes resource via hub and via spoke", func() {
+		It("reads Computes resource via hub and via spoke v1alpha1", func() {
 			// The workflow_controller's Reconcile() created
 			// a Computes resource to match the Workflow resource.
 
@@ -457,5 +471,9 @@ var _ = Describe("Conversion Webhook Test", func() {
 				g.Expect(anno).To(HaveLen(0))
 			}).Should(Succeed())
 		})
+
+		// +crdbumper:scaffold:spoketest="dws.Workflow"
 	})
+
+	// +crdbumper:scaffold:webhooksuitetest
 })
