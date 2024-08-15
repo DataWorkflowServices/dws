@@ -106,7 +106,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.ClientMount"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.ClientMount"
 	})
 
 	Context("DWDirectiveRule", func() {
@@ -153,7 +153,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.DWDirectiveRule"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.DWDirectiveRule"
 	})
 
 	Context("DirectiveBreakdown", func() {
@@ -200,7 +200,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.DirectiveBreakdown"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.DirectiveBreakdown"
 	})
 
 	Context("PersistentStorageInstance", func() {
@@ -253,7 +253,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.PersistentStorageInstance"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.PersistentStorageInstance"
 	})
 
 	Context("Servers", func() {
@@ -300,7 +300,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.Servers"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.Servers"
 	})
 
 	Context("Storage", func() {
@@ -347,7 +347,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.Storage"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.Storage"
 	})
 
 	Context("SystemConfiguration", func() {
@@ -394,7 +394,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.SystemConfiguration"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.SystemConfiguration"
 	})
 
 	Context("Workflow", func() {
@@ -472,7 +472,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
-		// +crdbumper:scaffold:spoketest="dws.Workflow"
+		// +crdbumper:scaffold:spoketest="dataworkflowservices.Workflow"
 	})
 
 	// +crdbumper:scaffold:webhooksuitetest
