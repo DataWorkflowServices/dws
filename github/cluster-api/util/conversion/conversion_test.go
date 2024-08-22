@@ -35,12 +35,14 @@ var (
 		Version: "v1old",
 		Kind:    "Workflow",
 	}
+
+	// +crdbumper:scaffold:gvk
 )
 
 func TestMarshalData(t *testing.T) {
 	g := NewWithT(t)
 
-	t.Run("should write source object to destination", func(*testing.T) {
+	t.Run("Workflow should write source object to destination", func(*testing.T) {
 		src := &dwsv1alpha2.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
@@ -73,7 +75,7 @@ func TestMarshalData(t *testing.T) {
 		g.Expect(dst.GetAnnotations()[DataAnnotation]).ToNot(ContainSubstring("label1"))
 	})
 
-	t.Run("should append the annotation", func(*testing.T) {
+	t.Run("Workflow should append the annotation", func(*testing.T) {
 		src := &dwsv1alpha2.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
@@ -89,12 +91,14 @@ func TestMarshalData(t *testing.T) {
 		g.Expect(MarshalData(src, dst)).To(Succeed())
 		g.Expect(dst.GetAnnotations()).To(HaveLen(2))
 	})
+
+	// +crdbumper:scaffold:marshaldata
 }
 
 func TestUnmarshalData(t *testing.T) {
 	g := NewWithT(t)
 
-	t.Run("should return false without errors if annotation doesn't exist", func(*testing.T) {
+	t.Run("Workflow should return false without errors if annotation doesn't exist", func(*testing.T) {
 		src := &dwsv1alpha2.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
@@ -109,7 +113,7 @@ func TestUnmarshalData(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 	})
 
-	t.Run("should return true when a valid annotation with data exists", func(*testing.T) {
+	t.Run("Workflow should return true when a valid annotation with data exists", func(*testing.T) {
 		src := &unstructured.Unstructured{}
 		src.SetGroupVersionKind(oldWorkflowGVK)
 		src.SetName("test-1")
@@ -133,7 +137,7 @@ func TestUnmarshalData(t *testing.T) {
 		g.Expect(dst.GetAnnotations()).To(BeEmpty())
 	})
 
-	t.Run("should clean the annotation on successful unmarshal", func(*testing.T) {
+	t.Run("Workflow should clean the annotation on successful unmarshal", func(*testing.T) {
 		src := &unstructured.Unstructured{}
 		src.SetGroupVersionKind(oldWorkflowGVK)
 		src.SetName("test-1")
@@ -155,6 +159,8 @@ func TestUnmarshalData(t *testing.T) {
 		g.Expect(src.GetAnnotations()).ToNot(HaveKey(DataAnnotation))
 		g.Expect(src.GetAnnotations()).To(HaveLen(1))
 	})
+
+	// +crdbumper:scaffold:unmarshaldata
 }
 
 // Just touch ginkgo, so it's here to interpret any ginkgo args from

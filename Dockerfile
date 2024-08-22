@@ -16,7 +16,7 @@
 # limitations under the License.
 
 # Build the manager binary
-FROM golang:1.21 as builder
+FROM golang:1.21 AS builder
 
 ARG TARGETARCH
 ARG TARGETOS
@@ -42,7 +42,7 @@ COPY github/cluster-api/util/conversion/ github/cluster-api/util/conversion/
 # by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager cmd/main.go
 
-FROM builder as testing
+FROM builder AS testing
 WORKDIR /workspace
 
 COPY hack/ hack/
