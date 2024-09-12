@@ -377,14 +377,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 		})
 
 		It("reads SystemConfiguration resource via hub and via spoke v1alpha1", func() {
-			//// Spoke should have annotation.
-			//resSpoke := &dwsv1alpha1.SystemConfiguration{}
-			//Eventually(func(g Gomega) {
-			//	g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
-			//	anno := resSpoke.GetAnnotations()
-			//	g.Expect(anno).To(HaveLen(1))
-			//	g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
-			//}).Should(Succeed())
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha1.SystemConfiguration{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
 
 			// Hub should not have annotation.
 			Eventually(func(g Gomega) {

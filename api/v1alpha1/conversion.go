@@ -20,6 +20,8 @@
 package v1alpha1
 
 import (
+	"os"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apiconversion "k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -367,6 +369,7 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 
 	if hasAnno {
 		dst.Spec.PortsCooldownInSeconds = restored.Spec.PortsCooldownInSeconds
+		dst.Status.Error = restored.Status.Error
 
 		// dst.Spec.ComputeNodes: The destination does not have this.
 		// Instead, it finds the computes that are already in the
@@ -415,7 +418,11 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 	dst.Spec.ComputeNodes = computes
 
 	// Preserve Hub data on down-conversion except for metadata.
-	return nil // utilconversion.MarshalData(src, dst)
+	if _, found := os.LookupEnv("ENVIRONMENT"); found {
+		return nil
+	} else {
+		return utilconversion.MarshalData(src, dst)
+	}
 }
 
 func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
@@ -581,4 +588,8 @@ func Convert_v1alpha2_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpe
 
 func Convert_v1alpha2_StorageSpec_To_v1alpha1_StorageSpec(in *dwsv1alpha2.StorageSpec, out *StorageSpec, s apiconversion.Scope) error {
 	return autoConvert_v1alpha2_StorageSpec_To_v1alpha1_StorageSpec(in, out, s)
+}
+
+func Convert_v1alpha2_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in *dwsv1alpha2.SystemConfigurationStatus, out *SystemConfigurationStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha2_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in, out, s)
 }
