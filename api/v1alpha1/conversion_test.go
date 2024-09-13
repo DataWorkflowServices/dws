@@ -25,7 +25,7 @@ import (
 	fuzz "github.com/google/gofuzz"
 	. "github.com/onsi/ginkgo/v2"
 
-	//"k8s.io/apimachinery/pkg/api/apitesting/fuzzer"
+	"k8s.io/apimachinery/pkg/api/apitesting/fuzzer"
 	runtimeserializer "k8s.io/apimachinery/pkg/runtime/serializer"
 
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
@@ -69,11 +69,11 @@ func TestFuzzyConversion(t *testing.T) {
 		Spoke: &Storage{},
 	}))
 
-	//t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-	//	Hub:         &dwsv1alpha2.SystemConfiguration{},
-	//	Spoke:       &SystemConfiguration{},
-	//	FuzzerFuncs: []fuzzer.FuzzerFuncs{SystemConfigurationFuzzFunc},
-	//}))
+	t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
+		Hub:         &dwsv1alpha2.SystemConfiguration{},
+		Spoke:       &SystemConfiguration{},
+		FuzzerFuncs: []fuzzer.FuzzerFuncs{SystemConfigurationFuzzFunc},
+	}))
 
 	t.Run("for Workflow", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
 		Hub:   &dwsv1alpha2.Workflow{},
