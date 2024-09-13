@@ -5,3 +5,10 @@ metadata:
   namespace: system
 spec:
   replicas: 1
+  template:
+  spec:
+    containers:
+    - name: webhook
+      env:
+      - name: ENVIRONMENT
+        value: "kind"
