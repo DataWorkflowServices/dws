@@ -96,6 +96,15 @@ func main() {
 			os.Exit(1)
 		}
 
+		if err = (&controllers.SystemConfigurationReconciler{
+			Client: mgr.GetClient(),
+			Log:    ctrl.Log.WithName("controllers").WithName("SystemConfiguration"),
+			Scheme: mgr.GetScheme(),
+		}).SetupWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "SystemConfiguration")
+			os.Exit(1)
+		}
+
 		if os.Getenv("ENVIRONMENT") == "kind" {
 			if err = (&controllers.ClientMountReconciler{
 				Client: mgr.GetClient(),

@@ -54,6 +54,45 @@ rules:
 - apiGroups:
   - dataworkflowservices.github.io
   resources:
+  - storages
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - systemconfigurations
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - systemconfigurations/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - systemconfigurations/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
   - workflows
   verbs:
   - get

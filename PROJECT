@@ -165,6 +165,7 @@ resources:
 - api:
     crdVersion: v1
     namespaced: true
+  controller: true
   domain: github.io
   group: dataworkflowservices
   kind: SystemConfiguration
