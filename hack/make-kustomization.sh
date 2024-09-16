@@ -61,11 +61,6 @@ patches:
   patch: |-
 $COMPONENT_LABELS
 $NNF_VER_LABELS
-- target:
-    kind: DaemonSet
-  patch: |-
-$COMPONENT_LABELS
-$NNF_VER_LABELS
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
