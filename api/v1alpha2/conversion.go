@@ -21,6 +21,7 @@ package v1alpha2
 
 import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	apiconversion "k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -169,12 +170,18 @@ func (src *PersistentStorageInstance) ConvertTo(dstRaw conversion.Hub) error {
 
 	// Manually restore data.
 	restored := &dwsv1alpha3.PersistentStorageInstance{}
-	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
+	hasAnno, err := utilconversion.UnmarshalData(src, restored)
+	if err != nil {
 		return err
 	}
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
+	if hasAnno {
+		dst.Spec.State = restored.Spec.State
+		dst.Status.State = restored.Status.State
+		dst.Status.Ready = restored.Status.Ready
+	}
 
 	return nil
 }
@@ -185,6 +192,22 @@ func (dst *PersistentStorageInstance) ConvertFrom(srcRaw conversion.Hub) error {
 
 	if err := Convert_v1alpha3_PersistentStorageInstance_To_v1alpha2_PersistentStorageInstance(src, dst, nil); err != nil {
 		return err
+	}
+
+	if src.Spec.State == dwsv1alpha3.PSIStateEnabled {
+		dst.Spec.State = PSIStateActive
+		if src.Status.State == dwsv1alpha3.PSIStateEnabled && src.Status.Ready == true {
+			dst.Status.State = PSIStateActive
+		} else {
+			dst.Status.State = PSIStateCreating
+		}
+	} else if src.Spec.State == dwsv1alpha3.PSIStateDisabled {
+		dst.Spec.State = PSIStateDestroying
+		if src.Status.State == dwsv1alpha3.PSIStateDisabled && src.Status.Ready == true {
+			dst.Status.State = PSIStateDestroying
+		} else {
+			dst.Status.State = PSIStateActive
+		}
 	}
 
 	// Preserve Hub data on down-conversion except for metadata.
@@ -398,4 +421,8 @@ func (src *WorkflowList) ConvertTo(dstRaw conversion.Hub) error {
 
 func (dst *WorkflowList) ConvertFrom(srcRaw conversion.Hub) error {
 	return apierrors.NewMethodNotSupported(resource("WorkflowList"), "ConvertFrom")
+}
+
+func Convert_v1alpha3_PersistentStorageInstanceStatus_To_v1alpha2_PersistentStorageInstanceStatus(in *dwsv1alpha3.PersistentStorageInstanceStatus, out *PersistentStorageInstanceStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha3_PersistentStorageInstanceStatus_To_v1alpha2_PersistentStorageInstanceStatus(in, out, s)
 }

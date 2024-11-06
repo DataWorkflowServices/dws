@@ -273,7 +273,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 					FsType:      "raw",
 					DWDirective: "",
 					UserID:      0,
-					State:       "Active",
+					State:       "Enabled",
 				},
 			}
 

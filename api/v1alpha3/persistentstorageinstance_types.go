@@ -40,16 +40,13 @@ type PersistentStorageInstanceState string
 
 // State enumerations
 const (
-	// The PSI resource exists in k8s, but the storage and filesystem that it represents has not been created yet
-	PSIStateCreating PersistentStorageInstanceState = "Creating"
-
 	// The storage and filesystem represented by the PSI exists and is ready for use
-	PSIStateActive PersistentStorageInstanceState = "Active"
+	PSIStateEnabled PersistentStorageInstanceState = "Enabled"
 
 	// A #DW destroy_persistent directive has been issued in a workflow.
 	// Once all other workflows with persistent_dw reservations on the PSI complete, the PSI will be destroyed.
 	// New #DW persistent_dw requests after the PSI enters the 'destroying' state will fail.
-	PSIStateDestroying PersistentStorageInstanceState = "Destroying"
+	PSIStateDisabled PersistentStorageInstanceState = "Disabled"
 )
 
 // PersistentStorageInstanceSpec defines the desired state of PersistentStorageInstance
@@ -68,7 +65,7 @@ type PersistentStorageInstanceSpec struct {
 	UserID uint32 `json:"userID"`
 
 	// Desired state of the PersistentStorageInstance
-	// +kubebuilder:validation:Enum:=Active;Destroying
+	// +kubebuilder:validation:Enum:=Enabled;Disabled
 	State PersistentStorageInstanceState `json:"state"`
 
 	// List of consumers using this persistent storage
@@ -81,8 +78,10 @@ type PersistentStorageInstanceStatus struct {
 	Servers corev1.ObjectReference `json:"servers,omitempty"`
 
 	// Current state of the PersistentStorageInstance
-	// +kubebuilder:validation:Enum:=Creating;Active;Destroying
+	// +kubebuilder:validation:Enum:=Enabled;Disabled
 	State PersistentStorageInstanceState `json:"state"`
+
+	Ready bool `json:"ready"`
 
 	// Error information
 	ResourceError `json:",inline"`

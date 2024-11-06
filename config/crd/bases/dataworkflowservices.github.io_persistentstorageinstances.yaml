@@ -560,8 +560,8 @@ spec:
               state:
                 description: Desired state of the PersistentStorageInstance
                 enum:
-                - Active
-                - Destroying
+                - Enabled
+                - Disabled
                 type: string
               userID:
                 description: User ID of the user that created the persistent storage
@@ -609,6 +609,8 @@ spec:
                 - severity
                 - type
                 type: object
+              ready:
+                type: boolean
               servers:
                 description: Servers refers to the Servers resource that provides
                   the backing storage for this storage instance
@@ -657,11 +659,11 @@ spec:
               state:
                 description: Current state of the PersistentStorageInstance
                 enum:
-                - Creating
-                - Active
-                - Destroying
+                - Enabled
+                - Disabled
                 type: string
             required:
+            - ready
             - state
             type: object
         type: object

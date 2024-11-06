@@ -235,14 +235,21 @@ func (src *PersistentStorageInstance) ConvertTo(dstRaw conversion.Hub) error {
 	if err != nil {
 		return err
 	}
+
 	// EDIT THIS FUNCTION! If the annotation is holding anything that is
 	// hub-specific then copy it into 'dst' from 'restored'.
 	// Otherwise, you may comment out UnmarshalData() until it's needed.
 
 	// v1alpha2 removed Error.Recoverable and uses Error.Severity and Error.Type, instead.
-	if hasAnno && restored.Status.Error != nil {
-		dst.Status.Error.Type = restored.Status.Error.Type
-		dst.Status.Error.Severity = restored.Status.Error.Severity
+	if hasAnno {
+		if restored.Status.Error != nil {
+			dst.Status.Error.Type = restored.Status.Error.Type
+			dst.Status.Error.Severity = restored.Status.Error.Severity
+		}
+
+		dst.Spec.State = restored.Spec.State
+		dst.Status.State = restored.Status.State
+		dst.Status.Ready = restored.Status.Ready
 	}
 	if src.Status.Error != nil && !src.Status.Error.Recoverable {
 		dst.Status.Error.Severity = dwsv1alpha3.SeverityFatal
@@ -266,6 +273,22 @@ func (dst *PersistentStorageInstance) ConvertFrom(srcRaw conversion.Hub) error {
 			dst.Status.Error.Recoverable = false
 		} else {
 			dst.Status.Error.Recoverable = true
+		}
+	}
+
+	if src.Spec.State == dwsv1alpha3.PSIStateEnabled {
+		dst.Spec.State = PSIStateActive
+		if src.Status.State == dwsv1alpha3.PSIStateEnabled && src.Status.Ready == true {
+			dst.Status.State = PSIStateActive
+		} else {
+			dst.Status.State = PSIStateCreating
+		}
+	} else if src.Spec.State == dwsv1alpha3.PSIStateDisabled {
+		dst.Spec.State = PSIStateDestroying
+		if src.Status.State == dwsv1alpha3.PSIStateDisabled && src.Status.Ready == true {
+			dst.Status.State = PSIStateDestroying
+		} else {
+			dst.Status.State = PSIStateActive
 		}
 	}
 
@@ -596,4 +619,8 @@ func Convert_v1alpha3_StorageSpec_To_v1alpha1_StorageSpec(in *dwsv1alpha3.Storag
 
 func Convert_v1alpha3_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in *dwsv1alpha3.SystemConfigurationStatus, out *SystemConfigurationStatus, s apiconversion.Scope) error {
 	return autoConvert_v1alpha3_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in, out, s)
+}
+
+func Convert_v1alpha3_PersistentStorageInstanceStatus_To_v1alpha1_PersistentStorageInstanceStatus(in *dwsv1alpha3.PersistentStorageInstanceStatus, out *PersistentStorageInstanceStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha3_PersistentStorageInstanceStatus_To_v1alpha1_PersistentStorageInstanceStatus(in, out, s)
 }
