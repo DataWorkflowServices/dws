@@ -26,12 +26,12 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 )
 
 var (
 	oldWorkflowGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha2.GroupVersion.Group,
+		Group:   dwsv1alpha3.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "Workflow",
 	}
@@ -91,14 +91,14 @@ func TestMarshalData(t *testing.T) {
 	g := NewWithT(t)
 
 	t.Run("Workflow should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha2.Workflow{
+		src := &dwsv1alpha3.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha2.WorkflowSpec{
+			Spec: dwsv1alpha3.WorkflowSpec{
 				DesiredState: "Proposal",
 				WLMID:        "special-id",
 				JobID:        intstr.FromString("my wlm job 8128"),
@@ -124,13 +124,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Workflow should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha2.Workflow{
+		src := &dwsv1alpha3.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha2.GroupVersion.WithKind("Workflow"))
+		dst.SetGroupVersionKind(dwsv1alpha3.GroupVersion.WithKind("Workflow"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -555,7 +555,7 @@ func TestUnmarshalData(t *testing.T) {
 	g := NewWithT(t)
 
 	t.Run("Workflow should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha2.Workflow{
+		src := &dwsv1alpha3.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -577,7 +577,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha2.Workflow{
+		dst := &dwsv1alpha3.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -602,7 +602,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha2.Workflow{
+		dst := &dwsv1alpha3.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},

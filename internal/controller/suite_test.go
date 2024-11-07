@@ -37,6 +37,7 @@ import (
 
 	dwsv1alpha1 "github.com/DataWorkflowServices/dws/api/v1alpha1"
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 	"github.com/DataWorkflowServices/dws/controllers"
 	//+kubebuilder:scaffold:imports
 )
@@ -79,6 +80,9 @@ var _ = BeforeSuite(func() {
 	err = dwsv1alpha2.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
+	err = dwsv1alpha3.AddToScheme(scheme.Scheme)
+	Expect(err).NotTo(HaveOccurred())
+
 	//+kubebuilder:scaffold:scheme
 
 	testEnv = &envtest.Environment{
@@ -118,32 +122,32 @@ var _ = BeforeSuite(func() {
 
 	// start webhooks
 
-	err = (&dwsv1alpha2.ClientMount{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.ClientMount{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 	/*
-		err = (&dwsv1alpha2.Computes{}).SetupWebhookWithManager(k8sManager)
+		err = (&dwsv1alpha3.Computes{}).SetupWebhookWithManager(k8sManager)
 		Expect(err).ToNot(HaveOccurred())
 	*/
 
-	err = (&dwsv1alpha2.DWDirectiveRule{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.DWDirectiveRule{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha2.DirectiveBreakdown{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.DirectiveBreakdown{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha2.PersistentStorageInstance{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.PersistentStorageInstance{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha2.Servers{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.Servers{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha2.Storage{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.Storage{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha2.SystemConfiguration{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.SystemConfiguration{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha2.Workflow{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha3.Workflow{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	// +crdbumper:scaffold:builder
