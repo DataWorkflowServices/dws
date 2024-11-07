@@ -28,55 +28,55 @@ import (
 	"k8s.io/apimachinery/pkg/api/apitesting/fuzzer"
 	runtimeserializer "k8s.io/apimachinery/pkg/runtime/serializer"
 
-	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
 )
 
 func TestFuzzyConversion(t *testing.T) {
 
 	t.Run("for ClientMount", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.ClientMount{},
+		Hub:   &dwsv1alpha3.ClientMount{},
 		Spoke: &ClientMount{},
 	}))
 
 	t.Run("for Computes", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.Computes{},
+		Hub:   &dwsv1alpha3.Computes{},
 		Spoke: &Computes{},
 	}))
 
 	t.Run("for DWDirectiveRule", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.DWDirectiveRule{},
+		Hub:   &dwsv1alpha3.DWDirectiveRule{},
 		Spoke: &DWDirectiveRule{},
 	}))
 
 	t.Run("for DirectiveBreakdown", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.DirectiveBreakdown{},
+		Hub:   &dwsv1alpha3.DirectiveBreakdown{},
 		Spoke: &DirectiveBreakdown{},
 	}))
 
 	t.Run("for PersistentStorageInstance", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.PersistentStorageInstance{},
+		Hub:   &dwsv1alpha3.PersistentStorageInstance{},
 		Spoke: &PersistentStorageInstance{},
 	}))
 
 	t.Run("for Servers", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.Servers{},
+		Hub:   &dwsv1alpha3.Servers{},
 		Spoke: &Servers{},
 	}))
 
 	t.Run("for Storage", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.Storage{},
+		Hub:   &dwsv1alpha3.Storage{},
 		Spoke: &Storage{},
 	}))
 
 	t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:         &dwsv1alpha2.SystemConfiguration{},
+		Hub:         &dwsv1alpha3.SystemConfiguration{},
 		Spoke:       &SystemConfiguration{},
 		FuzzerFuncs: []fuzzer.FuzzerFuncs{SystemConfigurationFuzzFunc},
 	}))
 
 	t.Run("for Workflow", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha2.Workflow{},
+		Hub:   &dwsv1alpha3.Workflow{},
 		Spoke: &Workflow{},
 	}))
 
@@ -119,7 +119,7 @@ func SystemConfigurationComputesv1Fuzzer(in *SystemConfigurationSpec, c fuzz.Con
 }
 
 // Add a breadcrumb to the fuzzed names to aid in debugging.
-func SystemConfigurationComputesv2Fuzzer(in *dwsv1alpha2.SystemConfigurationSpec, c fuzz.Continue) {
+func SystemConfigurationComputesv2Fuzzer(in *dwsv1alpha3.SystemConfigurationSpec, c fuzz.Continue) {
 	// Tell the fuzzer to begin by fuzzing everything in the object.
 	c.FuzzNoCustom(in)
 
