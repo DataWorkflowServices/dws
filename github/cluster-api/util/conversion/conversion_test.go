@@ -698,7 +698,7 @@ func TestUnmarshalData(t *testing.T) {
 		src.SetGroupVersionKind(oldComputesGVK)
 		src.SetName("test-1")
 		src.SetAnnotations(map[string]string{
-			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
+			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"data\":[]}",
 		})
 
 		dst := &dwsv1alpha3.Computes{
@@ -723,7 +723,7 @@ func TestUnmarshalData(t *testing.T) {
 		src.SetName("test-1")
 		src.SetAnnotations(map[string]string{
 			"annotation-1": "",
-			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
+			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"data\":[]}",
 		})
 
 		dst := &dwsv1alpha3.Computes{
@@ -760,7 +760,7 @@ func TestUnmarshalData(t *testing.T) {
 		src.SetGroupVersionKind(oldDWDirectiveRuleGVK)
 		src.SetName("test-1")
 		src.SetAnnotations(map[string]string{
-			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
+			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":[]}",
 		})
 
 		dst := &dwsv1alpha3.DWDirectiveRule{
@@ -785,7 +785,7 @@ func TestUnmarshalData(t *testing.T) {
 		src.SetName("test-1")
 		src.SetAnnotations(map[string]string{
 			"annotation-1": "",
-			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
+			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":[]}",
 		})
 
 		dst := &dwsv1alpha3.DWDirectiveRule{
