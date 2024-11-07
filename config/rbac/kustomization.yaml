@@ -24,3 +24,25 @@ resources:
 
 configurations:
   - kustomizeconfig.yaml
+# For each CRD, "Editor" and "Viewer" roles are scaffolded by
+# default, aiding admins in cluster management. Those roles are
+# not used by the Project itself. You can comment the following lines
+# if you do not want those helpers be installed with your Project.
+- workflow_editor_role.yaml
+- workflow_viewer_role.yaml
+- systemconfiguration_editor_role.yaml
+- systemconfiguration_viewer_role.yaml
+- storage_editor_role.yaml
+- storage_viewer_role.yaml
+- servers_editor_role.yaml
+- servers_viewer_role.yaml
+- persistentstorageinstance_editor_role.yaml
+- persistentstorageinstance_viewer_role.yaml
+- directivebreakdown_editor_role.yaml
+- directivebreakdown_viewer_role.yaml
+- dwdirectiverule_editor_role.yaml
+- dwdirectiverule_viewer_role.yaml
+- computes_editor_role.yaml
+- computes_viewer_role.yaml
+- clientmount_editor_role.yaml
+- clientmount_viewer_role.yaml
