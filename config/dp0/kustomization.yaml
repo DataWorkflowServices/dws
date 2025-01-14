@@ -4,4 +4,5 @@ resources:
 patches:
 # Arguments for the controller manager that are specific to dp0
 - path: manager_environment_patch.yaml
+- path: webhook_environment_patch.yaml
 
