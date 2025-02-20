@@ -193,7 +193,7 @@ func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
 	}
 
 	if hasAnno {
-		dst.Status.RequiredDaemons = restored.Status.RequiredDaemons
+		dst.Status.Requires = restored.Status.Requires
 	}
 
 	return nil
@@ -449,6 +449,8 @@ func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
 
 	if hasAnno {
 		dst.Spec.JobID = restored.Spec.JobID
+		dst.Status.Requires = restored.Status.Requires
+		dst.Status.WorkflowToken = restored.Status.WorkflowToken
 	} else {
 		dst.Spec.JobID = intstr.FromInt(src.Spec.JobID)
 	}
@@ -592,6 +594,10 @@ func Convert_v1alpha3_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpe
 
 func Convert_v1alpha3_StorageSpec_To_v1alpha1_StorageSpec(in *dwsv1alpha3.StorageSpec, out *StorageSpec, s apiconversion.Scope) error {
 	return autoConvert_v1alpha3_StorageSpec_To_v1alpha1_StorageSpec(in, out, s)
+}
+
+func Convert_v1alpha3_WorkflowStatus_To_v1alpha1_WorkflowStatus(in *dwsv1alpha3.WorkflowStatus, out *WorkflowStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha3_WorkflowStatus_To_v1alpha1_WorkflowStatus(in, out, s)
 }
 
 func Convert_v1alpha3_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in *dwsv1alpha3.SystemConfigurationStatus, out *SystemConfigurationStatus, s apiconversion.Scope) error {
