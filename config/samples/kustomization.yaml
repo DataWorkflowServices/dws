@@ -9,4 +9,13 @@ resources:
 - dws_v1alpha1_clientmount.yaml
 - dws_v1alpha1_persistentstorageinstance.yaml
 - dws_v1alpha1_systemconfiguration.yaml
+- dataworkflowservices_v1alpha3_clientmount.yaml
+- dataworkflowservices_v1alpha3_computes.yaml
+- dataworkflowservices_v1alpha3_dwdirectiverule.yaml
+- dataworkflowservices_v1alpha3_directivebreakdown.yaml
+- dataworkflowservices_v1alpha3_persistentstorageinstance.yaml
+- dataworkflowservices_v1alpha3_servers.yaml
+- dataworkflowservices_v1alpha3_storage.yaml
+- dataworkflowservices_v1alpha3_systemconfiguration.yaml
+- dataworkflowservices_v1alpha3_workflow.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

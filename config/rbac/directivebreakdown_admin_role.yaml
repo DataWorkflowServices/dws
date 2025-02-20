@@ -1,0 +1,27 @@
+# This rule is not used by the project dws itself.
+# It is provided to allow the cluster admin to help manage permissions for users.
+#
+# Grants full permissions ('*') over dataworkflowservices.github.io.
+# This role is intended for users authorized to modify roles and bindings within the cluster,
+# enabling them to delegate specific permissions to other users or groups as needed.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: dws
+    app.kubernetes.io/managed-by: kustomize
+  name: directivebreakdown-admin-role
+rules:
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - directivebreakdowns
+  verbs:
+  - '*'
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - directivebreakdowns/status
+  verbs:
+  - get

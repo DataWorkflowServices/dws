@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2023.
+Copyright 2021-2025.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import (
 
 	dwsv1alpha1 "github.com/DataWorkflowServices/dws/api/v1alpha1"
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 	"github.com/DataWorkflowServices/dws/controllers"
 	//+kubebuilder:scaffold:imports
 )
@@ -49,6 +50,7 @@ func init() {
 
 	utilruntime.Must(dwsv1alpha1.AddToScheme(scheme))
 	utilruntime.Must(dwsv1alpha2.AddToScheme(scheme))
+	utilruntime.Must(dwsv1alpha3.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
