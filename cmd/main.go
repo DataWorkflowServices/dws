@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2023.
+Copyright 2021-2025.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import (
 
 	dwsv1alpha1 "github.com/DataWorkflowServices/dws/api/v1alpha1"
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
+	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 	"github.com/DataWorkflowServices/dws/controllers"
 	//+kubebuilder:scaffold:imports
 )
@@ -49,6 +50,7 @@ func init() {
 
 	utilruntime.Must(dwsv1alpha1.AddToScheme(scheme))
 	utilruntime.Must(dwsv1alpha2.AddToScheme(scheme))
+	utilruntime.Must(dwsv1alpha3.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -116,39 +118,39 @@ func main() {
 			}
 		}
 	case "webhook":
-		if err = (&dwsv1alpha2.ClientMount{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.ClientMount{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "ClientMount")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.Computes{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.Computes{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Computes")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.DWDirectiveRule{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.DWDirectiveRule{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "DWDirectiveRule")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.DirectiveBreakdown{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.DirectiveBreakdown{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "DirectiveBreakdown")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.PersistentStorageInstance{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.PersistentStorageInstance{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "PersistentStorageInstance")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.Servers{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.Servers{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Servers")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.Storage{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.Storage{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Storage")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.SystemConfiguration{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.SystemConfiguration{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "SystemConfiguration")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha2.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha3.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 			os.Exit(1)
 		}
