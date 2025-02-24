@@ -295,6 +295,16 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 		return err
 	}
 
+	// +crdbumper:carryforward:begin="SystemConfiguration.ConvertFrom"
+	// In a non-test environment, ENVIRONMENT will be set. Don't save Hub data in the
+	// annotations in this case. The SystemConfiguration resource can be very large, and
+	// the annotation will be too large to store. In a test environment, we want the Hub
+	// data saved in the annotations to test hub-spoke-hub and spoke-hub-spoke conversions.
+	if _, found := os.LookupEnv("ENVIRONMENT"); found {
+		return nil
+	}
+	// +crdbumper:carryforward:end
+
 	// Preserve Hub data on down-conversion except for metadata.
 	return utilconversion.MarshalData(src, dst)
 }
