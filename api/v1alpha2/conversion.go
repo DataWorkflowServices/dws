@@ -20,6 +20,8 @@
 package v1alpha2
 
 import (
+	"os"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apiconversion "k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime/schema"
