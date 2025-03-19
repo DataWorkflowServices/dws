@@ -7,7 +7,6 @@ resources:
 - service_account.yaml
 - role.yaml
 - role_binding.yaml
-- workflow_editor_role.yaml
 - leader_election_role.yaml
 - leader_election_role_binding.yaml
 - webhook_role.yaml
@@ -21,6 +20,38 @@ resources:
 - auth_proxy_role_binding.yaml
 - auth_proxy_client_clusterrole.yaml
 - auth_proxy_client_clusterrole_binding.yaml
+
+# For each CRD, "Admin", "Editor" and "Viewer" roles are scaffolded by
+# default, aiding admins in cluster management. Those roles are
+# not used by the {{ .ProjectName }} itself. You can comment the following lines
+# if you do not want those helpers be installed with your Project.
+- workflow_admin_role.yaml
+- workflow_editor_role.yaml
+- workflow_viewer_role.yaml
+- systemconfiguration_admin_role.yaml
+- systemconfiguration_editor_role.yaml
+- systemconfiguration_viewer_role.yaml
+- storage_admin_role.yaml
+- storage_editor_role.yaml
+- storage_viewer_role.yaml
+- servers_admin_role.yaml
+- servers_editor_role.yaml
+- servers_viewer_role.yaml
+- persistentstorageinstance_admin_role.yaml
+- persistentstorageinstance_editor_role.yaml
+- persistentstorageinstance_viewer_role.yaml
+- directivebreakdown_admin_role.yaml
+- directivebreakdown_editor_role.yaml
+- directivebreakdown_viewer_role.yaml
+- dwdirectiverule_admin_role.yaml
+- dwdirectiverule_editor_role.yaml
+- dwdirectiverule_viewer_role.yaml
+- computes_admin_role.yaml
+- computes_editor_role.yaml
+- computes_viewer_role.yaml
+- clientmount_admin_role.yaml
+- clientmount_editor_role.yaml
+- clientmount_viewer_role.yaml
 
 configurations:
   - kustomizeconfig.yaml
