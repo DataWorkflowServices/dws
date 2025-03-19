@@ -1,4 +1,4 @@
-# Copyright 2020-2024 Hewlett Packard Enterprise Development LP
+# Copyright 2020-2025 Hewlett Packard Enterprise Development LP
 # Other additional copyright holders may be indicated within.
 #
 # The entirety of this work is licensed under the Apache License,
@@ -16,7 +16,7 @@
 # limitations under the License.
 
 # Build the manager binary
-FROM golang:1.21 AS builder
+FROM golang:1.22 AS builder
 
 ARG TARGETARCH
 ARG TARGETOS
