@@ -24,54 +24,54 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 
-	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
+	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
 	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
 )
 
 func TestFuzzyConversion(t *testing.T) {
 
 	t.Run("for ClientMount", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.ClientMount{},
+		Hub:   &dwsv1alpha4.ClientMount{},
 		Spoke: &ClientMount{},
 	}))
 
 	t.Run("for Computes", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.Computes{},
+		Hub:   &dwsv1alpha4.Computes{},
 		Spoke: &Computes{},
 	}))
 
 	t.Run("for DWDirectiveRule", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.DWDirectiveRule{},
+		Hub:   &dwsv1alpha4.DWDirectiveRule{},
 		Spoke: &DWDirectiveRule{},
 	}))
 
 	t.Run("for DirectiveBreakdown", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.DirectiveBreakdown{},
+		Hub:   &dwsv1alpha4.DirectiveBreakdown{},
 		Spoke: &DirectiveBreakdown{},
 	}))
 
 	t.Run("for PersistentStorageInstance", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.PersistentStorageInstance{},
+		Hub:   &dwsv1alpha4.PersistentStorageInstance{},
 		Spoke: &PersistentStorageInstance{},
 	}))
 
 	t.Run("for Servers", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.Servers{},
+		Hub:   &dwsv1alpha4.Servers{},
 		Spoke: &Servers{},
 	}))
 
 	t.Run("for Storage", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.Storage{},
+		Hub:   &dwsv1alpha4.Storage{},
 		Spoke: &Storage{},
 	}))
 
 	t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.SystemConfiguration{},
+		Hub:   &dwsv1alpha4.SystemConfiguration{},
 		Spoke: &SystemConfiguration{},
 	}))
 
 	t.Run("for Workflow", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha3.Workflow{},
+		Hub:   &dwsv1alpha4.Workflow{},
 		Spoke: &Workflow{},
 	}))
 
