@@ -52,6 +52,8 @@ resources:
 - clientmount_admin_role.yaml
 - clientmount_editor_role.yaml
 - clientmount_viewer_role.yaml
+- systemstatus_editor_role.yaml
+- systemstatus_viewer_role.yaml
 
 configurations:
   - kustomizeconfig.yaml
