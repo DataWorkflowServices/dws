@@ -1,0 +1,23 @@
+# permissions for end users to view systemstatuses.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: dws
+    app.kubernetes.io/managed-by: kustomize
+  name: systemstatus-viewer-role
+rules:
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - systemstatuses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - systemstatuses/status
+  verbs:
+  - get

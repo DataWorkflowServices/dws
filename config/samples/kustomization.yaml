@@ -27,4 +27,5 @@ resources:
 - dataworkflowservices_v1alpha4_storage.yaml
 - dataworkflowservices_v1alpha4_systemconfiguration.yaml
 - dataworkflowservices_v1alpha4_workflow.yaml
+- dataworkflowservices_v1alpha4_systemstatus.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
