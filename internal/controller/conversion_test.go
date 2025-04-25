@@ -34,6 +34,7 @@ import (
 	dwsv1alpha1 "github.com/DataWorkflowServices/dws/api/v1alpha1"
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
 	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
+	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
 	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
 	"github.com/DataWorkflowServices/dws/utils/dwdparse"
 )
@@ -49,24 +50,24 @@ var _ = Describe("Conversion Webhook Test", func() {
 	// have that annotation when it is accessed by its hub API.
 
 	Context("ClientMount", func() {
-		var resHub *dwsv1alpha3.ClientMount
+		var resHub *dwsv1alpha4.ClientMount
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.ClientMount{
+			resHub = &dwsv1alpha4.ClientMount{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				Spec: dwsv1alpha3.ClientMountSpec{
+				Spec: dwsv1alpha4.ClientMountSpec{
 					Node:         "client-01",
 					DesiredState: "unmounted",
-					Mounts: []dwsv1alpha3.ClientMountInfo{
+					Mounts: []dwsv1alpha4.ClientMountInfo{
 						{
 							MountPath:      "",
 							SetPermissions: false,
 							Options:        "",
-							Device: dwsv1alpha3.ClientMountDevice{
+							Device: dwsv1alpha4.ClientMountDevice{
 								Type: "reference",
 							},
 							Type:       "none",
@@ -82,7 +83,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.ClientMount{}
+				expected := &dwsv1alpha4.ClientMount{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -125,15 +126,33 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads ClientMount resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.ClientMount{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.ClientMount"
 	})
 
 	Context("DWDirectiveRule", func() {
-		var resHub *dwsv1alpha3.DWDirectiveRule
+		var resHub *dwsv1alpha4.DWDirectiveRule
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.DWDirectiveRule{
+			resHub = &dwsv1alpha4.DWDirectiveRule{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
@@ -147,7 +166,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.DWDirectiveRule{}
+				expected := &dwsv1alpha4.DWDirectiveRule{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -190,20 +209,38 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads DWDirectiveRule resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.DWDirectiveRule{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.DWDirectiveRule"
 	})
 
 	Context("DirectiveBreakdown", func() {
-		var resHub *dwsv1alpha3.DirectiveBreakdown
+		var resHub *dwsv1alpha4.DirectiveBreakdown
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.DirectiveBreakdown{
+			resHub = &dwsv1alpha4.DirectiveBreakdown{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				Spec: dwsv1alpha3.DirectiveBreakdownSpec{},
+				Spec: dwsv1alpha4.DirectiveBreakdownSpec{},
 			}
 
 			Expect(k8sClient.Create(context.TODO(), resHub)).To(Succeed())
@@ -212,7 +249,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.DirectiveBreakdown{}
+				expected := &dwsv1alpha4.DirectiveBreakdown{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -255,20 +292,38 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads DirectiveBreakdown resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.DirectiveBreakdown{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.DirectiveBreakdown"
 	})
 
 	Context("PersistentStorageInstance", func() {
-		var resHub *dwsv1alpha3.PersistentStorageInstance
+		var resHub *dwsv1alpha4.PersistentStorageInstance
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.PersistentStorageInstance{
+			resHub = &dwsv1alpha4.PersistentStorageInstance{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				Spec: dwsv1alpha3.PersistentStorageInstanceSpec{
+				Spec: dwsv1alpha4.PersistentStorageInstanceSpec{
 					Name:        "",
 					FsType:      "raw",
 					DWDirective: "",
@@ -283,7 +338,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.PersistentStorageInstance{}
+				expected := &dwsv1alpha4.PersistentStorageInstance{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -326,20 +381,38 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads PersistentStorageInstance resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.PersistentStorageInstance{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.PersistentStorageInstance"
 	})
 
 	Context("Servers", func() {
-		var resHub *dwsv1alpha3.Servers
+		var resHub *dwsv1alpha4.Servers
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.Servers{
+			resHub = &dwsv1alpha4.Servers{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				Spec: dwsv1alpha3.ServersSpec{},
+				Spec: dwsv1alpha4.ServersSpec{},
 			}
 
 			Expect(k8sClient.Create(context.TODO(), resHub)).To(Succeed())
@@ -348,7 +421,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.Servers{}
+				expected := &dwsv1alpha4.Servers{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -391,20 +464,38 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads Servers resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.Servers{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.Servers"
 	})
 
 	Context("Storage", func() {
-		var resHub *dwsv1alpha3.Storage
+		var resHub *dwsv1alpha4.Storage
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.Storage{
+			resHub = &dwsv1alpha4.Storage{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				Spec: dwsv1alpha3.StorageSpec{},
+				Spec: dwsv1alpha4.StorageSpec{},
 			}
 
 			Expect(k8sClient.Create(context.TODO(), resHub)).To(Succeed())
@@ -413,7 +504,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.Storage{}
+				expected := &dwsv1alpha4.Storage{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -456,20 +547,38 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads Storage resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.Storage{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.Storage"
 	})
 
 	Context("SystemConfiguration", func() {
-		var resHub *dwsv1alpha3.SystemConfiguration
+		var resHub *dwsv1alpha4.SystemConfiguration
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.SystemConfiguration{
+			resHub = &dwsv1alpha4.SystemConfiguration{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				Spec: dwsv1alpha3.SystemConfigurationSpec{},
+				Spec: dwsv1alpha4.SystemConfigurationSpec{},
 			}
 
 			Expect(k8sClient.Create(context.TODO(), resHub)).To(Succeed())
@@ -478,7 +587,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.SystemConfiguration{}
+				expected := &dwsv1alpha4.SystemConfiguration{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -521,21 +630,39 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads SystemConfiguration resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.SystemConfiguration{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.SystemConfiguration"
 	})
 
 	Context("Workflow", func() {
-		var resHub *dwsv1alpha3.Workflow
+		var resHub *dwsv1alpha4.Workflow
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.Workflow{
+			resHub = &dwsv1alpha4.Workflow{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				Spec: dwsv1alpha3.WorkflowSpec{
-					DesiredState: dwsv1alpha3.StateProposal,
+				Spec: dwsv1alpha4.WorkflowSpec{
+					DesiredState: dwsv1alpha4.StateProposal,
 					WLMID:        "test",
 					JobID:        intstr.FromString("a job id 42"),
 					UserID:       0,
@@ -552,7 +679,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.Workflow{}
+				expected := &dwsv1alpha4.Workflow{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -591,7 +718,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 
 			// Hub should not have annotation.
-			computeHub := &dwsv1alpha3.Computes{}
+			computeHub := &dwsv1alpha4.Computes{}
 			Eventually(func(g Gomega) {
 				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), computeHub)).To(Succeed())
 				anno := computeHub.GetAnnotations()
@@ -617,20 +744,38 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}).Should(Succeed())
 		})
 
+		It("reads Workflow resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.Workflow{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
 		// +crdbumper:scaffold:spoketest="dataworkflowservices.Workflow"
 	})
 
 	Context("Computes", func() {
-		var resHub *dwsv1alpha3.Computes
+		var resHub *dwsv1alpha4.Computes
 
 		BeforeEach(func() {
 			id := uuid.NewString()[0:8]
-			resHub = &dwsv1alpha3.Computes{
+			resHub = &dwsv1alpha4.Computes{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      id,
 					Namespace: corev1.NamespaceDefault,
 				},
-				//Spec: dwsv1alpha3.ComputesSpec{},
+				//Spec: dwsv1alpha4.ComputesSpec{},
 			}
 
 			Expect(k8sClient.Create(context.TODO(), resHub)).To(Succeed())
@@ -639,7 +784,7 @@ var _ = Describe("Conversion Webhook Test", func() {
 		AfterEach(func() {
 			if resHub != nil {
 				Expect(k8sClient.Delete(context.TODO(), resHub)).To(Succeed())
-				expected := &dwsv1alpha3.Computes{}
+				expected := &dwsv1alpha4.Computes{}
 				Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 					return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), expected)
 				}).ShouldNot(Succeed())
@@ -649,6 +794,24 @@ var _ = Describe("Conversion Webhook Test", func() {
 		It("reads Computes resource via hub and via spoke v1alpha2", func() {
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha2.Computes{}
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
+				anno := resSpoke.GetAnnotations()
+				g.Expect(anno).To(HaveLen(1))
+				g.Expect(anno).Should(HaveKey(utilconversion.DataAnnotation))
+			}).Should(Succeed())
+
+			// Hub should not have annotation.
+			Eventually(func(g Gomega) {
+				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resHub)).To(Succeed())
+				anno := resHub.GetAnnotations()
+				g.Expect(anno).To(HaveLen(0))
+			}).Should(Succeed())
+		})
+
+		It("reads Computes resource via hub and via spoke v1alpha3", func() {
+			// Spoke should have annotation.
+			resSpoke := &dwsv1alpha3.Computes{}
 			Eventually(func(g Gomega) {
 				g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).To(Succeed())
 				anno := resSpoke.GetAnnotations()
