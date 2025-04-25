@@ -32,24 +32,24 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
+	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
 )
 
 var _ = Describe("Workflow Controller Test", func() {
 
 	var (
-		wf *dwsv1alpha3.Workflow
+		wf *dwsv1alpha4.Workflow
 	)
 
 	BeforeEach(func() {
 		wfid := uuid.NewString()[0:8]
-		wf = &dwsv1alpha3.Workflow{
+		wf = &dwsv1alpha4.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      fmt.Sprintf("%s", wfid),
 				Namespace: corev1.NamespaceDefault,
 			},
-			Spec: dwsv1alpha3.WorkflowSpec{
-				DesiredState: dwsv1alpha3.StateProposal,
+			Spec: dwsv1alpha4.WorkflowSpec{
+				DesiredState: dwsv1alpha4.StateProposal,
 				WLMID:        "test",
 				JobID:        intstr.FromString("wlm job 442"),
 				UserID:       0,
@@ -63,7 +63,7 @@ var _ = Describe("Workflow Controller Test", func() {
 		if wf != nil {
 			Expect(k8sClient.Delete(context.TODO(), wf)).To(Succeed())
 
-			wfExpected := &dwsv1alpha3.Workflow{}
+			wfExpected := &dwsv1alpha4.Workflow{}
 			Eventually(func() error { // Delete can still return the cached object. Wait until the object is no longer present.
 				return k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(wf), wfExpected)
 			}).ShouldNot(Succeed())
@@ -76,7 +76,7 @@ var _ = Describe("Workflow Controller Test", func() {
 		Eventually(func(g Gomega) string {
 			g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(wf), wf)).To(Succeed())
 			return wf.Status.Status
-		}).Should(Equal(dwsv1alpha3.StatusCompleted))
+		}).Should(Equal(dwsv1alpha4.StatusCompleted))
 
 	})
 
@@ -92,7 +92,7 @@ var _ = Describe("Workflow Controller Test", func() {
 		Eventually(func(g Gomega) string {
 			g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(wf), wf)).To(Succeed())
 			return wf.Status.Status
-		}).Should(Equal(dwsv1alpha3.StatusCompleted))
+		}).Should(Equal(dwsv1alpha4.StatusCompleted))
 
 		wf.Spec.Hurry = true
 		Expect(k8sClient.Update(context.TODO(), wf)).ToNot(Succeed())
@@ -104,9 +104,9 @@ var _ = Describe("Workflow Controller Test", func() {
 		Eventually(func(g Gomega) string {
 			g.Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(wf), wf)).To(Succeed())
 			return wf.Status.Status
-		}).Should(Equal(dwsv1alpha3.StatusCompleted))
+		}).Should(Equal(dwsv1alpha4.StatusCompleted))
 
-		wf.Spec.DesiredState = dwsv1alpha3.StateTeardown
+		wf.Spec.DesiredState = dwsv1alpha4.StateTeardown
 		wf.Spec.Hurry = true
 		Expect(k8sClient.Update(context.TODO(), wf)).To(Succeed())
 	})

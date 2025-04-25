@@ -52,6 +52,12 @@ resources:
 - clientmount_admin_role.yaml
 - clientmount_editor_role.yaml
 - clientmount_viewer_role.yaml
+- systemstatus_editor_role.yaml
+- systemstatus_viewer_role.yaml
 
 configurations:
   - kustomizeconfig.yaml
+# For each CRD, "Editor" and "Viewer" roles are scaffolded by
+# default, aiding admins in cluster management. Those roles are
+# not used by the Project itself. You can comment the following lines
+# if you do not want those helpers be installed with your Project.

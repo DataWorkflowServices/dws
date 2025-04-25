@@ -1,0 +1,27 @@
+# permissions for end users to edit systemstatuses.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: dws
+    app.kubernetes.io/managed-by: kustomize
+  name: systemstatus-editor-role
+rules:
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - systemstatuses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
+  - systemstatuses/status
+  verbs:
+  - get
