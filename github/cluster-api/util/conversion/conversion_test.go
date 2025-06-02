@@ -85,6 +85,12 @@ var (
 		Kind:    "SystemConfiguration",
 	}
 
+	oldSystemStatusGVK = schema.GroupVersionKind{
+		Group:   dwsv1alpha5.GroupVersion.Group,
+		Version: "v1old",
+		Kind:    "SystemStatus",
+	}
+
 // +crdbumper:scaffold:gvk
 )
 
@@ -516,6 +522,57 @@ func TestMarshalData(t *testing.T) {
 		}
 		dst := &unstructured.Unstructured{}
 		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("SystemConfiguration"))
+		dst.SetName("test-1")
+		dst.SetAnnotations(map[string]string{
+			"annotation": "1",
+		})
+
+		g.Expect(MarshalData(src, dst)).To(Succeed())
+		g.Expect(dst.GetAnnotations()).To(HaveLen(2))
+	})
+
+	t.Run("SystemStatus should write source object to destination", func(*testing.T) {
+		src := &dwsv1alpha5.SystemStatus{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "test-1",
+				Labels: map[string]string{
+					"label1": "",
+				},
+			},
+			//Spec: dwsv1alpha5.SystemStatusSpec{
+			//	// ACTION: Fill in a few valid fields so
+			//	// they can be tested in the annotation checks
+			//	// below.
+			//},
+		}
+
+		dst := &unstructured.Unstructured{}
+		dst.SetGroupVersionKind(oldSystemStatusGVK)
+		dst.SetName("test-1")
+
+		g.Expect(MarshalData(src, dst)).To(Succeed())
+		// ensure the src object is not modified
+		g.Expect(src.GetLabels()).ToNot(BeEmpty())
+
+		g.Expect(dst.GetAnnotations()[DataAnnotation]).ToNot(BeEmpty())
+
+		// ACTION: Fill in a few valid fields above in the Spec so
+		// they can be tested here in the annotation checks.
+
+		//g.Expect(dst.GetAnnotations()[DataAnnotation]).To(ContainSubstring("mgsNids"))
+		//g.Expect(dst.GetAnnotations()[DataAnnotation]).To(ContainSubstring("rabbit-03@tcp"))
+		//g.Expect(dst.GetAnnotations()[DataAnnotation]).To(ContainSubstring("mountRoot"))
+		//g.Expect(dst.GetAnnotations()[DataAnnotation]).To(ContainSubstring("/lus/w0"))
+	})
+
+	t.Run("SystemStatus should append the annotation", func(*testing.T) {
+		src := &dwsv1alpha5.SystemStatus{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "test-1",
+			},
+		}
+		dst := &unstructured.Unstructured{}
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("SystemStatus"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -1076,6 +1133,68 @@ func TestUnmarshalData(t *testing.T) {
 		})
 
 		dst := &dwsv1alpha4.SystemConfiguration{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "test-1",
+			},
+		}
+
+		ok, err := UnmarshalData(src, dst)
+		g.Expect(err).ToNot(HaveOccurred())
+		g.Expect(ok).To(BeTrue())
+
+		g.Expect(src.GetAnnotations()).ToNot(HaveKey(DataAnnotation))
+		g.Expect(src.GetAnnotations()).To(HaveLen(1))
+	})
+
+	t.Run("SystemStatus should return false without errors if annotation doesn't exist", func(*testing.T) {
+		src := &dwsv1alpha5.SystemStatus{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "test-1",
+			},
+		}
+		dst := &unstructured.Unstructured{}
+		dst.SetGroupVersionKind(oldSystemStatusGVK)
+		dst.SetName("test-1")
+
+		ok, err := UnmarshalData(src, dst)
+		g.Expect(ok).To(BeFalse())
+		g.Expect(err).ToNot(HaveOccurred())
+	})
+
+	t.Run("SystemStatus should return true when a valid annotation with data exists", func(*testing.T) {
+		src := &unstructured.Unstructured{}
+		src.SetGroupVersionKind(oldSystemStatusGVK)
+		src.SetName("test-1")
+		src.SetAnnotations(map[string]string{
+			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
+		})
+
+		dst := &dwsv1alpha5.SystemStatus{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "test-1",
+			},
+		}
+
+		ok, err := UnmarshalData(src, dst)
+		g.Expect(err).ToNot(HaveOccurred())
+		g.Expect(ok).To(BeTrue())
+
+		g.Expect(dst.GetLabels()).To(HaveLen(1))
+		g.Expect(dst.GetName()).To(Equal("test-1"))
+		g.Expect(dst.GetLabels()).To(HaveKeyWithValue("label1", ""))
+		g.Expect(dst.GetAnnotations()).To(BeEmpty())
+	})
+
+	t.Run("SystemStatus should clean the annotation on successful unmarshal", func(*testing.T) {
+		src := &unstructured.Unstructured{}
+		src.SetGroupVersionKind(oldSystemStatusGVK)
+		src.SetName("test-1")
+		src.SetAnnotations(map[string]string{
+			"annotation-1": "",
+			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
+		})
+
+		dst := &dwsv1alpha5.SystemStatus{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},

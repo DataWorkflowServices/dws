@@ -154,6 +154,9 @@ var _ = BeforeSuite(func() {
 	err = (&dwsv1alpha4.Workflow{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
+	err = (&dwsv1alpha5.SystemStatus{}).SetupWebhookWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
 	// +crdbumper:scaffold:builder
 
 	// start reconcilers
