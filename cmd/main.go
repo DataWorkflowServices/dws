@@ -37,6 +37,7 @@ import (
 	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
 	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
+	dwsv1alpha5 "github.com/DataWorkflowServices/dws/api/v1alpha5"
 	"github.com/DataWorkflowServices/dws/controllers"
 	//+kubebuilder:scaffold:imports
 )
@@ -53,6 +54,7 @@ func init() {
 	utilruntime.Must(dwsv1alpha2.AddToScheme(scheme))
 	utilruntime.Must(dwsv1alpha3.AddToScheme(scheme))
 	utilruntime.Must(dwsv1alpha4.AddToScheme(scheme))
+	utilruntime.Must(dwsv1alpha5.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
