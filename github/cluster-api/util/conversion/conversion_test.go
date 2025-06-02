@@ -26,61 +26,61 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
+	dwsv1alpha5 "github.com/DataWorkflowServices/dws/api/v1alpha5"
 	"github.com/DataWorkflowServices/dws/utils/dwdparse"
 )
 
 var (
 	oldWorkflowGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "Workflow",
 	}
 
 	oldClientMountGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "ClientMount",
 	}
 
 	oldComputesGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "Computes",
 	}
 
 	oldDirectiveBreakdownGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "DirectiveBreakdown",
 	}
 
 	oldDWDirectiveRuleGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "DWDirectiveRule",
 	}
 
 	oldPersistentStorageInstanceGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "PersistentStorageInstance",
 	}
 
 	oldServersGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "Servers",
 	}
 
 	oldStorageGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "Storage",
 	}
 
 	oldSystemConfigurationGVK = schema.GroupVersionKind{
-		Group:   dwsv1alpha4.GroupVersion.Group,
+		Group:   dwsv1alpha5.GroupVersion.Group,
 		Version: "v1old",
 		Kind:    "SystemConfiguration",
 	}
@@ -98,14 +98,14 @@ func TestMarshalData(t *testing.T) {
 	g := NewWithT(t)
 
 	t.Run("Workflow should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.Workflow{
+		src := &dwsv1alpha5.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha4.WorkflowSpec{
+			Spec: dwsv1alpha5.WorkflowSpec{
 				DesiredState: "Proposal",
 				WLMID:        "special-id",
 				JobID:        intstr.FromString("my wlm job 8128"),
@@ -131,13 +131,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Workflow should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.Workflow{
+		src := &dwsv1alpha5.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("Workflow"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("Workflow"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -148,14 +148,14 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("ClientMount should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.ClientMount{
+		src := &dwsv1alpha5.ClientMount{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha4.ClientMountSpec{
+			Spec: dwsv1alpha5.ClientMountSpec{
 				DesiredState: "Proposal",
 				Node:         "rabbit-node-1",
 			},
@@ -177,13 +177,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("ClientMount should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.ClientMount{
+		src := &dwsv1alpha5.ClientMount{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("ClientMount"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("ClientMount"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -194,14 +194,14 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Computes should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.Computes{
+		src := &dwsv1alpha5.Computes{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Data: []dwsv1alpha4.ComputesData{
+			Data: []dwsv1alpha5.ComputesData{
 				{
 					Name: "compute-node-1",
 				},
@@ -227,13 +227,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Computes should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.Computes{
+		src := &dwsv1alpha5.Computes{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("Computes"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("Computes"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -244,14 +244,14 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("DirectiveBreakdown should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.DirectiveBreakdown{
+		src := &dwsv1alpha5.DirectiveBreakdown{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha4.DirectiveBreakdownSpec{
+			Spec: dwsv1alpha5.DirectiveBreakdownSpec{
 				UserID:    10468,
 				Directive: "#DW jobdw my-thing",
 			},
@@ -273,13 +273,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("DirectiveBreakdown should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.DirectiveBreakdown{
+		src := &dwsv1alpha5.DirectiveBreakdown{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("DirectiveBreakdown"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("DirectiveBreakdown"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -290,7 +290,7 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("DWDirectiveRule should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.DWDirectiveRule{
+		src := &dwsv1alpha5.DWDirectiveRule{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
@@ -327,13 +327,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("DWDirectiveRule should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.DWDirectiveRule{
+		src := &dwsv1alpha5.DWDirectiveRule{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("DWDirectiveRule"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("DWDirectiveRule"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -344,14 +344,14 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("PersistentStorageInstance should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.PersistentStorageInstance{
+		src := &dwsv1alpha5.PersistentStorageInstance{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha4.PersistentStorageInstanceSpec{
+			Spec: dwsv1alpha5.PersistentStorageInstanceSpec{
 				DWDirective: "#DW persistentdw my-thing",
 				Name:        "rabbit-node-1",
 			},
@@ -373,13 +373,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("PersistentStorageInstance should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.PersistentStorageInstance{
+		src := &dwsv1alpha5.PersistentStorageInstance{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("PersistentStorageInstance"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("PersistentStorageInstance"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -390,15 +390,15 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Servers should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.Servers{
+		src := &dwsv1alpha5.Servers{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha4.ServersSpec{
-				AllocationSets: []dwsv1alpha4.ServersSpecAllocationSet{
+			Spec: dwsv1alpha5.ServersSpec{
+				AllocationSets: []dwsv1alpha5.ServersSpecAllocationSet{
 					{
 						Label: "my-label-1",
 					},
@@ -425,13 +425,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Servers should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.Servers{
+		src := &dwsv1alpha5.Servers{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("Servers"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("Servers"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -442,14 +442,14 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Storage should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.Storage{
+		src := &dwsv1alpha5.Storage{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha4.StorageSpec{
+			Spec: dwsv1alpha5.StorageSpec{
 				State: "Enabled",
 				Mode:  "Live",
 			},
@@ -471,13 +471,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("Storage should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.Storage{
+		src := &dwsv1alpha5.Storage{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("Storage"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("Storage"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -488,14 +488,14 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("SystemConfiguration should write source object to destination", func(*testing.T) {
-		src := &dwsv1alpha4.SystemConfiguration{
+		src := &dwsv1alpha5.SystemConfiguration{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: dwsv1alpha4.SystemConfigurationSpec{
+			Spec: dwsv1alpha5.SystemConfigurationSpec{
 				PortsCooldownInSeconds: 32468,
 			},
 		}
@@ -515,13 +515,13 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("SystemConfiguration should append the annotation", func(*testing.T) {
-		src := &dwsv1alpha4.SystemConfiguration{
+		src := &dwsv1alpha5.SystemConfiguration{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
 		dst := &unstructured.Unstructured{}
-		dst.SetGroupVersionKind(dwsv1alpha4.GroupVersion.WithKind("SystemConfiguration"))
+		dst.SetGroupVersionKind(dwsv1alpha5.GroupVersion.WithKind("SystemConfiguration"))
 		dst.SetName("test-1")
 		dst.SetAnnotations(map[string]string{
 			"annotation": "1",
@@ -589,7 +589,7 @@ func TestUnmarshalData(t *testing.T) {
 	g := NewWithT(t)
 
 	t.Run("Workflow should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.Workflow{
+		src := &dwsv1alpha5.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -611,7 +611,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Workflow{
+		dst := &dwsv1alpha5.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -636,7 +636,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Workflow{
+		dst := &dwsv1alpha5.Workflow{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -651,7 +651,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("ClientMount should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.ClientMount{
+		src := &dwsv1alpha5.ClientMount{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -673,7 +673,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.ClientMount{
+		dst := &dwsv1alpha5.ClientMount{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -698,7 +698,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.ClientMount{
+		dst := &dwsv1alpha5.ClientMount{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -713,7 +713,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("Computes should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.Computes{
+		src := &dwsv1alpha5.Computes{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -735,7 +735,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Computes{
+		dst := &dwsv1alpha5.Computes{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -760,7 +760,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Computes{
+		dst := &dwsv1alpha5.Computes{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -775,7 +775,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("DirectiveBreakdown should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.DirectiveBreakdown{
+		src := &dwsv1alpha5.DirectiveBreakdown{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -797,7 +797,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.DirectiveBreakdown{
+		dst := &dwsv1alpha5.DirectiveBreakdown{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -822,7 +822,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.DirectiveBreakdown{
+		dst := &dwsv1alpha5.DirectiveBreakdown{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -837,7 +837,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("DWDirectiveRule should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.DWDirectiveRule{
+		src := &dwsv1alpha5.DWDirectiveRule{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -859,7 +859,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":[]}",
 		})
 
-		dst := &dwsv1alpha4.DWDirectiveRule{
+		dst := &dwsv1alpha5.DWDirectiveRule{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -884,7 +884,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":[]}",
 		})
 
-		dst := &dwsv1alpha4.DWDirectiveRule{
+		dst := &dwsv1alpha5.DWDirectiveRule{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -899,7 +899,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("PersistentStorageInstance should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.PersistentStorageInstance{
+		src := &dwsv1alpha5.PersistentStorageInstance{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -921,7 +921,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.PersistentStorageInstance{
+		dst := &dwsv1alpha5.PersistentStorageInstance{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -946,7 +946,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.PersistentStorageInstance{
+		dst := &dwsv1alpha5.PersistentStorageInstance{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -961,7 +961,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("Servers should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.Servers{
+		src := &dwsv1alpha5.Servers{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -983,7 +983,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Servers{
+		dst := &dwsv1alpha5.Servers{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -1008,7 +1008,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Servers{
+		dst := &dwsv1alpha5.Servers{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -1023,7 +1023,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("Storage should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.Storage{
+		src := &dwsv1alpha5.Storage{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -1045,7 +1045,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Storage{
+		dst := &dwsv1alpha5.Storage{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -1070,7 +1070,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.Storage{
+		dst := &dwsv1alpha5.Storage{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -1085,7 +1085,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("SystemConfiguration should return false without errors if annotation doesn't exist", func(*testing.T) {
-		src := &dwsv1alpha4.SystemConfiguration{
+		src := &dwsv1alpha5.SystemConfiguration{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -1107,7 +1107,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.SystemConfiguration{
+		dst := &dwsv1alpha5.SystemConfiguration{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -1132,7 +1132,7 @@ func TestUnmarshalData(t *testing.T) {
 			DataAnnotation: "{\"metadata\":{\"name\":\"test-1\",\"creationTimestamp\":null,\"labels\":{\"label1\":\"\"}},\"spec\":{},\"status\":{}}",
 		})
 
-		dst := &dwsv1alpha4.SystemConfiguration{
+		dst := &dwsv1alpha5.SystemConfiguration{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
