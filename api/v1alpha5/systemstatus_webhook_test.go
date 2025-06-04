@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Hewlett Packard Enterprise Development LP
+ * Copyright 2025 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -17,21 +17,25 @@
  * limitations under the License.
  */
 
-package v1alpha4
+package v1alpha5
 
 import (
-	ctrl "sigs.k8s.io/controller-runtime"
-	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	. "github.com/onsi/ginkgo/v2"
 )
 
-// log is for logging in this package.
-var computeslog = logf.Log.WithName("computes-resource")
+var _ = Describe("SystemStatus Webhook", func() {
 
-// SetupWebhookWithManager will setup the manager to manage the webhooks
-func (r *Computes) SetupWebhookWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewWebhookManagedBy(mgr).
-		For(r).
-		Complete()
-}
+	// We already have api/<spoke_ver>/conversion_test.go that is
+	// digging deep into the conversion routines, and we have
+	// internal/controllers/conversion_test.go that is verifying that the
+	// conversion webhook is hooked up to those routines.
 
-// TODO(user): EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
+	Context("When creating SystemStatus under Conversion Webhook", func() {
+		It("Should get the converted version of SystemStatus", func() {
+
+			// TODO(user): Add your logic here
+
+		})
+	})
+
+})

@@ -1,0 +1,9 @@
+apiVersion: dataworkflowservices.github.io/v1alpha5
+kind: SystemConfiguration
+metadata:
+  labels:
+    app.kubernetes.io/name: dws
+    app.kubernetes.io/managed-by: kustomize
+  name: systemconfiguration-sample
+spec:
+  # TODO(user): Add fields here

@@ -29,7 +29,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
+	dwsv1alpha5 "github.com/DataWorkflowServices/dws/api/v1alpha5"
 	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
 )
 
@@ -37,14 +37,14 @@ var convertlog = logf.Log.V(2).WithName("convert-v1alpha1")
 
 func (src *ClientMount) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert ClientMount To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.ClientMount)
+	dst := dstRaw.(*dwsv1alpha5.ClientMount)
 
-	if err := Convert_v1alpha1_ClientMount_To_v1alpha4_ClientMount(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_ClientMount_To_v1alpha5_ClientMount(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.ClientMount{}
+	restored := &dwsv1alpha5.ClientMount{}
 	hasAnno, err := utilconversion.UnmarshalData(src, restored)
 	if err != nil {
 		return err
@@ -59,7 +59,7 @@ func (src *ClientMount) ConvertTo(dstRaw conversion.Hub) error {
 		dst.Status.Error.Severity = restored.Status.Error.Severity
 	}
 	if src.Status.Error != nil && !src.Status.Error.Recoverable {
-		dst.Status.Error.Severity = dwsv1alpha4.SeverityFatal
+		dst.Status.Error.Severity = dwsv1alpha5.SeverityFatal
 	}
 
 	// v1alpha2 added a rollup of all the mounts' ready flags
@@ -79,17 +79,17 @@ func (src *ClientMount) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *ClientMount) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.ClientMount)
+	src := srcRaw.(*dwsv1alpha5.ClientMount)
 	convertlog.Info("Convert ClientMount From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_ClientMount_To_v1alpha1_ClientMount(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_ClientMount_To_v1alpha1_ClientMount(src, dst, nil); err != nil {
 		return err
 	}
 
 	// v1alpha2 removed Error.Recoverable, and it must be translated from
 	// other fields.
 	if src.Status.Error != nil {
-		if src.Status.Error.Severity == dwsv1alpha4.SeverityFatal {
+		if src.Status.Error.Severity == dwsv1alpha5.SeverityFatal {
 			dst.Status.Error.Recoverable = false
 		} else {
 			dst.Status.Error.Recoverable = true
@@ -103,14 +103,14 @@ func (dst *ClientMount) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *Computes) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert Computes To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.Computes)
+	dst := dstRaw.(*dwsv1alpha5.Computes)
 
-	if err := Convert_v1alpha1_Computes_To_v1alpha4_Computes(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_Computes_To_v1alpha5_Computes(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.Computes{}
+	restored := &dwsv1alpha5.Computes{}
 	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
 		return err
 	}
@@ -122,10 +122,10 @@ func (src *Computes) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Computes) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.Computes)
+	src := srcRaw.(*dwsv1alpha5.Computes)
 	convertlog.Info("Convert Computes From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_Computes_To_v1alpha1_Computes(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_Computes_To_v1alpha1_Computes(src, dst, nil); err != nil {
 		return err
 	}
 
@@ -135,14 +135,14 @@ func (dst *Computes) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *DWDirectiveRule) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert DWDirectiveRule To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.DWDirectiveRule)
+	dst := dstRaw.(*dwsv1alpha5.DWDirectiveRule)
 
-	if err := Convert_v1alpha1_DWDirectiveRule_To_v1alpha4_DWDirectiveRule(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_DWDirectiveRule_To_v1alpha5_DWDirectiveRule(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.DWDirectiveRule{}
+	restored := &dwsv1alpha5.DWDirectiveRule{}
 	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
 		return err
 	}
@@ -154,10 +154,10 @@ func (src *DWDirectiveRule) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *DWDirectiveRule) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.DWDirectiveRule)
+	src := srcRaw.(*dwsv1alpha5.DWDirectiveRule)
 	convertlog.Info("Convert DWDirectiveRule From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_DWDirectiveRule_To_v1alpha1_DWDirectiveRule(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_DWDirectiveRule_To_v1alpha1_DWDirectiveRule(src, dst, nil); err != nil {
 		return err
 	}
 
@@ -167,14 +167,14 @@ func (dst *DWDirectiveRule) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert DirectiveBreakdown To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.DirectiveBreakdown)
+	dst := dstRaw.(*dwsv1alpha5.DirectiveBreakdown)
 
-	if err := Convert_v1alpha1_DirectiveBreakdown_To_v1alpha4_DirectiveBreakdown(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_DirectiveBreakdown_To_v1alpha5_DirectiveBreakdown(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.DirectiveBreakdown{}
+	restored := &dwsv1alpha5.DirectiveBreakdown{}
 	hasAnno, err := utilconversion.UnmarshalData(src, restored)
 	if err != nil {
 		return err
@@ -189,7 +189,7 @@ func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
 		dst.Status.Error.Severity = restored.Status.Error.Severity
 	}
 	if src.Status.Error != nil && !src.Status.Error.Recoverable {
-		dst.Status.Error.Severity = dwsv1alpha4.SeverityFatal
+		dst.Status.Error.Severity = dwsv1alpha5.SeverityFatal
 	}
 
 	if hasAnno {
@@ -200,17 +200,17 @@ func (src *DirectiveBreakdown) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *DirectiveBreakdown) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.DirectiveBreakdown)
+	src := srcRaw.(*dwsv1alpha5.DirectiveBreakdown)
 	convertlog.Info("Convert DirectiveBreakdown From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_DirectiveBreakdown_To_v1alpha1_DirectiveBreakdown(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_DirectiveBreakdown_To_v1alpha1_DirectiveBreakdown(src, dst, nil); err != nil {
 		return err
 	}
 
 	// v1alpha2 removed Error.Recoverable, and it must be translated from
 	// other fields.
 	if src.Status.Error != nil {
-		if src.Status.Error.Severity == dwsv1alpha4.SeverityFatal {
+		if src.Status.Error.Severity == dwsv1alpha5.SeverityFatal {
 			dst.Status.Error.Recoverable = false
 		} else {
 			dst.Status.Error.Recoverable = true
@@ -223,14 +223,14 @@ func (dst *DirectiveBreakdown) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *PersistentStorageInstance) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert PersistentStorageInstance To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.PersistentStorageInstance)
+	dst := dstRaw.(*dwsv1alpha5.PersistentStorageInstance)
 
-	if err := Convert_v1alpha1_PersistentStorageInstance_To_v1alpha4_PersistentStorageInstance(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_PersistentStorageInstance_To_v1alpha5_PersistentStorageInstance(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.PersistentStorageInstance{}
+	restored := &dwsv1alpha5.PersistentStorageInstance{}
 	hasAnno, err := utilconversion.UnmarshalData(src, restored)
 	if err != nil {
 		return err
@@ -245,24 +245,24 @@ func (src *PersistentStorageInstance) ConvertTo(dstRaw conversion.Hub) error {
 		dst.Status.Error.Severity = restored.Status.Error.Severity
 	}
 	if src.Status.Error != nil && !src.Status.Error.Recoverable {
-		dst.Status.Error.Severity = dwsv1alpha4.SeverityFatal
+		dst.Status.Error.Severity = dwsv1alpha5.SeverityFatal
 	}
 
 	return nil
 }
 
 func (dst *PersistentStorageInstance) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.PersistentStorageInstance)
+	src := srcRaw.(*dwsv1alpha5.PersistentStorageInstance)
 	convertlog.Info("Convert PersistentStorageInstance From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_PersistentStorageInstance_To_v1alpha1_PersistentStorageInstance(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_PersistentStorageInstance_To_v1alpha1_PersistentStorageInstance(src, dst, nil); err != nil {
 		return err
 	}
 
 	// v1alpha2 removed Error.Recoverable, and it must be translated from
 	// other fields.
 	if src.Status.Error != nil {
-		if src.Status.Error.Severity == dwsv1alpha4.SeverityFatal {
+		if src.Status.Error.Severity == dwsv1alpha5.SeverityFatal {
 			dst.Status.Error.Recoverable = false
 		} else {
 			dst.Status.Error.Recoverable = true
@@ -275,14 +275,14 @@ func (dst *PersistentStorageInstance) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *Servers) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert Servers To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.Servers)
+	dst := dstRaw.(*dwsv1alpha5.Servers)
 
-	if err := Convert_v1alpha1_Servers_To_v1alpha4_Servers(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_Servers_To_v1alpha5_Servers(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.Servers{}
+	restored := &dwsv1alpha5.Servers{}
 	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
 		return err
 	}
@@ -293,7 +293,7 @@ func (src *Servers) ConvertTo(dstRaw conversion.Hub) error {
 	// v1alpha2 introduced Status.ResourceError.
 	if restored.Status.Error != nil {
 		// Allocate a resource here, because v1alpha1 didn't have this.
-		dst.Status.Error = dwsv1alpha4.NewResourceError("")
+		dst.Status.Error = dwsv1alpha5.NewResourceError("")
 		dst.Status.Error.DebugMessage = restored.Status.Error.DebugMessage
 		dst.Status.Error.UserMessage = restored.Status.Error.UserMessage
 		dst.Status.Error.Type = restored.Status.Error.Type
@@ -304,10 +304,10 @@ func (src *Servers) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Servers) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.Servers)
+	src := srcRaw.(*dwsv1alpha5.Servers)
 	convertlog.Info("Convert Servers From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_Servers_To_v1alpha1_Servers(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_Servers_To_v1alpha1_Servers(src, dst, nil); err != nil {
 		return err
 	}
 
@@ -317,14 +317,14 @@ func (dst *Servers) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *Storage) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert Storage To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.Storage)
+	dst := dstRaw.(*dwsv1alpha5.Storage)
 
-	if err := Convert_v1alpha1_Storage_To_v1alpha4_Storage(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_Storage_To_v1alpha5_Storage(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.Storage{}
+	restored := &dwsv1alpha5.Storage{}
 	if ok, err := utilconversion.UnmarshalData(src, restored); err != nil || !ok {
 		return err
 	}
@@ -338,10 +338,10 @@ func (src *Storage) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Storage) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.Storage)
+	src := srcRaw.(*dwsv1alpha5.Storage)
 	convertlog.Info("Convert Storage From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_Storage_To_v1alpha1_Storage(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_Storage_To_v1alpha1_Storage(src, dst, nil); err != nil {
 		return err
 	}
 
@@ -351,14 +351,14 @@ func (dst *Storage) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert SystemConfiguration To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.SystemConfiguration)
+	dst := dstRaw.(*dwsv1alpha5.SystemConfiguration)
 
-	if err := Convert_v1alpha1_SystemConfiguration_To_v1alpha4_SystemConfiguration(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_SystemConfiguration_To_v1alpha5_SystemConfiguration(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.SystemConfiguration{}
+	restored := &dwsv1alpha5.SystemConfiguration{}
 	hasAnno, err := utilconversion.UnmarshalData(src, restored)
 	if err != nil {
 		return err
@@ -383,7 +383,7 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 		// The v1alpha1.FindExternalComputes() method walks through
 		// the spec.Computes list to determine which ones are external.
 		externComputes := src.FindExternalComputes()
-		dstExternComputes := make([]dwsv1alpha4.SystemConfigurationExternalComputeNode, len(externComputes))
+		dstExternComputes := make([]dwsv1alpha5.SystemConfigurationExternalComputeNode, len(externComputes))
 		idx := 0
 		for _, name := range externComputes {
 			dstExternComputes[idx].Name = name
@@ -395,10 +395,10 @@ func (src *SystemConfiguration) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.SystemConfiguration)
+	src := srcRaw.(*dwsv1alpha5.SystemConfiguration)
 	convertlog.Info("Convert SystemConfiguration From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_SystemConfiguration_To_v1alpha1_SystemConfiguration(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_SystemConfiguration_To_v1alpha1_SystemConfiguration(src, dst, nil); err != nil {
 		return err
 	}
 
@@ -433,14 +433,14 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 
 func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
 	convertlog.Info("Convert Workflow To Hub", "name", src.GetName(), "namespace", src.GetNamespace())
-	dst := dstRaw.(*dwsv1alpha4.Workflow)
+	dst := dstRaw.(*dwsv1alpha5.Workflow)
 
-	if err := Convert_v1alpha1_Workflow_To_v1alpha4_Workflow(src, dst, nil); err != nil {
+	if err := Convert_v1alpha1_Workflow_To_v1alpha5_Workflow(src, dst, nil); err != nil {
 		return err
 	}
 
 	// Manually restore data.
-	restored := &dwsv1alpha4.Workflow{}
+	restored := &dwsv1alpha5.Workflow{}
 	hasAnno, err := utilconversion.UnmarshalData(src, restored)
 	if err != nil {
 		return err
@@ -461,10 +461,10 @@ func (src *Workflow) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Workflow) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*dwsv1alpha4.Workflow)
+	src := srcRaw.(*dwsv1alpha5.Workflow)
 	convertlog.Info("Convert Workflow From Hub", "name", src.GetName(), "namespace", src.GetNamespace())
 
-	if err := Convert_v1alpha4_Workflow_To_v1alpha1_Workflow(src, dst, nil); err != nil {
+	if err := Convert_v1alpha5_Workflow_To_v1alpha1_Workflow(src, dst, nil); err != nil {
 		return err
 	}
 
@@ -558,50 +558,50 @@ func (dst *WorkflowList) ConvertFrom(srcRaw conversion.Hub) error {
 // The conversion-gen tool dropped these from zz_generated.conversion.go to
 // force us to acknowledge that we are addressing the conversion requirements.
 
-func Convert_v1alpha4_ClientMountStatus_To_v1alpha1_ClientMountStatus(in *dwsv1alpha4.ClientMountStatus, out *ClientMountStatus, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_ClientMountStatus_To_v1alpha1_ClientMountStatus(in, out, s)
+func Convert_v1alpha5_ClientMountStatus_To_v1alpha1_ClientMountStatus(in *dwsv1alpha5.ClientMountStatus, out *ClientMountStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_ClientMountStatus_To_v1alpha1_ClientMountStatus(in, out, s)
 }
 
-func Convert_v1alpha4_DirectiveBreakdownStatus_To_v1alpha1_DirectiveBreakdownStatus(in *dwsv1alpha4.DirectiveBreakdownStatus, out *DirectiveBreakdownStatus, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_DirectiveBreakdownStatus_To_v1alpha1_DirectiveBreakdownStatus(in, out, s)
+func Convert_v1alpha5_DirectiveBreakdownStatus_To_v1alpha1_DirectiveBreakdownStatus(in *dwsv1alpha5.DirectiveBreakdownStatus, out *DirectiveBreakdownStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_DirectiveBreakdownStatus_To_v1alpha1_DirectiveBreakdownStatus(in, out, s)
 }
 
-func Convert_v1alpha1_ResourceErrorInfo_To_v1alpha4_ResourceErrorInfo(in *ResourceErrorInfo, out *dwsv1alpha4.ResourceErrorInfo, s apiconversion.Scope) error {
-	return autoConvert_v1alpha1_ResourceErrorInfo_To_v1alpha4_ResourceErrorInfo(in, out, s)
+func Convert_v1alpha1_ResourceErrorInfo_To_v1alpha5_ResourceErrorInfo(in *ResourceErrorInfo, out *dwsv1alpha5.ResourceErrorInfo, s apiconversion.Scope) error {
+	return autoConvert_v1alpha1_ResourceErrorInfo_To_v1alpha5_ResourceErrorInfo(in, out, s)
 }
 
-func Convert_v1alpha4_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in *dwsv1alpha4.ResourceErrorInfo, out *ResourceErrorInfo, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in, out, s)
+func Convert_v1alpha5_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in *dwsv1alpha5.ResourceErrorInfo, out *ResourceErrorInfo, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_ResourceErrorInfo_To_v1alpha1_ResourceErrorInfo(in, out, s)
 }
 
-func Convert_v1alpha4_ServersStatus_To_v1alpha1_ServersStatus(in *dwsv1alpha4.ServersStatus, out *ServersStatus, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_ServersStatus_To_v1alpha1_ServersStatus(in, out, s)
+func Convert_v1alpha5_ServersStatus_To_v1alpha1_ServersStatus(in *dwsv1alpha5.ServersStatus, out *ServersStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_ServersStatus_To_v1alpha1_ServersStatus(in, out, s)
 }
 
-func Convert_v1alpha1_WorkflowSpec_To_v1alpha4_WorkflowSpec(in *WorkflowSpec, out *dwsv1alpha4.WorkflowSpec, s apiconversion.Scope) error {
-	return autoConvert_v1alpha1_WorkflowSpec_To_v1alpha4_WorkflowSpec(in, out, s)
+func Convert_v1alpha1_WorkflowSpec_To_v1alpha5_WorkflowSpec(in *WorkflowSpec, out *dwsv1alpha5.WorkflowSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha1_WorkflowSpec_To_v1alpha5_WorkflowSpec(in, out, s)
 }
 
-func Convert_v1alpha4_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *dwsv1alpha4.WorkflowSpec, out *WorkflowSpec, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_WorkflowSpec_To_v1alpha1_WorkflowSpec(in, out, s)
+func Convert_v1alpha5_WorkflowSpec_To_v1alpha1_WorkflowSpec(in *dwsv1alpha5.WorkflowSpec, out *WorkflowSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_WorkflowSpec_To_v1alpha1_WorkflowSpec(in, out, s)
 }
 
-func Convert_v1alpha1_SystemConfigurationSpec_To_v1alpha4_SystemConfigurationSpec(in *SystemConfigurationSpec, out *dwsv1alpha4.SystemConfigurationSpec, s apiconversion.Scope) error {
-	return autoConvert_v1alpha1_SystemConfigurationSpec_To_v1alpha4_SystemConfigurationSpec(in, out, s)
+func Convert_v1alpha1_SystemConfigurationSpec_To_v1alpha5_SystemConfigurationSpec(in *SystemConfigurationSpec, out *dwsv1alpha5.SystemConfigurationSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha1_SystemConfigurationSpec_To_v1alpha5_SystemConfigurationSpec(in, out, s)
 }
 
-func Convert_v1alpha4_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in *dwsv1alpha4.SystemConfigurationSpec, out *SystemConfigurationSpec, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in, out, s)
+func Convert_v1alpha5_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in *dwsv1alpha5.SystemConfigurationSpec, out *SystemConfigurationSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_SystemConfigurationSpec_To_v1alpha1_SystemConfigurationSpec(in, out, s)
 }
 
-func Convert_v1alpha4_StorageSpec_To_v1alpha1_StorageSpec(in *dwsv1alpha4.StorageSpec, out *StorageSpec, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_StorageSpec_To_v1alpha1_StorageSpec(in, out, s)
+func Convert_v1alpha5_StorageSpec_To_v1alpha1_StorageSpec(in *dwsv1alpha5.StorageSpec, out *StorageSpec, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_StorageSpec_To_v1alpha1_StorageSpec(in, out, s)
 }
 
-func Convert_v1alpha4_WorkflowStatus_To_v1alpha1_WorkflowStatus(in *dwsv1alpha4.WorkflowStatus, out *WorkflowStatus, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_WorkflowStatus_To_v1alpha1_WorkflowStatus(in, out, s)
+func Convert_v1alpha5_WorkflowStatus_To_v1alpha1_WorkflowStatus(in *dwsv1alpha5.WorkflowStatus, out *WorkflowStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_WorkflowStatus_To_v1alpha1_WorkflowStatus(in, out, s)
 }
 
-func Convert_v1alpha4_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in *dwsv1alpha4.SystemConfigurationStatus, out *SystemConfigurationStatus, s apiconversion.Scope) error {
-	return autoConvert_v1alpha4_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in, out, s)
+func Convert_v1alpha5_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in *dwsv1alpha5.SystemConfigurationStatus, out *SystemConfigurationStatus, s apiconversion.Scope) error {
+	return autoConvert_v1alpha5_SystemConfigurationStatus_To_v1alpha1_SystemConfigurationStatus(in, out, s)
 }
