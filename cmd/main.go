@@ -158,7 +158,6 @@ func main() {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 			os.Exit(1)
 		}
-
 		if err = (&dwsv1alpha5.SystemStatus{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "SystemStatus")
 			os.Exit(1)
