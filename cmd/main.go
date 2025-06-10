@@ -158,16 +158,14 @@ func main() {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 			os.Exit(1)
 		}
-	default:
-		setupLog.Info("unsupported mode", "mode", mode)
-		os.Exit(1)
-	}
 
-	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
 		if err = (&dwsv1alpha5.SystemStatus{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "SystemStatus")
 			os.Exit(1)
 		}
+	default:
+		setupLog.Info("unsupported mode", "mode", mode)
+		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
 
