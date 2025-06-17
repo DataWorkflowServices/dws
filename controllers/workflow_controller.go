@@ -221,6 +221,7 @@ func (r *WorkflowReconciler) Reconcile(ctx context.Context, req ctrl.Request) (r
 			}
 
 			if driver.Status == dwsv1alpha5.StatusTransientCondition || driver.Status == dwsv1alpha5.StatusError || driver.Status == dwsv1alpha5.StatusCompleted {
+				log.Info("setting status", "status", driver.Status, "message", workflow.Status.Message)
 				workflow.Status.Status = driver.Status
 			} else {
 				workflow.Status.Status = dwsv1alpha5.StatusDriverWait
