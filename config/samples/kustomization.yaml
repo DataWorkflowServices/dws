@@ -28,4 +28,14 @@ resources:
 - dataworkflowservices_v1alpha4_systemconfiguration.yaml
 - dataworkflowservices_v1alpha4_workflow.yaml
 - dataworkflowservices_v1alpha4_systemstatus.yaml
+- dataworkflowservices_v1alpha5_clientmount.yaml
+- dataworkflowservices_v1alpha5_computes.yaml
+- dataworkflowservices_v1alpha5_dwdirectiverule.yaml
+- dataworkflowservices_v1alpha5_directivebreakdown.yaml
+- dataworkflowservices_v1alpha5_persistentstorageinstance.yaml
+- dataworkflowservices_v1alpha5_servers.yaml
+- dataworkflowservices_v1alpha5_storage.yaml
+- dataworkflowservices_v1alpha5_systemconfiguration.yaml
+- dataworkflowservices_v1alpha5_systemstatus.yaml
+- dataworkflowservices_v1alpha5_workflow.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
