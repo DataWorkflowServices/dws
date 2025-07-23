@@ -1,8 +1,6 @@
 module github.com/DataWorkflowServices/dws
 
-go 1.22.0
-
-toolchain go1.22.5
+go 1.23.9
 
 require (
 	github.com/go-logr/logr v1.4.2
