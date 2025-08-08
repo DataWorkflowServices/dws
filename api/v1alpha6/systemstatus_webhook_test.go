@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package v1alpha5
+package v1alpha6
 
 import (
 	. "github.com/onsi/ginkgo/v2"
