@@ -421,4 +421,84 @@ resources:
     defaulting: true
     validation: true
     webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: ClientMount
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Computes
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: DWDirectiveRule
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: DirectiveBreakdown
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: PersistentStorageInstance
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Servers
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Storage
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: SystemConfiguration
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: SystemStatus
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Workflow
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
 version: "3"
