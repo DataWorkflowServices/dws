@@ -124,43 +124,43 @@ func main() {
 			}
 		}
 	case "webhook":
-		if err = (&dwsv1alpha5.ClientMount{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.ClientMount{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "ClientMount")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.Computes{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.Computes{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Computes")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.DWDirectiveRule{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.DWDirectiveRule{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "DWDirectiveRule")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.DirectiveBreakdown{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.DirectiveBreakdown{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "DirectiveBreakdown")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.PersistentStorageInstance{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.PersistentStorageInstance{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "PersistentStorageInstance")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.Servers{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.Servers{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Servers")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.Storage{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.Storage{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Storage")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.SystemConfiguration{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.SystemConfiguration{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "SystemConfiguration")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha5.SystemStatus{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha6.SystemStatus{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "SystemStatus")
 			os.Exit(1)
 		}
