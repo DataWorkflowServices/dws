@@ -1,5 +1,0 @@
-apiVersion: dataworkflowservices.github.io/v1alpha1
-kind: DWDirectiveRule
-metadata:
-  name: dwdirectiverule-sample
-spec:
