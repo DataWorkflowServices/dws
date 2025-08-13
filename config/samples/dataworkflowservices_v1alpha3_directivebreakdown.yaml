@@ -1,9 +1,0 @@
-apiVersion: dataworkflowservices.github.io/v1alpha3
-kind: DirectiveBreakdown
-metadata:
-  labels:
-    app.kubernetes.io/name: dws
-    app.kubernetes.io/managed-by: kustomize
-  name: directivebreakdown-sample
-spec:
-  # TODO(user): Add fields here

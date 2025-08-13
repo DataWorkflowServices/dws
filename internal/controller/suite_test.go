@@ -35,9 +35,6 @@ import (
 	zapcr "sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	dwsv1alpha1 "github.com/DataWorkflowServices/dws/api/v1alpha1"
-	dwsv1alpha2 "github.com/DataWorkflowServices/dws/api/v1alpha2"
-	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
 	dwsv1alpha5 "github.com/DataWorkflowServices/dws/api/v1alpha5"
 	dwsv1alpha6 "github.com/DataWorkflowServices/dws/api/v1alpha6"
@@ -77,15 +74,6 @@ var _ = BeforeSuite(func() {
 	// Then add the scheme to envtest.CRDInstallOptions.
 
 	var err error
-	err = dwsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = dwsv1alpha2.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = dwsv1alpha3.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
 	err = dwsv1alpha4.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
