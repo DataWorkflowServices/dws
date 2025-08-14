@@ -626,6 +626,7 @@ spec:
                 - Creating
                 - Active
                 - Destroying
+                - Degraded
                 type: string
             required:
             - state
