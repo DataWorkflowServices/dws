@@ -1,14 +1,5 @@
 ## Append samples you want in your CSV to this file as resources ##
 resources:
-- dws_v1alpha1_workflow.yaml
-- dws_v1alpha1_dwdirectiverule.yaml
-- dws_v1alpha1_directivebreakdown.yaml
-- dws_v1alpha1_servers.yaml
-- dws_v1alpha1_computes.yaml
-- dws_v1alpha1_storage.yaml
-- dws_v1alpha1_clientmount.yaml
-- dws_v1alpha1_persistentstorageinstance.yaml
-- dws_v1alpha1_systemconfiguration.yaml
 - dataworkflowservices_v1alpha3_clientmount.yaml
 - dataworkflowservices_v1alpha3_computes.yaml
 - dataworkflowservices_v1alpha3_dwdirectiverule.yaml
@@ -38,4 +29,14 @@ resources:
 - dataworkflowservices_v1alpha5_systemconfiguration.yaml
 - dataworkflowservices_v1alpha5_systemstatus.yaml
 - dataworkflowservices_v1alpha5_workflow.yaml
+- dataworkflowservices_v1alpha6_clientmount.yaml
+- dataworkflowservices_v1alpha6_computes.yaml
+- dataworkflowservices_v1alpha6_dwdirectiverule.yaml
+- dataworkflowservices_v1alpha6_directivebreakdown.yaml
+- dataworkflowservices_v1alpha6_persistentstorageinstance.yaml
+- dataworkflowservices_v1alpha6_servers.yaml
+- dataworkflowservices_v1alpha6_storage.yaml
+- dataworkflowservices_v1alpha6_systemconfiguration.yaml
+- dataworkflowservices_v1alpha6_systemstatus.yaml
+- dataworkflowservices_v1alpha6_workflow.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

@@ -24,59 +24,59 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 
-	dwsv1alpha5 "github.com/DataWorkflowServices/dws/api/v1alpha5"
+	dwsv1alpha6 "github.com/DataWorkflowServices/dws/api/v1alpha6"
 	utilconversion "github.com/DataWorkflowServices/dws/github/cluster-api/util/conversion"
 )
 
 func TestFuzzyConversion(t *testing.T) {
 
 	t.Run("for ClientMount", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.ClientMount{},
+		Hub:   &dwsv1alpha6.ClientMount{},
 		Spoke: &ClientMount{},
 	}))
 
 	t.Run("for Computes", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.Computes{},
+		Hub:   &dwsv1alpha6.Computes{},
 		Spoke: &Computes{},
 	}))
 
 	t.Run("for DWDirectiveRule", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.DWDirectiveRule{},
+		Hub:   &dwsv1alpha6.DWDirectiveRule{},
 		Spoke: &DWDirectiveRule{},
 	}))
 
 	t.Run("for DirectiveBreakdown", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.DirectiveBreakdown{},
+		Hub:   &dwsv1alpha6.DirectiveBreakdown{},
 		Spoke: &DirectiveBreakdown{},
 	}))
 
 	t.Run("for PersistentStorageInstance", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.PersistentStorageInstance{},
+		Hub:   &dwsv1alpha6.PersistentStorageInstance{},
 		Spoke: &PersistentStorageInstance{},
 	}))
 
 	t.Run("for Servers", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.Servers{},
+		Hub:   &dwsv1alpha6.Servers{},
 		Spoke: &Servers{},
 	}))
 
 	t.Run("for Storage", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.Storage{},
+		Hub:   &dwsv1alpha6.Storage{},
 		Spoke: &Storage{},
 	}))
 
 	t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.SystemConfiguration{},
+		Hub:   &dwsv1alpha6.SystemConfiguration{},
 		Spoke: &SystemConfiguration{},
 	}))
 
 	t.Run("for SystemStatus", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.SystemStatus{},
+		Hub:   &dwsv1alpha6.SystemStatus{},
 		Spoke: &SystemStatus{},
 	}))
 
 	t.Run("for Workflow", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha5.Workflow{},
+		Hub:   &dwsv1alpha6.Workflow{},
 		Spoke: &Workflow{},
 	}))
 

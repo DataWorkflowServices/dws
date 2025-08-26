@@ -1,7 +1,0 @@
-apiVersion: dataworkflowservices.github.io/v1alpha1
-kind: ClientMount
-metadata:
-  name: clientmount-sample
-spec:
-  # Add fields here
-  foo: bar
