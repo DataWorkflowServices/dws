@@ -20,6 +20,8 @@
 package v1alpha5
 
 import (
+	"os"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
@@ -282,6 +284,16 @@ func (dst *SystemConfiguration) ConvertFrom(srcRaw conversion.Hub) error {
 	if err := Convert_v1alpha6_SystemConfiguration_To_v1alpha5_SystemConfiguration(src, dst, nil); err != nil {
 		return err
 	}
+
+	// +crdbumper:carryforward:begin="SystemConfiguration.ConvertFrom"
+	// In a non-test environment, ENVIRONMENT will be set. Don't save Hub data in the
+	// annotations in this case. The SystemConfiguration resource can be very large, and
+	// the annotation will be too large to store. In a test environment, we want the Hub
+	// data saved in the annotations to test hub-spoke-hub and spoke-hub-spoke conversions.
+	if _, found := os.LookupEnv("ENVIRONMENT"); found {
+		return nil
+	}
+	// +crdbumper:carryforward:end
 
 	// Preserve Hub data on down-conversion except for metadata.
 	return utilconversion.MarshalData(src, dst)
