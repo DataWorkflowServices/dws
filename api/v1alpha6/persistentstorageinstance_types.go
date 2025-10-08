@@ -111,6 +111,20 @@ func (psi *PersistentStorageInstance) GetStatus() updater.Status[*PersistentStor
 	return &psi.Status
 }
 
+// IsUsable looks at the status of the PersistentStorageInstance and determines whether the
+// storage can be used.
+func (psi *PersistentStorageInstance) IsUsable() bool {
+	if psi.Status.State == PSIStateActive {
+		return true
+	}
+
+	if psi.Status.State == PSIStateDegraded {
+		return true
+	}
+
+	return false
+}
+
 //+kubebuilder:object:root=true
 
 // PersistentStorageInstanceList contains a list of PersistentStorageInstances
