@@ -118,6 +118,8 @@ func (psi *PersistentStorageInstance) IsUsable() bool {
 		return true
 	}
 
+	// Degraded means that a drive has failed in a RAID array. The storage is still usable in this
+	// state
 	if psi.Status.State == PSIStateDegraded {
 		return true
 	}
