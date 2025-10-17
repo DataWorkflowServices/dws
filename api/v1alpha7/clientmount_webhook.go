@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Hewlett Packard Enterprise Development LP
+ * Copyright 2023-2025 Hewlett Packard Enterprise Development LP
  * Other additional copyright holders may be indicated within.
  *
  * The entirety of this work is licensed under the Apache License,
@@ -17,25 +17,21 @@
  * limitations under the License.
  */
 
-package v1alpha6
+package v1alpha7
 
 import (
-	. "github.com/onsi/ginkgo/v2"
+	ctrl "sigs.k8s.io/controller-runtime"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-var _ = Describe("SystemStatus Webhook", func() {
+// log is for logging in this package.
+var clientmountlog = logf.Log.WithName("clientmount-resource")
 
-	// We already have api/<spoke_ver>/conversion_test.go that is
-	// digging deep into the conversion routines, and we have
-	// internal/controllers/conversion_test.go that is verifying that the
-	// conversion webhook is hooked up to those routines.
+// SetupWebhookWithManager will setup the manager to manage the webhooks
+func (r *ClientMount) SetupWebhookWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewWebhookManagedBy(mgr).
+		For(r).
+		Complete()
+}
 
-	Context("When creating SystemStatus under Conversion Webhook", func() {
-		It("Should get the converted version of SystemStatus", func() {
-
-			// TODO(user): Add your logic here
-
-		})
-	})
-
-})
+// TODO(user): EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!

@@ -23,38 +23,32 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+// +kubebuilder:validation:Enum=Enabled;Disabled
+type SystemNodeStatus string
 
-// SystemStatusSpec defines the desired state of SystemStatus
-type SystemStatusSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+const (
+	SystemNodeStatusEnabled  SystemNodeStatus = "Enabled"
+	SystemNodeStatusDisabled SystemNodeStatus = "Disabled"
+)
 
-	// Foo is an example field of SystemStatus. Edit systemstatus_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
-}
-
-// SystemStatusStatus defines the observed state of SystemStatus
-type SystemStatusStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+// SystemStatusData defines the data in the SystemStatus
+type SystemStatusData struct {
+	// Nodes is a map of node name to node status
+	Nodes map[string]SystemNodeStatus `json:"nodes,omitempty"`
 }
 
 // +kubebuilder:object:root=true
-// +kubebuilder:subresource:status
-
+// +kubebuilder:storageversion
 // SystemStatus is the Schema for the systemstatuses API
 type SystemStatus struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   SystemStatusSpec   `json:"spec,omitempty"`
-	Status SystemStatusStatus `json:"status,omitempty"`
+	Data SystemStatusData `json:"data,omitempty"`
 }
 
 // +kubebuilder:object:root=true
-
+// +kubebuilder:storageversion
 // SystemStatusList contains a list of SystemStatus
 type SystemStatusList struct {
 	metav1.TypeMeta `json:",inline"`
