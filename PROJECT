@@ -251,9 +251,6 @@ resources:
   kind: ClientMount
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -262,9 +259,6 @@ resources:
   kind: Computes
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -273,9 +267,6 @@ resources:
   kind: DWDirectiveRule
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -284,9 +275,6 @@ resources:
   kind: DirectiveBreakdown
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -295,9 +283,6 @@ resources:
   kind: PersistentStorageInstance
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -306,9 +291,6 @@ resources:
   kind: Servers
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -317,9 +299,6 @@ resources:
   kind: Storage
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -328,9 +307,6 @@ resources:
   kind: SystemConfiguration
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -339,9 +315,6 @@ resources:
   kind: SystemStatus
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    conversion: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -350,10 +323,6 @@ resources:
   kind: Workflow
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
-  webhooks:
-    defaulting: true
-    validation: true
-    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -362,6 +331,9 @@ resources:
   kind: ClientMount
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -370,6 +342,9 @@ resources:
   kind: Computes
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -378,6 +353,9 @@ resources:
   kind: DWDirectiveRule
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -386,6 +364,9 @@ resources:
   kind: DirectiveBreakdown
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -394,6 +375,9 @@ resources:
   kind: PersistentStorageInstance
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -402,6 +386,9 @@ resources:
   kind: Servers
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -410,6 +397,9 @@ resources:
   kind: Storage
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -418,6 +408,9 @@ resources:
   kind: SystemConfiguration
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -426,6 +419,9 @@ resources:
   kind: SystemStatus
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -434,4 +430,8 @@ resources:
   kind: Workflow
   path: github.com/DataWorkflowServices/dws/api/v1alpha7
   version: v1alpha7
-version: "3"
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+version: '3'
