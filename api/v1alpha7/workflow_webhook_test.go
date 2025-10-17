@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package v1alpha6
+package v1alpha7
 
 import (
 	"context"
