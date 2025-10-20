@@ -92,7 +92,7 @@ spec:
               type: object
             type: array
         type: object
-    served: true
+    served: false
     storage: false
   - name: v1alpha6
     schema:
