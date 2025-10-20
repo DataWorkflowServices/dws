@@ -1,24 +1,5 @@
 ## Append samples you want in your CSV to this file as resources ##
 resources:
-- dataworkflowservices_v1alpha3_clientmount.yaml
-- dataworkflowservices_v1alpha3_computes.yaml
-- dataworkflowservices_v1alpha3_dwdirectiverule.yaml
-- dataworkflowservices_v1alpha3_directivebreakdown.yaml
-- dataworkflowservices_v1alpha3_persistentstorageinstance.yaml
-- dataworkflowservices_v1alpha3_servers.yaml
-- dataworkflowservices_v1alpha3_storage.yaml
-- dataworkflowservices_v1alpha3_systemconfiguration.yaml
-- dataworkflowservices_v1alpha3_workflow.yaml
-- dataworkflowservices_v1alpha4_clientmount.yaml
-- dataworkflowservices_v1alpha4_computes.yaml
-- dataworkflowservices_v1alpha4_dwdirectiverule.yaml
-- dataworkflowservices_v1alpha4_directivebreakdown.yaml
-- dataworkflowservices_v1alpha4_persistentstorageinstance.yaml
-- dataworkflowservices_v1alpha4_servers.yaml
-- dataworkflowservices_v1alpha4_storage.yaml
-- dataworkflowservices_v1alpha4_systemconfiguration.yaml
-- dataworkflowservices_v1alpha4_workflow.yaml
-- dataworkflowservices_v1alpha4_systemstatus.yaml
 - dataworkflowservices_v1alpha5_clientmount.yaml
 - dataworkflowservices_v1alpha5_computes.yaml
 - dataworkflowservices_v1alpha5_dwdirectiverule.yaml
