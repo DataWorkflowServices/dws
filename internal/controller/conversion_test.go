@@ -89,7 +89,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads ClientMount resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read ClientMount resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.ClientMount{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads ClientMount resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.ClientMount{}
 			Eventually(func(g Gomega) {
@@ -154,7 +161,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads DWDirectiveRule resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read DWDirectiveRule resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.DWDirectiveRule{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads DWDirectiveRule resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.DWDirectiveRule{}
 			Eventually(func(g Gomega) {
@@ -219,7 +233,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads DirectiveBreakdown resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read DirectiveBreakdown resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.DirectiveBreakdown{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads DirectiveBreakdown resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.DirectiveBreakdown{}
 			Eventually(func(g Gomega) {
@@ -290,7 +311,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads PersistentStorageInstance resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read PersistentStorageInstance resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.PersistentStorageInstance{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads PersistentStorageInstance resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.PersistentStorageInstance{}
 			Eventually(func(g Gomega) {
@@ -355,7 +383,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads Servers resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read Servers resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.Servers{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads Servers resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.Servers{}
 			Eventually(func(g Gomega) {
@@ -420,7 +455,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads Storage resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read Storage resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.Storage{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads Storage resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.Storage{}
 			Eventually(func(g Gomega) {
@@ -485,7 +527,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads SystemConfiguration resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read SystemConfiguration resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.SystemConfiguration{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads SystemConfiguration resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.SystemConfiguration{}
 			Eventually(func(g Gomega) {
@@ -559,7 +608,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads Workflow resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read Workflow resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.Workflow{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads Workflow resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.Workflow{}
 			Eventually(func(g Gomega) {
@@ -624,7 +680,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads Computes resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read Computes resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.Computes{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads Computes resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.Computes{}
 			Eventually(func(g Gomega) {
@@ -689,7 +752,14 @@ var _ = Describe("Conversion Webhook Test", func() {
 			}
 		})
 
-		It("reads SystemStatus resource via hub and via spoke v1alpha5", func() {
+		It("is unable to read SystemStatus resource via spoke v1alpha5", func() {
+			resSpoke := &dwsv1alpha5.SystemStatus{}
+			Expect(k8sClient.Get(context.TODO(), client.ObjectKeyFromObject(resHub), resSpoke)).ToNot(Succeed())
+		})
+
+		PIt("reads SystemStatus resource via hub and via spoke v1alpha5", func() {
+			// ACTION: v1alpha5 is no longer served, and this test can be removed.
+
 			// Spoke should have annotation.
 			resSpoke := &dwsv1alpha5.SystemStatus{}
 			Eventually(func(g Gomega) {
