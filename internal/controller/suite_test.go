@@ -35,10 +35,9 @@ import (
 	zapcr "sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
-	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
 	dwsv1alpha5 "github.com/DataWorkflowServices/dws/api/v1alpha5"
 	dwsv1alpha6 "github.com/DataWorkflowServices/dws/api/v1alpha6"
+	dwsv1alpha7 "github.com/DataWorkflowServices/dws/api/v1alpha7"
 	"github.com/DataWorkflowServices/dws/controllers"
 	//+kubebuilder:scaffold:imports
 )
@@ -75,16 +74,13 @@ var _ = BeforeSuite(func() {
 	// Then add the scheme to envtest.CRDInstallOptions.
 
 	var err error
-	err = dwsv1alpha3.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = dwsv1alpha4.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
 	err = dwsv1alpha5.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = dwsv1alpha6.AddToScheme(scheme.Scheme)
+	Expect(err).NotTo(HaveOccurred())
+
+	err = dwsv1alpha7.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	//+kubebuilder:scaffold:scheme
@@ -126,35 +122,35 @@ var _ = BeforeSuite(func() {
 
 	// start webhooks
 
-	err = (&dwsv1alpha6.ClientMount{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.ClientMount{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 	/*
-		err = (&dwsv1alpha6.Computes{}).SetupWebhookWithManager(k8sManager)
+		err = (&dwsv1alpha7.Computes{}).SetupWebhookWithManager(k8sManager)
 		Expect(err).ToNot(HaveOccurred())
 	*/
 
-	err = (&dwsv1alpha6.DWDirectiveRule{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.DWDirectiveRule{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha6.DirectiveBreakdown{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.DirectiveBreakdown{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha6.PersistentStorageInstance{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.PersistentStorageInstance{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha6.Servers{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.Servers{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha6.Storage{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.Storage{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha6.SystemConfiguration{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.SystemConfiguration{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha6.Workflow{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.Workflow{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&dwsv1alpha6.SystemStatus{}).SetupWebhookWithManager(k8sManager)
+	err = (&dwsv1alpha7.SystemStatus{}).SetupWebhookWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	// +crdbumper:scaffold:builder

@@ -14,7 +14,7 @@ spec:
     singular: systemstatus
   scope: Namespaced
   versions:
-  - name: v1alpha4
+  - name: v1alpha5
     schema:
       openAPIV3Schema:
         description: SystemStatus is the Schema for the systemstatuses API
@@ -51,7 +51,7 @@ spec:
         type: object
     served: false
     storage: false
-  - name: v1alpha5
+  - name: v1alpha6
     schema:
       openAPIV3Schema:
         description: SystemStatus is the Schema for the systemstatuses API
@@ -88,7 +88,7 @@ spec:
         type: object
     served: true
     storage: false
-  - name: v1alpha6
+  - name: v1alpha7
     schema:
       openAPIV3Schema:
         description: SystemStatus is the Schema for the systemstatuses API
