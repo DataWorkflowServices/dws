@@ -1,0 +1,9 @@
+apiVersion: dataworkflowservices.github.io/v1alpha4
+kind: Computes
+metadata:
+  labels:
+    app.kubernetes.io/name: dws
+    app.kubernetes.io/managed-by: kustomize
+  name: computes-sample
+spec:
+  # TODO(user): Add fields here

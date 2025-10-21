@@ -1,5 +1,15 @@
 ## Append samples you want in your CSV to this file as resources ##
 resources:
+- dataworkflowservices_v1alpha4_clientmount.yaml
+- dataworkflowservices_v1alpha4_computes.yaml
+- dataworkflowservices_v1alpha4_dwdirectiverule.yaml
+- dataworkflowservices_v1alpha4_directivebreakdown.yaml
+- dataworkflowservices_v1alpha4_persistentstorageinstance.yaml
+- dataworkflowservices_v1alpha4_servers.yaml
+- dataworkflowservices_v1alpha4_storage.yaml
+- dataworkflowservices_v1alpha4_systemconfiguration.yaml
+- dataworkflowservices_v1alpha4_workflow.yaml
+- dataworkflowservices_v1alpha4_systemstatus.yaml
 - dataworkflowservices_v1alpha5_clientmount.yaml
 - dataworkflowservices_v1alpha5_computes.yaml
 - dataworkflowservices_v1alpha5_dwdirectiverule.yaml
