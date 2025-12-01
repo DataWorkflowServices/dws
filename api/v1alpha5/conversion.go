@@ -23,6 +23,7 @@ import (
 	"os"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	apiconversion "k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -450,4 +451,40 @@ func (src *WorkflowList) ConvertTo(dstRaw conversion.Hub) error {
 
 func (dst *WorkflowList) ConvertFrom(srcRaw conversion.Hub) error {
 	return apierrors.NewMethodNotSupported(resource("WorkflowList"), "ConvertFrom")
+}
+
+// convertResourceStatusFromHub converts a v1alpha7 ResourceStatus to v1alpha5.
+// FencedStatus is mapped to OfflineStatus since Fenced doesn't exist in older API versions.
+func convertResourceStatusFromHub(in dwsv1alpha7.ResourceStatus) ResourceStatus {
+	if in == dwsv1alpha7.FencedStatus {
+		return OfflineStatus
+	}
+	return ResourceStatus(in)
+}
+
+// Convert_v1alpha7_Node_To_v1alpha5_Node handles conversion with FencedStatus mapping.
+func Convert_v1alpha7_Node_To_v1alpha5_Node(in *dwsv1alpha7.Node, out *Node, s apiconversion.Scope) error {
+	if err := autoConvert_v1alpha7_Node_To_v1alpha5_Node(in, out, s); err != nil {
+		return err
+	}
+	out.Status = convertResourceStatusFromHub(in.Status)
+	return nil
+}
+
+// Convert_v1alpha7_StorageDevice_To_v1alpha5_StorageDevice handles conversion with FencedStatus mapping.
+func Convert_v1alpha7_StorageDevice_To_v1alpha5_StorageDevice(in *dwsv1alpha7.StorageDevice, out *StorageDevice, s apiconversion.Scope) error {
+	if err := autoConvert_v1alpha7_StorageDevice_To_v1alpha5_StorageDevice(in, out, s); err != nil {
+		return err
+	}
+	out.Status = convertResourceStatusFromHub(in.Status)
+	return nil
+}
+
+// Convert_v1alpha7_StorageStatus_To_v1alpha5_StorageStatus handles conversion with FencedStatus mapping.
+func Convert_v1alpha7_StorageStatus_To_v1alpha5_StorageStatus(in *dwsv1alpha7.StorageStatus, out *StorageStatus, s apiconversion.Scope) error {
+	if err := autoConvert_v1alpha7_StorageStatus_To_v1alpha5_StorageStatus(in, out, s); err != nil {
+		return err
+	}
+	out.Status = convertResourceStatusFromHub(in.Status)
+	return nil
 }
