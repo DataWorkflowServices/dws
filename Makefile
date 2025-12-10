@@ -235,7 +235,8 @@ CONVERSION_GEN_VER := v0.31.5
 # Can be "latest", but cannot be a tag, such as "v1.3.3".  However, it will
 # work with the short-form git commit rev that has been tagged.
 #CONVERSION_VERIFIER_VER := 09030092b # v1.3.3
-CONVERSION_VERIFIER_VER := b0284d8b # v1.7.3
+#CONVERSION_VERIFIER_VER := b0284d8b # v1.7.3
+CONVERSION_VERIFIER_VER := 7b1cf365 # v1.11.3
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
@@ -264,7 +265,7 @@ $(CONVERSION_GEN): $(LOCALBIN) # Build conversion-gen from tools folder.
 # The SRC_DIRS value is a space-separated list of paths to old versions.
 # The --input-dirs value is a single path item; specify multiple --input-dirs
 # parameters if you have multiple old versions.
-SRC_DIRS=./api/v1alpha3 ./api/v1alpha4 ./api/v1alpha5
+SRC_DIRS=./api/v1alpha4 ./api/v1alpha5 ./api/v1alpha6
 generate-go-conversions: $(CONVERSION_GEN) ## Generate conversions go code
 	$(MAKE) clean-generated-conversions SRC_DIRS="$(SRC_DIRS)"
 	$(CONVERSION_GEN) \

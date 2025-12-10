@@ -33,10 +33,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	dwsv1alpha3 "github.com/DataWorkflowServices/dws/api/v1alpha3"
 	dwsv1alpha4 "github.com/DataWorkflowServices/dws/api/v1alpha4"
 	dwsv1alpha5 "github.com/DataWorkflowServices/dws/api/v1alpha5"
 	dwsv1alpha6 "github.com/DataWorkflowServices/dws/api/v1alpha6"
+	dwsv1alpha7 "github.com/DataWorkflowServices/dws/api/v1alpha7"
 	"github.com/DataWorkflowServices/dws/controllers"
 	//+kubebuilder:scaffold:imports
 )
@@ -49,10 +49,10 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(dwsv1alpha3.AddToScheme(scheme))
 	utilruntime.Must(dwsv1alpha4.AddToScheme(scheme))
 	utilruntime.Must(dwsv1alpha5.AddToScheme(scheme))
 	utilruntime.Must(dwsv1alpha6.AddToScheme(scheme))
+	utilruntime.Must(dwsv1alpha7.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -120,43 +120,43 @@ func main() {
 			}
 		}
 	case "webhook":
-		if err = (&dwsv1alpha6.ClientMount{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.ClientMount{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "ClientMount")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.Computes{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.Computes{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Computes")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.DWDirectiveRule{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.DWDirectiveRule{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "DWDirectiveRule")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.DirectiveBreakdown{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.DirectiveBreakdown{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "DirectiveBreakdown")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.PersistentStorageInstance{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.PersistentStorageInstance{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "PersistentStorageInstance")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.Servers{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.Servers{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Servers")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.Storage{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.Storage{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Storage")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.SystemConfiguration{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.SystemConfiguration{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "SystemConfiguration")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.Workflow{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Workflow")
 			os.Exit(1)
 		}
-		if err = (&dwsv1alpha6.SystemStatus{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&dwsv1alpha7.SystemStatus{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "SystemStatus")
 			os.Exit(1)
 		}
