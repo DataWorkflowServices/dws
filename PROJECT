@@ -17,78 +17,6 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: ClientMount
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: Computes
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: DWDirectiveRule
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: DirectiveBreakdown
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: PersistentStorageInstance
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: Servers
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: Storage
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: SystemConfiguration
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: Workflow
-  path: github.com/DataWorkflowServices/dws/api/v1alpha3
-  version: v1alpha3
-- api:
-    crdVersion: v1
-    namespaced: true
-  domain: github.io
-  group: dataworkflowservices
-  kind: ClientMount
   path: github.com/DataWorkflowServices/dws/api/v1alpha4
   version: v1alpha4
 - api:
@@ -251,6 +179,86 @@ resources:
   kind: ClientMount
   path: github.com/DataWorkflowServices/dws/api/v1alpha6
   version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Computes
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: DWDirectiveRule
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: DirectiveBreakdown
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: PersistentStorageInstance
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Servers
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Storage
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: SystemConfiguration
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: SystemStatus
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: Workflow
+  path: github.com/DataWorkflowServices/dws/api/v1alpha6
+  version: v1alpha6
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: github.io
+  group: dataworkflowservices
+  kind: ClientMount
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -260,8 +268,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: Computes
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -271,8 +279,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: DWDirectiveRule
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -282,8 +290,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: DirectiveBreakdown
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -293,8 +301,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: PersistentStorageInstance
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -304,8 +312,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: Servers
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -315,8 +323,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: Storage
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -326,8 +334,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: SystemConfiguration
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -337,8 +345,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: SystemStatus
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     conversion: true
     webhookVersion: v1
@@ -348,8 +356,8 @@ resources:
   domain: github.io
   group: dataworkflowservices
   kind: Workflow
-  path: github.com/DataWorkflowServices/dws/api/v1alpha6
-  version: v1alpha6
+  path: github.com/DataWorkflowServices/dws/api/v1alpha7
+  version: v1alpha7
   webhooks:
     defaulting: true
     validation: true
