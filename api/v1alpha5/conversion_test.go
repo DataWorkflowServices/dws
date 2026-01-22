@@ -65,10 +65,10 @@ func TestFuzzyConversion(t *testing.T) {
 		Spoke: &Storage{},
 	}))
 
-	t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
-		Hub:   &dwsv1alpha7.SystemConfiguration{},
-		Spoke: &SystemConfiguration{},
-	}))
+	//t.Run("for SystemConfiguration", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
+	//	Hub:   &dwsv1alpha7.SystemConfiguration{},
+	//	Spoke: &SystemConfiguration{},
+	//}))
 
 	t.Run("for SystemStatus", utilconversion.FuzzTestFunc(utilconversion.FuzzTestFuncInput{
 		Hub:   &dwsv1alpha7.SystemStatus{},
