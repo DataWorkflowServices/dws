@@ -121,12 +121,12 @@ vet: ## Run go vet against code.
 
 container-unit-test: VERSION ?= $(shell cat .version)
 container-unit-test: .version ## Build docker image with the manager and execute unit tests.
-	${CONTAINER_TOOL} build -f Dockerfile --label $(IMAGE_TAG_BASE)-$@:$(VERSION)-$@ -t $(IMAGE_TAG_BASE)-$@:$(VERSION) --target testing .
-	${CONTAINER_TOOL} run --rm -t --name $@-nnf-sos  $(IMAGE_TAG_BASE)-$@:$(VERSION)
+	${CONTAINER_TOOL} build --platform linux/amd64 -f Dockerfile --label $(IMAGE_TAG_BASE)-$@:$(VERSION)-$@ -t $(IMAGE_TAG_BASE)-$@:$(VERSION) --target testing .
+	${CONTAINER_TOOL} run --platform linux/amd64 --rm -t --name $@-nnf-sos  $(IMAGE_TAG_BASE)-$@:$(VERSION)
 
 TESTDIR ?= ./...
 test: manifests generate fmt vet envtest ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path --bin-dir $(LOCALBIN))" go test $(TESTDIR) -coverprofile cover.out
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --use-deprecated-gcs=false -p path --bin-dir $(LOCALBIN))" go test $(TESTDIR) -coverprofile cover.out
 
 ##@ Build
 build: manifests generate fmt vet ## Build manager binary.
@@ -230,7 +230,7 @@ CONVERSION_VERIFIER_PKG := sigs.k8s.io/cluster-api/hack/tools/conversion-verifie
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v5.5.0
 CONTROLLER_TOOLS_VERSION ?= v0.16.5
-CONVERSION_GEN_VER := v0.31.5
+CONVERSION_GEN_VER := v0.32.3
 
 # Can be "latest", but cannot be a tag, such as "v1.3.3".  However, it will
 # work with the short-form git commit rev that has been tagged.

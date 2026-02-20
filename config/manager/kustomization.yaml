@@ -19,4 +19,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: ghcr.io/dataworkflowservices/dws
-  newTag: 0.1.15
+  newTag: 0.1.16
