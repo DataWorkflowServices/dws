@@ -116,6 +116,9 @@ var _ = BeforeSuite(func() {
 	err = (&Workflow{}).SetupWebhookWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 
+	err = (&PersistentStorageInstance{}).SetupWebhookWithManager(mgr)
+	Expect(err).NotTo(HaveOccurred())
+
 	//+kubebuilder:scaffold:webhook
 
 	go func() {
