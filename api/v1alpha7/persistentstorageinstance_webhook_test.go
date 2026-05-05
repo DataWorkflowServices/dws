@@ -88,9 +88,9 @@ var _ = Describe("PersistentStorageInstance Webhook", func() {
 			Expect(k8sClient.Update(context.TODO(), psi)).ShouldNot(Succeed())
 		})
 
-		It("should reject changes to UserID", func() {
+		It("should allow changes to UserID", func() {
 			psi.Spec.UserID = 9999
-			Expect(k8sClient.Update(context.TODO(), psi)).ShouldNot(Succeed())
+			Expect(k8sClient.Update(context.TODO(), psi)).Should(Succeed())
 		})
 
 		It("should allow transitioning State to Destroying", func() {

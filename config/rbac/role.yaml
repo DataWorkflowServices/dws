@@ -59,6 +59,12 @@ rules:
 - apiGroups:
   - dataworkflowservices.github.io
   resources:
+  - persistentstorageinstances
+  verbs:
+  - get
+- apiGroups:
+  - dataworkflowservices.github.io
+  resources:
   - workflows
   verbs:
   - get
