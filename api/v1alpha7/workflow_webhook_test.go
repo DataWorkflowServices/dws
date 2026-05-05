@@ -23,6 +23,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/DataWorkflowServices/dws/utils/dwdparse"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -140,5 +141,100 @@ var _ = Describe("Workflow Webhook", func() {
 			Entry("When Spec.DesiredState PostRun", StatePostRun),
 			Entry("When Spec.DesiredState DataOut", StateDataOut),
 		)
+	})
+
+	Describe("Persistent storage directive userID validation", func() {
+		var (
+			psi  *PersistentStorageInstance
+			rule *DWDirectiveRule
+		)
+
+		BeforeEach(func() {
+			workflow.Spec.UserID = 1000
+			workflow.Spec.DWDirectives = []string{"#DW persistentdw name=shared-psi"}
+
+			psi = &PersistentStorageInstance{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "shared-psi",
+					Namespace: workflow.Namespace,
+				},
+				Spec: PersistentStorageInstanceSpec{
+					Name:        "shared-psi",
+					FsType:      "lustre",
+					DWDirective: "#DW create_persistent name=shared-psi type=lustre capacity=1GiB",
+					UserID:      2000,
+					State:       PSIStateActive,
+				},
+			}
+
+			rule = &DWDirectiveRule{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      fmt.Sprintf("rules-%s", uuid.NewString()[0:8]),
+					Namespace: workflow.Namespace,
+				},
+				Spec: []dwdparse.DWDirectiveRuleSpec{
+					{
+						Command: "persistentdw",
+						RuleDefs: []dwdparse.DWDirectiveRuleDef{{
+							Key:             "name",
+							Type:            "string",
+							Pattern:         "^([A-Za-z0-9_-]+)$",
+							IsRequired:      true,
+							IsValueRequired: true,
+						}},
+					},
+					{
+						Command: "destroy_persistent",
+						RuleDefs: []dwdparse.DWDirectiveRuleDef{{
+							Key:             "name",
+							Type:            "string",
+							Pattern:         "^([A-Za-z0-9_-]+)$",
+							IsRequired:      true,
+							IsValueRequired: true,
+						}},
+					},
+				},
+			}
+
+			Expect(k8sClient.Create(context.TODO(), rule)).To(Succeed())
+			Expect(k8sClient.Create(context.TODO(), psi)).To(Succeed())
+		})
+
+		AfterEach(func() {
+			if psi != nil {
+				Expect(k8sClient.Delete(context.TODO(), psi)).To(Succeed())
+			}
+
+			if rule != nil {
+				Expect(k8sClient.Delete(context.TODO(), rule)).To(Succeed())
+			}
+		})
+
+		It("rejects a persistentdw request when workflow and PSI userIDs differ", func() {
+			Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
+			workflow = nil
+		})
+
+		It("allows a persistentdw request when the PSI opts out of the userID check", func() {
+			psi.Annotations = map[string]string{PersistentStorageIgnoreUIDAnnotation: "true"}
+			Expect(k8sClient.Update(context.TODO(), psi)).To(Succeed())
+
+			Expect(k8sClient.Create(context.TODO(), workflow)).To(Succeed())
+		})
+
+		It("rejects a destroy_persistent request when workflow and PSI userIDs differ", func() {
+			workflow.Spec.DWDirectives = []string{"#DW destroy_persistent name=shared-psi"}
+			Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
+			workflow = nil
+		})
+
+		It("rejects a destroy_persistent request even when the PSI opts out of the userID check", func() {
+			workflow.Spec.DWDirectives = []string{"#DW destroy_persistent name=shared-psi"}
+			psi.Annotations = map[string]string{PersistentStorageIgnoreUIDAnnotation: "true"}
+			Expect(k8sClient.Update(context.TODO(), psi)).To(Succeed())
+
+			Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
+			workflow = nil
+		})
 	})
 })

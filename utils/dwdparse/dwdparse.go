@@ -242,7 +242,7 @@ func ValidateArgs(spec DWDirectiveRuleSpec, args map[string]string, uniqueMap ma
 
 // Validate a list of directives against the supplied rules. When a directive is valid
 // for a particular rule, the `onValidDirectiveFunc` function is called.
-func Validate(rules []DWDirectiveRuleSpec, directives []string, onValidDirectiveFunc func(index int, rule DWDirectiveRuleSpec)) error {
+func Validate(rules []DWDirectiveRuleSpec, directives []string, onValidDirectiveFunc func(index int, rule DWDirectiveRuleSpec) error) error {
 
 	// Create a map to track argument uniqueness within the directives for
 	// rules that contain `UniqueWithin`
@@ -262,7 +262,9 @@ func Validate(rules []DWDirectiveRuleSpec, directives []string, onValidDirective
 
 			if valid {
 				validDirective = true
-				onValidDirectiveFunc(index, rule)
+				if err := onValidDirectiveFunc(index, rule); err != nil {
+					return err
+				}
 			}
 		}
 

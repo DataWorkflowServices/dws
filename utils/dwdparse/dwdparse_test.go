@@ -345,7 +345,7 @@ var dwDirectiveTests = []struct {
 func TestDWParse(t *testing.T) {
 	for index, tt := range dwDirectiveTests {
 
-		err := Validate(dWDRules, tt.directiveList, func(int, DWDirectiveRuleSpec) {})
+		err := Validate(dWDRules, tt.directiveList, func(int, DWDirectiveRuleSpec) error { return nil })
 
 		if (tt.result == pass && err != nil) || (tt.result == fail && err == nil) {
 			t.Errorf("TestDWParse(%s)(%d): expect_valid(%v) err(%v)", tt.directiveList, index, tt.result, err)
@@ -362,7 +362,7 @@ type testCase struct {
 // test provides a common method to test a series of test cases against a set of rules
 func test(t *testing.T, rules []DWDirectiveRuleSpec, tests []testCase) {
 	for index, tc := range tests {
-		err := Validate(rules, tc.directives, func(int, DWDirectiveRuleSpec) {})
+		err := Validate(rules, tc.directives, func(int, DWDirectiveRuleSpec) error { return nil })
 
 		if (tc.result == pass && err != nil) || (tc.result == fail && err == nil) {
 			t.Errorf("test(%s)(%d): expected(%v) err(%v)", tc.directives, index, tc.result, err)

@@ -27,6 +27,7 @@ import (
 	"reflect"
 	"strings"
 
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -39,6 +40,7 @@ import (
 )
 
 //+kubebuilder:rbac:groups=dataworkflowservices.github.io,resources=dwdirectiverules,verbs=get;list;watch
+//+kubebuilder:rbac:groups=dataworkflowservices.github.io,resources=persistentstorageinstances,verbs=get
 
 // log is for logging in this package.
 var workflowlog = logf.Log.WithName("workflow-resource")
@@ -230,8 +232,8 @@ func checkDirectives(workflow *Workflow, ruleParser RuleParser) error {
 	}
 
 	// Forward the rule and directive index to the rule parsers matched directive handling
-	onValidDirectiveFunc := func(index int, rule dwdparse.DWDirectiveRuleSpec) {
-		ruleParser.MatchedDirective(workflow, rule.WatchStates, index, rule.DriverLabel)
+	onValidDirectiveFunc := func(index int, rule dwdparse.DWDirectiveRuleSpec) error {
+		return ruleParser.MatchedDirective(workflow, rule.WatchStates, index, rule.DriverLabel)
 	}
 
 	return dwdparse.Validate(ruleParser.GetRuleList(), workflow.Spec.DWDirectives, onValidDirectiveFunc)
@@ -242,7 +244,7 @@ func checkDirectives(workflow *Workflow, ruleParser RuleParser) error {
 type RuleParser interface {
 	ReadRules() error
 	GetRuleList() []dwdparse.DWDirectiveRuleSpec
-	MatchedDirective(*Workflow, string, int, string)
+	MatchedDirective(*Workflow, string, int, string) error
 }
 
 // RuleList contains the rules to be applied for a particular driver
@@ -296,10 +298,10 @@ type MutatingRuleParser struct {
 }
 
 // MatchedDirective updates the driver status entries to indicate driver availability
-func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates string, index int, label string) {
+func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates string, index int, label string) error {
 	if len(watchStates) == 0 {
 		// Nothing to do
-		return
+		return nil
 	}
 
 	registrationMap := make(map[WorkflowState]bool)
@@ -335,6 +337,8 @@ func (r *MutatingRuleParser) MatchedDirective(workflow *Workflow, watchStates st
 		workflow.Status.Drivers = append(workflow.Status.Drivers, driverStatus)
 		workflowlog.Info("Registering driver", "Driver", driverStatus.DriverID, "Watch state", state)
 	}
+
+	return nil
 }
 
 // ValidatingRuleParser implements the RuleParser interface.
@@ -347,5 +351,45 @@ type ValidatingRuleParser struct {
 }
 
 // MatchedDirective provides the interface function for the validating webhook
-func (r *ValidatingRuleParser) MatchedDirective(workflow *Workflow, watchStates string, index int, label string) {
+func (r *ValidatingRuleParser) MatchedDirective(workflow *Workflow, watchStates string, index int, label string) error {
+	return validatePersistentInstanceDirective(workflow, index)
+}
+
+func validatePersistentInstanceDirective(workflow *Workflow, index int) error {
+	argsMap, err := dwdparse.BuildArgsMap(workflow.Spec.DWDirectives[index])
+	if err != nil {
+		return err
+	}
+
+	command := argsMap["command"]
+	if command != "persistentdw" && command != "destroy_persistent" {
+		return nil
+	}
+
+	name, ok := argsMap["name"]
+	if !ok {
+		return field.Required(field.NewPath("Spec").Child("DWDirectives").Index(index), fmt.Sprintf("%s directives require a name", command))
+	}
+
+	psi := &PersistentStorageInstance{}
+	key := client.ObjectKey{Name: name, Namespace: workflow.Namespace}
+	// NOTE: The Validator interface does not propagate request context;
+	// migrate to CustomValidator to enable proper context propagation.
+	if err := c.Get(context.TODO(), key, psi); err != nil {
+		if apierrors.IsNotFound(err) {
+			return field.Invalid(field.NewPath("Spec").Child("DWDirectives").Index(index), workflow.Spec.DWDirectives[index], fmt.Sprintf("persistent storage instance %q not found", name))
+		}
+
+		return err
+	}
+
+	if command == "persistentdw" && strings.EqualFold(psi.Annotations[PersistentStorageIgnoreUIDAnnotation], "true") {
+		return nil
+	}
+
+	if psi.Spec.UserID != workflow.Spec.UserID {
+		return field.Forbidden(field.NewPath("Spec").Child("DWDirectives").Index(index), fmt.Sprintf("workflow userID %d does not match persistent storage instance %q userID %d", workflow.Spec.UserID, name, psi.Spec.UserID))
+	}
+
+	return nil
 }

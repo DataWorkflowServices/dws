@@ -33,6 +33,17 @@ const (
 
 	// PersistentStorageNamespaceLabel is defined for resources that relate to the namespace of a DWS PersistentStorageInstance
 	PersistentStorageNamespaceLabel = "dataworkflowservices.github.io/persistentstorage.namespace"
+
+	// PersistentStorageIgnoreUIDAnnotation allows workflow admission for a
+	// persistentdw directive to bypass the check that workflow.spec.userID
+	// matches PersistentStorageInstance.spec.userID.
+	//
+	// This annotation applies only to persistentdw. It does not apply to
+	// destroy_persistent, which still requires a matching userID.
+	//
+	// PersistentStorageInstance.spec.userID is mutable, so changing it may
+	// affect admission decisions for later workflows that reference the PSI.
+	PersistentStorageIgnoreUIDAnnotation = "dataworkflowservices.github.io/ignore-uid"
 )
 
 // PersistentStorageInstanceState specifies the golang type for PSIState
