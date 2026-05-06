@@ -85,10 +85,6 @@ func (r *PersistentStorageInstance) ValidateUpdate(old runtime.Object) (admissio
 		return nil, immutableError("DWDirective")
 	}
 
-	if r.Spec.UserID != oldPSI.Spec.UserID {
-		return nil, immutableError("UserID")
-	}
-
 	return nil, nil
 }
 
