@@ -377,7 +377,9 @@ func validatePersistentInstanceDirective(workflow *Workflow, index int) error {
 	// migrate to CustomValidator to enable proper context propagation.
 	if err := c.Get(context.TODO(), key, psi); err != nil {
 		if apierrors.IsNotFound(err) {
-			return field.Invalid(field.NewPath("Spec").Child("DWDirectives").Index(index), workflow.Spec.DWDirectives[index], fmt.Sprintf("persistent storage instance %q not found", name))
+			// PSI may not exist yet (e.g., create_persistent workflow still reconciling).
+			// Defer existence validation to the reconciler which retries.
+			return nil
 		}
 
 		return err

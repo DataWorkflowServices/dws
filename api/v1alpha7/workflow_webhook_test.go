@@ -236,5 +236,20 @@ var _ = Describe("Workflow Webhook", func() {
 			Expect(k8sClient.Create(context.TODO(), workflow)).ShouldNot(Succeed())
 			workflow = nil
 		})
+
+		It("allows a persistentdw request when the PSI does not yet exist", func() {
+			Expect(k8sClient.Delete(context.TODO(), psi)).To(Succeed())
+			psi = nil
+
+			Expect(k8sClient.Create(context.TODO(), workflow)).To(Succeed())
+		})
+
+		It("allows a destroy_persistent request when the PSI does not yet exist", func() {
+			workflow.Spec.DWDirectives = []string{"#DW destroy_persistent name=shared-psi"}
+			Expect(k8sClient.Delete(context.TODO(), psi)).To(Succeed())
+			psi = nil
+
+			Expect(k8sClient.Create(context.TODO(), workflow)).To(Succeed())
+		})
 	})
 })
