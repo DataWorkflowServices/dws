@@ -16,7 +16,7 @@
 # limitations under the License.
 
 # Build the manager binary
-FROM golang:1.25.7 AS builder
+FROM golang:1.26.5 AS builder
 
 ARG TARGETARCH
 ARG TARGETOS
