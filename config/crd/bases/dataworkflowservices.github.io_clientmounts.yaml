@@ -901,7 +901,11 @@ spec:
       jsonPath: .spec.desiredState
       name: DESIREDSTATE
       type: string
-    - description: True if desired state is achieved
+    - description: The state observed by the client node
+      jsonPath: .status.mounts[0].state
+      name: STATE
+      type: string
+    - description: True if all mounts in status.mounts are ready
       jsonPath: .status.allReady
       name: READY
       type: boolean
