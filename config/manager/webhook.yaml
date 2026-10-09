@@ -10,6 +10,13 @@ spec:
     matchLabels:
       control-plane: webhook
   replicas: 3
+  # Required hostname anti-affinity means a surge pod can never schedule on a
+  # cluster with exactly `replicas` eligible nodes, so roll in place instead.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:

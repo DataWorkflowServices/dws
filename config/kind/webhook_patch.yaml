@@ -5,6 +5,8 @@ metadata:
   namespace: system
 spec:
   replicas: 1
+  # Drop the base rolling-update strategy; kind has spare nodes for a surge pod.
+  strategy: null
   template:
     spec:
       containers:
