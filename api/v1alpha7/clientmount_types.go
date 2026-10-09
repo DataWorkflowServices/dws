@@ -193,7 +193,8 @@ type ClientMountStatus struct {
 //+kubebuilder:storageversion
 //+kubebuilder:subresource:status
 //+kubebuilder:printcolumn:name="DESIREDSTATE",type="string",JSONPath=".spec.desiredState",description="The desired state"
-//+kubebuilder:printcolumn:name="READY",type="boolean",JSONPath=".status.allReady",description="True if desired state is achieved"
+//+kubebuilder:printcolumn:name="STATE",type="string",JSONPath=".status.mounts[0].state",description="The state observed by the client node"
+//+kubebuilder:printcolumn:name="READY",type="boolean",JSONPath=".status.allReady",description="True if all mounts in status.mounts are ready"
 //+kubebuilder:printcolumn:name="ERROR",type="string",JSONPath=".status.error.severity"
 //+kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 
