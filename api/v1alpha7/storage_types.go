@@ -119,9 +119,11 @@ type StorageStatus struct {
 	// Access contains the information about where the storage is accessible
 	Access StorageAccess `json:"access,omitempty"`
 
-	// Capacity is the number of bytes this storage provides. This is the
-	// total accessible bytes as determined by the driver and may be different
-	// than the sum of the devices' capacities.
+	// Capacity is the number of unallocated bytes this storage currently has
+	// available, as determined by the driver. It decreases as allocations are
+	// made against this storage and increases as they are released. It is not
+	// the total capacity; the total is not exposed by this field and is
+	// approximately the sum of Devices[].Capacity.
 	// +kubebuilder:default:=0
 	Capacity int64 `json:"capacity"`
 
